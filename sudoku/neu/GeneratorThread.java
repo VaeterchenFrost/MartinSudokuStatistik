@@ -50,7 +50,7 @@ class GeneratorThread extends Thread{
 					istImPool = this.pool.setze(neues.neuTyp, neues.infoSudoku, neues.loesungsZeit);
 				}
 				if (SudokuPool.generatorStatistik != null){
-					String topfName = pool.gibTopfName(forderung);
+					String topfName = pool.gibTopfName(neues.neuTyp);
 					SudokuPool.generatorStatistik.neuesSudoku(neues.neuTyp, neues.infoSudoku, istImPool, neues.loesungsZeit, topfName);
 				}
 			}

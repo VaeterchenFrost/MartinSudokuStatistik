@@ -49,7 +49,9 @@ public class SudokuStatistik implements GeneratorStatistik {
 		RandomAccessFile f = null;
 
 		try {
-			String dname = neuTyp.toString().substring(0, 1) + neuTyp.toString().substring(1).toLowerCase();
+			String dname = neuTyp.gibName();// neuTyp.gibName().substring(0, 1)
+											// +
+											// neuTyp.gibName().substring(1).toLowerCase();
 			f = new RandomAccessFile(String.format("%s%s%s", topfName, dname, ".txt"), "rws");
 			String sSudoku = infoSudoku == null ? "null" : "Erfolg";
 			String sGespeichert = "nicht gespeichert";
@@ -67,6 +69,7 @@ public class SudokuStatistik implements GeneratorStatistik {
 			System.out.println("Hallo SudokuStatistik " + zeitString + " " + neuTyp + " " + sSudoku + ": "
 					+ sGespeichert + " " + new Integer(loesungsZeit));
 			// Log Datei:
+			System.out.println("Logge t=" + loesungsZeit + " in " + topfName);
 			incrementOnLine(f, loesungsZeit);
 
 		} catch (Exception e) {
@@ -108,8 +111,8 @@ public class SudokuStatistik implements GeneratorStatistik {
 		long pos_prevline, pos_currline, currline;
 		String newline = ws + System.getProperty("line.separator");
 		int len_newline = newline.length();
-
-		System.out.println("write at" + line);
+		// DEBUG:
+		System.out.println("write at " + line);
 		// Gehe zu benötigter Line, zählend bei 1
 		// Erstelle erste Zeile
 		if (f.length() < len_newline) {
