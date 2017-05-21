@@ -32,7 +32,7 @@ public class SudokuStatistik implements GeneratorStatistik {
 		Collection<TopfInfo> values = verfuegbare.values();
 		TopfInfo summe = PoolInfo.gibSumme(values);
 
-		System.out.println("Gesamtzahl Sudokus alles Toepfe: " + summe.gibAnzahl());
+		System.out.println("Gesamtzahl Sudokus aller Toepfe: " + summe.gibAnzahl());
 		//===================================
 		while (true) {
 		}
