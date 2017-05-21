@@ -2,13 +2,18 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.EnumMap;
 
 import sudoku.bedienung.SudokuBedienung;
 import sudoku.kern.exception.Exc;
 import sudoku.kern.info.InfoSudoku;
+import sudoku.logik.Schwierigkeit;
 import sudoku.neu.GeneratorStatistik;
 import sudoku.neu.NeuTyp;
 import sudoku.neu.SudokuPool;
+import sudoku.neu.pool.PoolInfo;
+import sudoku.neu.pool.TopfInfo;
 
 public class SudokuStatistik implements GeneratorStatistik {
 
@@ -18,7 +23,17 @@ public class SudokuStatistik implements GeneratorStatistik {
 		@SuppressWarnings("unused")
 		// Ohne die Zuweisung auf eine Variable w�rde SudokuBedienung vom
 		// Garbitscher sofort wieder weggeschmissen!
+		
 		SudokuBedienung sudokuBedienung = new SudokuBedienung(null);
+		
+		// ==Auslesen Fuellstand============
+		PoolInfo pinfo = sudokuBedienung.gibSudokuPoolInfo();
+		EnumMap<Schwierigkeit, TopfInfo> verfuegbare = pinfo.verfuegbare;
+		Collection<TopfInfo> values = verfuegbare.values();
+		TopfInfo summe = PoolInfo.gibSumme(values);
+
+		System.out.println("Gesamtzahl Sudokus alles Toepfe: " + summe.gibAnzahl());
+		//===================================
 		while (true) {
 		}
 	}
