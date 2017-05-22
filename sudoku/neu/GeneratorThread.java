@@ -43,7 +43,7 @@ class GeneratorThread extends Thread{
 			long sleepTime = 100;
 			
 			if (forderung != null){
-				sleepTime = 10;
+				sleepTime = 300;
 				Generator.GeneratorErgebnis neues = Generator.gibNeuesSudoku(forderung);
 				Boolean istImPool = null;
 				if (neues.infoSudoku != null){

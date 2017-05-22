@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -23,9 +24,9 @@ public class SudokuStatistik implements GeneratorStatistik {
 		@SuppressWarnings("unused")
 		// Ohne die Zuweisung auf eine Variable w�rde SudokuBedienung vom
 		// Garbitscher sofort wieder weggeschmissen!
-		
+
 		SudokuBedienung sudokuBedienung = new SudokuBedienung(null);
-		
+
 		// ==Auslesen Fuellstand============
 		PoolInfo pinfo = sudokuBedienung.gibSudokuPoolInfo();
 		EnumMap<Schwierigkeit, TopfInfo> verfuegbare = pinfo.verfuegbare;
@@ -33,7 +34,7 @@ public class SudokuStatistik implements GeneratorStatistik {
 		TopfInfo summe = PoolInfo.gibSumme(values);
 
 		System.out.println("Gesamtzahl Sudokus aller Toepfe: " + summe.gibAnzahl());
-		//===================================
+		// ===================================
 		while (true) {
 		}
 	}
@@ -77,11 +78,16 @@ public class SudokuStatistik implements GeneratorStatistik {
 					sGespeichert = "gespeichert als 2.";
 				}
 			}
-			LocalDateTime now = LocalDateTime.now();
-			DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.mm.yyyy HH:mm");
-			String zeitString = now.format(df);
+			
+
+			DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss O");
+			String zeitString = ZonedDateTime.now().format(df); // ZonedDateTime
+																// fuer
+																// time-zone
+																// information
+																// (offsets)
 			// Log Console:
-			System.out.println("Hallo SudokuStatistik " + zeitString + " " + neuTyp + " " + sSudoku + ": "
+			System.out.println("Hallo SudokuStatistik (" + zeitString + ") " + neuTyp + " " + sSudoku + ": "
 					+ sGespeichert + " " + new Integer(loesungsZeit));
 			// Log Datei:
 			System.out.println("Logge t=" + loesungsZeit + " in " + topfName);

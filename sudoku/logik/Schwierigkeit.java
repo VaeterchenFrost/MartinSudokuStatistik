@@ -29,7 +29,7 @@ public enum Schwierigkeit {
 
 		/**
 		 * @param klugheit
-		 * @return null oder Schwierigkeit, die mit der übergebenen Klugheit zu bewältigen ist
+		 * @return null oder Schwierigkeit, die mit der ï¿½bergebenen Klugheit zu bewï¿½ltigen ist
 		 */
 		public static Schwierigkeit gibSchwierigkeit(Klugheit klugheit) {
 			EnumMap<Schwierigkeit, Klugheit> typKlugheiten = gibSchwierigkeitKlugheiten();
@@ -50,7 +50,7 @@ public enum Schwierigkeit {
 		}
 
 		/**
-		 * @param logik bei null kommt die kleinste Schwierigkeit zurück
+		 * @param logik bei null kommt die kleinste Schwierigkeit zurï¿½ck
 		 * @return null oder die kleinste Schwierigkeit, die diese logik beinhaltet
 		 */
 		public static Schwierigkeit gibKleinsteSchwierigkeit(Logik_ID logik) {
@@ -118,7 +118,7 @@ public enum Schwierigkeit {
 		
 		/**
 		 * @param typ
-		 * @return Gibt einen um eins leichteren Schwierigkeit zurück oder null
+		 * @return Gibt einen um eins leichteren Schwierigkeit zurï¿½ck oder null
 		 */
 		public static Schwierigkeit gibLeichtere(Schwierigkeit typ) {
 			if (typ == null){
@@ -138,7 +138,7 @@ public enum Schwierigkeit {
 
 		/**
 		 * @param typ
-		 * @return Gibt einen um eins schwereren Schwierigkeit zurück oder null
+		 * @return Gibt einen um eins schwereren Schwierigkeit zurï¿½ck oder null
 		 */
 		public static Schwierigkeit gibSchwerere(Schwierigkeit typ) {
 			if (typ == null){
@@ -162,8 +162,13 @@ public enum Schwierigkeit {
 		 * @return typ rotiert
 		 */
 		public static Schwierigkeit rotiere(Schwierigkeit typ){
+
 			Schwierigkeit[] typen = Schwierigkeit.values();
 			Schwierigkeit groesster = typen[typen.length-1];
+			//
+//			if(!typ.equals(groesster))return groesster;
+//			if(typ.equals(groesster))return typen[typen.length-2];
+			//
 			if (groesster.equals(typ)){
 				return typen[0];
 			}
