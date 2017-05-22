@@ -78,7 +78,6 @@ public class SudokuStatistik implements GeneratorStatistik {
 					sGespeichert = "gespeichert als 2.";
 				}
 			}
-			
 
 			DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss O");
 			String zeitString = ZonedDateTime.now().format(df); // ZonedDateTime
@@ -113,12 +112,14 @@ public class SudokuStatistik implements GeneratorStatistik {
 	}
 
 	/*
-	 * f: Beschreibbarer File line: positiv, Aus Sicherheitsgründen auf 100.00
-	 * beschränkt
+	 * f: Beschreibbarer File
+	 * 
+	 * line: positiv, Aus Sicherheitsgründen auf 10.000 beschränkt
+	 * 
 	 */
 	private static boolean incrementOnLine(RandomAccessFile f, final int line)
 			throws IOException, NumberFormatException {
-		final int max_lines = 100000;
+		final int max_lines = 10000;
 		final String ws = "          ";
 		if (line < 1) {
 			throw new IllegalArgumentException("Line number starts at 1.");
