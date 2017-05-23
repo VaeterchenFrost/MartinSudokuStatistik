@@ -86,7 +86,7 @@ public class SudokuStatistik implements GeneratorStatistik {
 																// information
 																// (offsets)
 			// Log Console:
-			System.out.println("Hallo SudokuStatistik (" + zeitString + ") " + neuTyp + " " + sSudoku + ": "
+			System.out.println("(" + zeitString + ") Hallo SudokuStatistik " + neuTyp + " " + sSudoku + ": "
 					+ sGespeichert + " " + new Integer(loesungsZeit));
 			// Log Datei:
 			System.out.println("Logge t=" + loesungsZeit + " in " + topfName);
