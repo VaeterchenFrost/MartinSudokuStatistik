@@ -154,7 +154,14 @@ public class DateiPool implements Pool0{
 		if (neuTyp == null){
 			throw new UnerwarteterNeuTyp("null");
 		}
-
+		
+		// LogiRex stark begrenzen: Nur gerade Lösungszeiten speichern
+		if (neuTyp.equals(new NeuTyp(Schwierigkeit.LOGIREX))){
+			if (loesungsZeit % 2 != 0){
+				return null;
+			}
+		}
+		
 		boolean istErstesDerLoesungsZeit = true;
 		String dateiName = null;
 		NeuTyp vollTyp = new NeuTyp(Typ.VOLL);
@@ -168,6 +175,11 @@ public class DateiPool implements Pool0{
 				dateiName = gibDateiName(verzeichnisName, loesungsZeit);
 				File f = new File(dateiName);
 				if ( f.exists()){
+					// LogiRex stark begrenzen: Je Lösungszeit nur eine Datei speichern
+					if (neuTyp.equals(new NeuTyp(Schwierigkeit.LOGIREX))){
+						return null;
+					}
+					
 					dateiName = gibDateiNameAlternative(verzeichnisName, loesungsZeit);
 					if (dateiName == null){
 						String bemerkung = String.format("Dateien für die Lösungszeit %d existieren alle", loesungsZeit);

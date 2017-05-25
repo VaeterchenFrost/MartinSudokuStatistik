@@ -103,16 +103,20 @@ class Generator extends Generator1 {
 		public final NeuTyp neuTyp;
 		public final InfoSudoku infoSudoku;
 		public final int loesungsZeit;
+		public final int laufNummer;
 
 		/**
-		 * @param infoSudoku
+		 * @param infoSudoku Auch null falls kein Sudoku erstellt werden konnte.
+		 * @param neuTyp Der Typ des erstellten Sudoku. Er muss nicht mit dem angeforderten Typ übereinstimmen!
 		 * @param loesungsZeit
+		 * @param laufNummer Nummer des Laufes, der erfolgreich dies Sudoku erzeugt hat.
 		 */
-		GeneratorErgebnis(NeuTyp neuTyp, InfoSudoku infoSudoku, int loesungsZeit) {
+		GeneratorErgebnis(InfoSudoku infoSudoku, NeuTyp neuTyp, int loesungsZeit, int laufNummer) {
 			super();
 			this.neuTyp = neuTyp;
 			this.infoSudoku = infoSudoku;
 			this.loesungsZeit = loesungsZeit;
+			this.laufNummer = laufNummer;
 		}
 
 	}
@@ -248,11 +252,12 @@ class Generator extends Generator1 {
 		InfoSudoku neuesSudoku = null;
 		int loesungsZeit = 0;
 		NeuTyp typDesNeuenSudoku = this.neuTyp;
-		
+		int laufNummer = 0;
+				
 		try {
 			// gewünschte einzusetzende Klugheit wird nicht jedesmal zufällig erreicht
-			int iNeuLaufMax = 50;
-			for (int iNeuLauf = 1; iNeuLauf < iNeuLaufMax; iNeuLauf++) {
+			int laufNummerMax = 50;
+			for (laufNummer = 1; laufNummer < laufNummerMax; laufNummer++) {
 				if (this.neuTyp.gibTyp() == NeuTyp.Typ.LEER) {
 					neuesSudoku = new InfoSudoku();
 					// Hier ist die Lösungszeit nicht relevant.
@@ -325,7 +330,7 @@ class Generator extends Generator1 {
 								if (istSystemOut()) {
 									System.out.println(String.format(
 											"Generator.gibNeues(): Soll=%s Geklappt (Ist=%s)in Lauf=%d (Logiken %s)",
-											neuTyp, wieSchwerIstTyp, iNeuLauf, erfolgreicheLogiken));
+											neuTyp, wieSchwerIstTyp, laufNummer, erfolgreicheLogiken));
 								}
 								// Das Ziel ist erreicht!
 								break; // for (int iLauf
@@ -354,7 +359,7 @@ class Generator extends Generator1 {
 					Generator.class.getName(), neuTyp, erfolg));
 		}
 
-		GeneratorErgebnis ergebnis = new GeneratorErgebnis(typDesNeuenSudoku, neuesSudoku, loesungsZeit);
+		GeneratorErgebnis ergebnis = new GeneratorErgebnis(neuesSudoku, typDesNeuenSudoku, loesungsZeit, laufNummer);
 		return ergebnis;
 	}
 

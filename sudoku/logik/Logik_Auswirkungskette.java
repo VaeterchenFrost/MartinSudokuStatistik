@@ -294,6 +294,54 @@ class Logik_Auswirkungskette implements Logik__Interface {
 		return ketten.get(0);
 	}
 
+	/**
+	 * @param zahlenListe
+	 * @param startIndex
+	 * @return Die Kette ab startIndex bis Index 0, gedreht
+	 */
+	static private ZahlenListe gibKetteRueckwaerst (ZahlenListe kette, int startIndex){
+		ZahlenListe ketteNeu = new ZahlenListe();
+		
+		for (int i = startIndex; i >= 0; i--) {
+			FeldNummerMitZahl feld = kette.get(i);
+			ketteNeu.add(feld);
+		}
+		return ketteNeu;
+	}
+
+	/**
+	 * @param kette
+	 * @param startIndex
+	 * @return Die Kette als Auswirkungskette ab startIndex bis zum Ende 
+	 */
+	static private ZahlenListe gibKetteVorwaerst (ZahlenListe kette, int startIndex){
+		ZahlenListe ketteNeu = new ZahlenListe();
+		
+		for (int i = startIndex; i < kette.size(); i++) {
+			FeldNummerMitZahl feld = kette.get(i);
+			int iZahl = i + 1;
+			if (iZahl == kette.size()){
+				iZahl = 0;
+			}
+			FeldNummerMitZahl zahl = kette.get(iZahl);
+			FeldNummerMitZahl feldNummerMitZahl = new FeldNummerMitZahl(feld.gibFeldNummer(), zahl.gibZahl());
+			ketteNeu.add(feldNummerMitZahl);
+		}
+		return ketteNeu;
+	}
+
+	static private String gibAuswirkung(ZahlenListe kette){
+		String s = "";
+		for (int i = 0; i < kette.size(); i++) {
+			FeldNummerMitZahl feld = kette.get(i);
+			if (!s.isEmpty()){
+				s += " => ";
+			}
+			s += feld; 
+		}
+		return s;
+	}
+
 	// ===========================================================
 	/**
 	 * @author heroe
@@ -339,6 +387,7 @@ class Logik_Auswirkungskette implements Logik__Interface {
 		}
 	}
 
+	
 	private class TipInfoKette extends TipInfo0 {
 		private FeldNummerMitZahl sollEintrag;
 		private ZahlenListe kette;
@@ -350,23 +399,34 @@ class Logik_Auswirkungskette implements Logik__Interface {
 		}
 
 		public EinTipText[] gibTip() {
-			String s1 = String.format("Im Feld%s ist einzig die Zahl %d möglich.", this.sollEintrag.gibFeldNummer(),
-					sollEintrag.gibZahl());
-			String s2 = String.format("Das bestimmt die auf diesem Feld%s startende und endende Kette:",
-					this.sollEintrag.gibFeldNummer());
-			String s3 = "Die Felder sind jeweils durch die zwischen ihnen genannte mögliche Zahl verbunden.";
+			String s1a = String.format("Das Verschluß-Feld%s der Kette", this.sollEintrag.gibFeldNummer());
+			EinTipText t1 = new EinTipText(s1a, kette.toString());
+
 			int verschlussZahl = kette.get(kette.size() - 1).gibZahl();
 			FeldNummerMitZahl nachbarStart = kette.get(1);
 			FeldNummerMitZahl nachbarEnde = kette.get(kette.size() - 2);
-			String s4 = String.format("Das Ketten-Verschluß-Feld%s ist über die EINE Zahl %d ",
-					this.sollEintrag.gibFeldNummer(), verschlussZahl);
-			String s5 = String.format("mit seinen BEIDEN Nachbarn Feld%s und Feld%s verbunden.",
+			String s2a = String.format("ist über nur die EINE Zahl %d ", verschlussZahl);
+			String s2b = String.format("mit seinen BEIDEN Nachbarn Feld%s und Feld%s verbunden.",
 					nachbarStart.gibFeldNummer(), nachbarEnde.gibFeldNummer());
-			String s6 = String.format(
-					"Unabhängig von der Belegung der Kette ist im Feld%s einzig die Zahl %d möglich.",
+			EinTipText t2 = new EinTipText(s2a, s2b);
+
+			String s3a = String.format("Daher ist im Feld%s einzig die Zahl %d möglich.",
 					this.sollEintrag.gibFeldNummer(), sollEintrag.gibZahl());
-			EinTipText[] sArray = new EinTipText[] { new EinTipText(s1, null), new EinTipText(s2, kette.toString()),
-					new EinTipText(s3, null), new EinTipText(s4, s5), new EinTipText(s6, null) };
+			EinTipText t3 = new EinTipText(s3a, null);
+
+			int beispielFeldIndex = kette.size() / 2;
+			FeldNummerMitZahl beispielFeldZahl = kette.get(beispielFeldIndex);
+			String s4a = String.format("Beispiel der Auswirkung der Belegungen des Ketten-Feldes%s:",
+					beispielFeldZahl.gibFeldNummer());
+			EinTipText t4 = new EinTipText(s4a, null);
+
+			ZahlenListe ketteRueckwaerts = gibKetteRueckwaerst (kette, beispielFeldIndex);
+			ZahlenListe ketteVorwaerts = gibKetteVorwaerst (kette, beispielFeldIndex);
+
+			EinTipText t5 = new EinTipText(gibAuswirkung(ketteRueckwaerts),null);
+			EinTipText t6 = new EinTipText(gibAuswirkung(ketteVorwaerts),null);
+			 
+			EinTipText[] sArray = new EinTipText[] { t1, t2, t3, t4, t5, t6 };
 			return sArray;
 		}
 
@@ -382,7 +442,10 @@ class Logik_Auswirkungskette implements Logik__Interface {
 
 		@Override
 		public ZahlenListe gibLoeschZahlen() {
-			return null;
+			FeldNummerMitZahl feldNummerMitZahl = kette.get(kette.size() - 1);
+			ZahlenListe loeschZahlen = new ZahlenListe();
+			loeschZahlen.add(feldNummerMitZahl);
+			return loeschZahlen;
 		}
 
 		@Override

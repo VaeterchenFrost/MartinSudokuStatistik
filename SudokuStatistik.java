@@ -47,8 +47,8 @@ public class SudokuStatistik implements GeneratorStatistik {
 	 */
 
 	@Override
-	public void neuesSudoku(final NeuTyp neuTyp, final InfoSudoku infoSudoku, final Boolean istErstesDerLoesungsZeit,
-			final int loesungsZeit, final String topfName) {
+	public void neuesSudoku(final NeuTyp forderung, final InfoSudoku infoSudoku, final NeuTyp neuTyp,
+			final int laufNummer, final Boolean istErstesDerLoesungsZeit, final int loesungsZeit, final String topfName) {
 		// Wenn null -> return ohne Funktionalität.
 		if (infoSudoku == null) {
 			return;

@@ -33,7 +33,7 @@ public class PoolInfo {
 	}
 
 	/**
-	 * @return Summe ï¿½ber alles
+	 * @return Summe über alles
 	 */
 	TopfInfo gibSumme() {
 		TopfInfo summe = new TopfInfo();
