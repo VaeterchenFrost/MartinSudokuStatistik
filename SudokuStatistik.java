@@ -42,8 +42,8 @@ public class SudokuStatistik implements GeneratorStatistik {
 	 * (non-Javadoc)
 	 * 
 	 * @see sudoku.neu.GeneratorStatistik#neuesSudoku(sudoku.neu.NeuTyp,
-	 * sudoku.kern.info.InfoSudoku, java.lang.Boolean, int) Alles basiert auf
-	 * NICHT NULL von infoSudoku -
+	 * sudoku.kern.info.InfoSudoku, java.lang.Boolean, int) 
+	 * Alles basiert auf NICHT NULL von infoSudoku
 	 */
 
 	@Override
@@ -58,13 +58,9 @@ public class SudokuStatistik implements GeneratorStatistik {
 			return;
 		}
 		// ---------------------------------
-		RandomAccessFile f = null;
+		String dname = neuTyp.gibName();
 
-		try {
-			String dname = neuTyp.gibName();// neuTyp.gibName().substring(0, 1)
-											// +
-											// neuTyp.gibName().substring(1).toLowerCase();
-			f = new RandomAccessFile(String.format("%s%s%s", topfName, dname, ".txt"), "rws");
+		try (RandomAccessFile f = new RandomAccessFile(String.format("%s%s%s", topfName, dname, ".txt"), "rws");) {
 
 			String sSudoku = forderung.gibName().equals(dname) ? "-ok-" : "-> " + dname.toUpperCase() + "";
 
@@ -91,7 +87,7 @@ public class SudokuStatistik implements GeneratorStatistik {
 			System.out.println("Logge t=" + loesungsZeit + " in " + topfName);
 			incrementOnLine(f, loesungsZeit);
 
-		} catch (Exception e) { // Exceptions=====================================
+		} catch (Exception e) { // ========Exceptions========
 			try {
 				// TODO: handle exception
 				System.err.println("Error occured while trying to log: " + neuTyp + ": " + new Integer(loesungsZeit));
@@ -100,17 +96,6 @@ public class SudokuStatistik implements GeneratorStatistik {
 				// TODO: handle output-exception
 			}
 			e.printStackTrace();
-
-		} finally {
-			if (f != null) {
-				try {
-					f.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			// Cleanup.
 		}
 	}
 
@@ -135,12 +120,12 @@ public class SudokuStatistik implements GeneratorStatistik {
 
 		long pos_prevline, pos_currline, currline;
 		String newline = ws + System.getProperty("line.separator");
-		int len_newline = newline.length();
+
 		// DEBUG:
-		System.out.println("SudokuStatistik.incrementOnLine write at " + line);
+		System.out.println("SudokuStatistik.incrementOnLine schreibe in " + line);
 		// Gehe zu benötigter Line, zählend bei 1
 		// Erstelle erste Zeile
-		if (f.length() < len_newline) {
+		if (f.length() < newline.length()) {
 			f.writeBytes(newline);
 		}
 		// reset
