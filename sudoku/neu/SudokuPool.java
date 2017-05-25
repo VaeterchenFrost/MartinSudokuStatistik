@@ -31,27 +31,6 @@ public class SudokuPool {
 		this.generatorThread = new GeneratorThread(pool, externeAusnahmeBehandlung);
 	}
 
-	/**
-	 * Setzt in den Pool das Sudoku zur Aufbewahrung
-	 * 
-	 * @param neuTyp
-	 * @param sudoku
-	 * @param loesungsZeit
-	 */
-	public void setze(NeuTyp neuTyp, InfoSudoku sudoku, int loesungsZeit) {
-		this.pool.setze(neuTyp, sudoku, loesungsZeit);
-	}
-
-	/**
-	 * @param neuTyp
-	 * @return Sudoku oder null wenn keines des angeforderten Typs zur Verf�gung
-	 *         steht
-	 */
-	public InfoSudoku gibSudoku(NeuTyp neuTyp, NeuTypOption option) {
-		InfoSudoku sudoku = pool.gibSudoku(neuTyp, option);
-		return sudoku;
-	}
-
 	@Override
 	protected void finalize() throws Throwable {
 		// Thread beenden!
@@ -64,8 +43,29 @@ public class SudokuPool {
 		return poolInfo;
 	}
 
+	/**
+	 * @param neuTyp
+	 * @return Sudoku oder null wenn keines des angeforderten Typs zur Verf�gung
+	 *         steht
+	 */
+	public InfoSudoku gibSudoku(NeuTyp neuTyp, NeuTypOption option) {
+		InfoSudoku sudoku = pool.gibSudoku(neuTyp, option);
+		return sudoku;
+	}
+
 	public String gibTopfName(NeuTyp neuTyp) {
 		String s = this.pool.gibTopfName(neuTyp);
 		return s;
+	}
+
+	/**
+	 * Setzt in den Pool das Sudoku zur Aufbewahrung
+	 * 
+	 * @param neuTyp
+	 * @param sudoku
+	 * @param loesungsZeit
+	 */
+	public void setze(NeuTyp neuTyp, InfoSudoku sudoku, int loesungsZeit) {
+		this.pool.setze(neuTyp, sudoku, loesungsZeit);
 	}
 }

@@ -16,10 +16,6 @@ public abstract class TipInfo0 implements TipInfo {
 		this.infoSudoku = null;
 	}
 
-	public void setzeSudoku(InfoSudoku infoSudoku) {
-		this.infoSudoku = infoSudoku;
-	}
-
 	public Logik_ID gibLogik() {
 		return logik;
 	}
@@ -36,6 +32,10 @@ public abstract class TipInfo0 implements TipInfo {
 		String klugheitNameKurz = SudokuLogik.gibNameKurz(logik);
 		String s = String.format("%d. Tip durch Logik %s:", tipNummer, klugheitNameKurz);
 		return s;
+	}
+
+	public void setzeSudoku(InfoSudoku infoSudoku) {
+		this.infoSudoku = infoSudoku;
 	}
 
 }

@@ -11,6 +11,14 @@ class LogikErgebnis {
 	final ZahlenListe loeschZahlen;
 	final TipInfo tipInfo;
 
+	LogikErgebnis(GruppenLaeufeListe gruppenLaeufeListe) {
+		super();
+		this.gruppenLaeufeListe = gruppenLaeufeListe;
+		this.eintrag = null;
+		this.loeschZahlen = null;
+		this.tipInfo = null;
+	}
+
 	LogikErgebnis(GruppenLaeufeListe gruppenLaeufeListe, FeldNummerMitZahl eintrag, ZahlenListe loeschZahlen,
 			TipInfo tipInfo) {
 		super();
@@ -18,14 +26,6 @@ class LogikErgebnis {
 		this.eintrag = eintrag;
 		this.loeschZahlen = loeschZahlen;
 		this.tipInfo = tipInfo;
-	}
-
-	LogikErgebnis(GruppenLaeufeListe gruppenLaeufeListe) {
-		super();
-		this.gruppenLaeufeListe = gruppenLaeufeListe;
-		this.eintrag = null;
-		this.loeschZahlen = null;
-		this.tipInfo = null;
 	}
 
 }

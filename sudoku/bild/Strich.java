@@ -37,14 +37,14 @@ class Strich {
 		return breite;
 	}
 
-	public void transformiereIndizees(int neuerUrsprung) {
-		von.transformiereIndex(neuerUrsprung);
-		nach.transformiereIndex(neuerUrsprung);
-	}
-
 	@Override
 	public String toString() {
 		return "Strich [Breite=" + gibBreite() + ", von=" + von + ", nach=" + nach + "]";
+	}
+
+	public void transformiereIndizees(int neuerUrsprung) {
+		von.transformiereIndex(neuerUrsprung);
+		nach.transformiereIndex(neuerUrsprung);
 	}
 
 }

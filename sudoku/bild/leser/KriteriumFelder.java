@@ -5,6 +5,25 @@ import java.util.ArrayList;
 import sudoku.kern.feldmatrix.FeldNummer;
 
 class KriteriumFelder implements KriteriumBildInfo {
+	// ========================================================
+	private class FeldErgebnis {
+		final FeldNummer feldNummer;
+		final float ist;
+		float erfuellungsGrad;
+
+		/**
+		 * @param feldNummer
+		 * @param ist
+		 * @param erfuellungsGrad
+		 */
+		FeldErgebnis(FeldNummer feldNummer, float ist, float erfuellungsGrad) {
+			super();
+			this.feldNummer = feldNummer;
+			this.ist = ist;
+			this.erfuellungsGrad = erfuellungsGrad;
+		}
+	}
+
 	/**
 	 * @param soll
 	 *            Sollwert
@@ -52,40 +71,9 @@ class KriteriumFelder implements KriteriumBildInfo {
 	}
 
 	// ========================================================
-	private class FeldErgebnis {
-		final FeldNummer feldNummer;
-		final float ist;
-		float erfuellungsGrad;
-
-		/**
-		 * @param feldNummer
-		 * @param ist
-		 * @param erfuellungsGrad
-		 */
-		FeldErgebnis(FeldNummer feldNummer, float ist, float erfuellungsGrad) {
-			super();
-			this.feldNummer = feldNummer;
-			this.ist = ist;
-			this.erfuellungsGrad = erfuellungsGrad;
-		}
-	}
-
-	// ========================================================
 	private String name;
 	private FeldNummer[] felder;
 	private SollSchwarz sollSchwarz;
-
-	/**
-	 * @param name
-	 * @param felder
-	 * @param sollSchwarz
-	 */
-	KriteriumFelder(String name, SollSchwarz sollSchwarz, FeldNummer[] felder) {
-		super();
-		this.name = name;
-		this.felder = felder;
-		this.sollSchwarz = sollSchwarz;
-	}
 
 	KriteriumFelder(String name, SollSchwarz sollSchwarz, FeldNummer feld) {
 		super();
@@ -124,8 +112,16 @@ class KriteriumFelder implements KriteriumBildInfo {
 		}
 	}
 
-	public String gibName() {
-		return name;
+	/**
+	 * @param name
+	 * @param felder
+	 * @param sollSchwarz
+	 */
+	KriteriumFelder(String name, SollSchwarz sollSchwarz, FeldNummer[] felder) {
+		super();
+		this.name = name;
+		this.felder = felder;
+		this.sollSchwarz = sollSchwarz;
 	}
 
 	public float gibErfuellungsGrad(ZahlBildInfo zahlBildInfo, boolean istHierSystemOut) {
@@ -152,6 +148,10 @@ class KriteriumFelder implements KriteriumBildInfo {
 		}
 
 		return durchschnitt;
+	}
+
+	public String gibName() {
+		return name;
 	}
 
 	@Override

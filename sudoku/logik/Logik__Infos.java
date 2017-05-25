@@ -4,33 +4,6 @@ package sudoku.logik;
  * @author heroe Eine Sudoku-Logik bzw. Sudoku-L�sungsstrategie
  */
 public interface Logik__Infos {
-	Logik_ID gibLogikID();
-
-	/**
-	 * @return Name der Logik als Zweibuchstaber
-	 */
-	String gibKurzName();
-
-	/**
-	 * @return Treffende Bezeichnung.
-	 */
-	String gibName();
-
-	/**
-	 * @return Wo ist die Situation vorzufinden?
-	 */
-	String[] gibWo();
-
-	/**
-	 * @return Die Situation in abstakter logischer Betrachtung benannt.
-	 */
-	String[] gibSituationAbstrakt();
-
-	/**
-	 * @return Die Situation in praktischer Betrachtung benannt.
-	 */
-	String[] gibSituation();
-
 	/**
 	 * @return Das Ergebnis der Situation.
 	 */
@@ -54,4 +27,31 @@ public interface Logik__Infos {
 	 *         gibt (in Spalten bzw. Zeilen).
 	 */
 	double gibKontrollZeit1();
+
+	/**
+	 * @return Name der Logik als Zweibuchstaber
+	 */
+	String gibKurzName();
+
+	Logik_ID gibLogikID();
+
+	/**
+	 * @return Treffende Bezeichnung.
+	 */
+	String gibName();
+
+	/**
+	 * @return Die Situation in praktischer Betrachtung benannt.
+	 */
+	String[] gibSituation();
+
+	/**
+	 * @return Die Situation in abstakter logischer Betrachtung benannt.
+	 */
+	String[] gibSituationAbstrakt();
+
+	/**
+	 * @return Wo ist die Situation vorzufinden?
+	 */
+	String[] gibWo();
 }

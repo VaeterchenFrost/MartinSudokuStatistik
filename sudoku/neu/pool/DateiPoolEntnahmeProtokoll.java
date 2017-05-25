@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import sudoku.kern.exception.Exc;
 import sudoku.kern.info.InfoSudoku;
 import sudoku.logik.Schwierigkeit;
@@ -34,16 +35,20 @@ public class DateiPoolEntnahmeProtokoll {
 	 */
 	private static String pfadName = null;
 
-	// ------------------------------------------------------------------------------------------------
-	static void sichereVerzeichnis(String poolPfadName) throws Exc {
-		pfadName = Verzeichnis.gibUnterverzeichnis(poolPfadName, unterVerzeichnisName, false) + "\\";
-	}
-
 	/**
+	 * @param wieSchwer
+	 * @param loesungsZeit
+	 *            in Minuten
 	 * @return Vollst�ndiger Pfad
 	 */
-	static String gibPfadName() {
-		return pfadName;
+	private static String gibDateiName(Schwierigkeit wieSchwer, int loesungsZeit) {
+		String wieSchwerName = Schwierigkeit.gibName(wieSchwer);
+		int zeitGerastert = AnalysatorKlare.gibAnzeigeZeit(loesungsZeit * 60, true);
+		String protokollZeitString = gibProtokollZeitString();
+		String zielDateiName = String.format("%s%s %s %3d", pfadName, protokollZeitString, wieSchwerName,
+				zeitGerastert);
+		String zielDateiPfad = gibDateiNameFrei(zielDateiName, InfoSudoku.dateiErweiterung);
+		return zielDateiPfad;
 	}
 
 	/**
@@ -67,119 +72,6 @@ public class DateiPoolEntnahmeProtokoll {
 				return pfad;
 			}
 		}
-	}
-
-	/**
-	 * @param wieSchwer
-	 * @param loesungsZeit
-	 *            in Minuten
-	 * @return Vollst�ndiger Pfad
-	 */
-	private static String gibDateiName(Schwierigkeit wieSchwer, int loesungsZeit) {
-		String wieSchwerName = Schwierigkeit.gibName(wieSchwer);
-		int zeitGerastert = AnalysatorKlare.gibAnzeigeZeit(loesungsZeit * 60, true);
-		String protokollZeitString = gibProtokollZeitString();
-		String zielDateiName = String.format("%s%s %s %3d", pfadName, protokollZeitString, wieSchwerName,
-				zeitGerastert);
-		String zielDateiPfad = gibDateiNameFrei(zielDateiName, InfoSudoku.dateiErweiterung);
-		return zielDateiPfad;
-	}
-
-	private static String gibProtokollZeitString() {
-		LocalDateTime now = LocalDateTime.now();
-
-		DateTimeFormatter df = DateTimeFormatter.ofPattern(protokollZeitFormat);
-		String zeitString = now.format(df);
-
-		zeitString = String.format("%s Uhr", zeitString);
-		return zeitString;
-	}
-
-	/**
-	 * @param dateiName
-	 *            vollst�ndiger Pfad
-	 * @return Die im dateiNamen dokumentierte Zeit der �bernahme des Sudoku in
-	 *         das Entnahmeprotokoll
-	 */
-	private static LocalDateTime gibProtokollZeit(String dateiName) {
-		int indexUnterVerzeichnis = dateiName.indexOf(unterVerzeichnisName);
-		int indexProtokollZeit = indexUnterVerzeichnis + unterVerzeichnisName.length() + 1;
-		String zeitString = dateiName.substring(indexProtokollZeit, indexProtokollZeit + protokollZeitFormat.length());
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(protokollZeitFormat);
-		LocalDateTime protokollZeit = LocalDateTime.parse(zeitString, formatter);
-		return protokollZeit;
-	}
-
-	/**
-	 * Verschiebt die Datei des Sudoku in das EntnahmeProtokoll-Verzeichnis
-	 * 
-	 * @param wieSchwer
-	 * @param quellDatei
-	 * @return true wenn die Datei verschoben wurde in das
-	 *         EntnahmeProtokoll-Verzeichnis
-	 */
-	static boolean protokolliere(Schwierigkeit wieSchwer, int loesungsZeit, File quellDatei) {
-		String zielDateiName = gibDateiName(wieSchwer, loesungsZeit);
-		File zielFile = new File(zielDateiName);
-		boolean verschoben = quellDatei.renameTo(zielFile);
-		return verschoben;
-	}
-
-	static void kontrolliereAnzahl() {
-		File f = new File(pfadName);
-		File[] fArray = f.listFiles();
-		// Sortieren aufsteigend: Auf Index=0 �lteste Entnahme
-		Arrays.sort(fArray);
-		if (fArray.length > nMax) {
-			int loeschMax = fArray.length - nMax;
-			for (int i = 0; i < loeschMax; i++) {
-				fArray[i].delete();
-			}
-		}
-	}
-
-	static int gibLoesungsZeit(String pfadName) {
-		int zeitIndex = pfadName.lastIndexOf(" ") + 1;
-		String zeitString = pfadName.substring(zeitIndex);
-
-		int bindeStrichIndex = zeitString.indexOf("-");
-		if (bindeStrichIndex > 0) {
-			zeitString = zeitString.substring(0, bindeStrichIndex);
-		} else {
-			zeitString = zeitString.substring(0, zeitString.indexOf("."));
-		}
-
-		zeitString = zeitString.trim();
-		int loesungsZeit = Integer.parseUnsignedInt(zeitString);
-		return loesungsZeit;
-	}
-
-	/**
-	 * @param f
-	 *            Datei
-	 * @param wieSchwer
-	 *            Das Sudoku der Datei soll diese Schwierigkeit besitzen
-	 * @param loesungsZeit
-	 *            Das Sudoku der Datei soll diese L�sungszeit besitzen. Falls
-	 *            null �bergeben wird, bleibt die L�sungszeit unber�cksichtigt.
-	 * @return
-	 */
-	static boolean istGesucht(File f, Schwierigkeit wieSchwer, Integer loesungsZeit) {
-		String name = f.getAbsolutePath();
-		String wieSchwerString = Schwierigkeit.gibName(wieSchwer);
-		int schwerIndex = name.indexOf(wieSchwerString);
-
-		if (schwerIndex < 0) {
-			return false; // NIcht die gesuchte Schwierigkeit
-		}
-
-		if (loesungsZeit == null) {
-			return true; // L�sungszeit soll egal sein
-		}
-
-		int fLoesungsZeit = gibLoesungsZeit(name);
-		boolean ret = fLoesungsZeit == loesungsZeit;
-		return ret;
 	}
 
 	/**
@@ -246,6 +138,54 @@ public class DateiPoolEntnahmeProtokoll {
 		return sudokus;
 	}
 
+	static int gibLoesungsZeit(String pfadName) {
+		int zeitIndex = pfadName.lastIndexOf(" ") + 1;
+		String zeitString = pfadName.substring(zeitIndex);
+
+		int bindeStrichIndex = zeitString.indexOf("-");
+		if (bindeStrichIndex > 0) {
+			zeitString = zeitString.substring(0, bindeStrichIndex);
+		} else {
+			zeitString = zeitString.substring(0, zeitString.indexOf("."));
+		}
+
+		zeitString = zeitString.trim();
+		int loesungsZeit = Integer.parseUnsignedInt(zeitString);
+		return loesungsZeit;
+	}
+
+	/**
+	 * @return Vollst�ndiger Pfad
+	 */
+	static String gibPfadName() {
+		return pfadName;
+	}
+
+	/**
+	 * @param dateiName
+	 *            vollst�ndiger Pfad
+	 * @return Die im dateiNamen dokumentierte Zeit der �bernahme des Sudoku in
+	 *         das Entnahmeprotokoll
+	 */
+	private static LocalDateTime gibProtokollZeit(String dateiName) {
+		int indexUnterVerzeichnis = dateiName.indexOf(unterVerzeichnisName);
+		int indexProtokollZeit = indexUnterVerzeichnis + unterVerzeichnisName.length() + 1;
+		String zeitString = dateiName.substring(indexProtokollZeit, indexProtokollZeit + protokollZeitFormat.length());
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(protokollZeitFormat);
+		LocalDateTime protokollZeit = LocalDateTime.parse(zeitString, formatter);
+		return protokollZeit;
+	}
+
+	private static String gibProtokollZeitString() {
+		LocalDateTime now = LocalDateTime.now();
+
+		DateTimeFormatter df = DateTimeFormatter.ofPattern(protokollZeitFormat);
+		String zeitString = now.format(df);
+
+		zeitString = String.format("%s Uhr", zeitString);
+		return zeitString;
+	}
+
 	/**
 	 * @param typ
 	 * @return Alle protokollierten Zeiten diesen Typs oder null falls keine
@@ -272,6 +212,67 @@ public class DateiPoolEntnahmeProtokoll {
 		zeitenListe.toArray(zeitenArray);
 		Arrays.sort(zeitenArray);
 		return zeitenArray;
+	}
+
+	/**
+	 * @param f
+	 *            Datei
+	 * @param wieSchwer
+	 *            Das Sudoku der Datei soll diese Schwierigkeit besitzen
+	 * @param loesungsZeit
+	 *            Das Sudoku der Datei soll diese L�sungszeit besitzen. Falls
+	 *            null �bergeben wird, bleibt die L�sungszeit unber�cksichtigt.
+	 * @return
+	 */
+	static boolean istGesucht(File f, Schwierigkeit wieSchwer, Integer loesungsZeit) {
+		String name = f.getAbsolutePath();
+		String wieSchwerString = Schwierigkeit.gibName(wieSchwer);
+		int schwerIndex = name.indexOf(wieSchwerString);
+
+		if (schwerIndex < 0) {
+			return false; // NIcht die gesuchte Schwierigkeit
+		}
+
+		if (loesungsZeit == null) {
+			return true; // L�sungszeit soll egal sein
+		}
+
+		int fLoesungsZeit = gibLoesungsZeit(name);
+		boolean ret = fLoesungsZeit == loesungsZeit;
+		return ret;
+	}
+
+	static void kontrolliereAnzahl() {
+		File f = new File(pfadName);
+		File[] fArray = f.listFiles();
+		// Sortieren aufsteigend: Auf Index=0 �lteste Entnahme
+		Arrays.sort(fArray);
+		if (fArray.length > nMax) {
+			int loeschMax = fArray.length - nMax;
+			for (int i = 0; i < loeschMax; i++) {
+				fArray[i].delete();
+			}
+		}
+	}
+
+	/**
+	 * Verschiebt die Datei des Sudoku in das EntnahmeProtokoll-Verzeichnis
+	 * 
+	 * @param wieSchwer
+	 * @param quellDatei
+	 * @return true wenn die Datei verschoben wurde in das
+	 *         EntnahmeProtokoll-Verzeichnis
+	 */
+	static boolean protokolliere(Schwierigkeit wieSchwer, int loesungsZeit, File quellDatei) {
+		String zielDateiName = gibDateiName(wieSchwer, loesungsZeit);
+		File zielFile = new File(zielDateiName);
+		boolean verschoben = quellDatei.renameTo(zielFile);
+		return verschoben;
+	}
+
+	// ------------------------------------------------------------------------------------------------
+	static void sichereVerzeichnis(String poolPfadName) throws Exc {
+		pfadName = Verzeichnis.gibUnterverzeichnis(poolPfadName, unterVerzeichnisName, false) + "\\";
 	}
 
 }

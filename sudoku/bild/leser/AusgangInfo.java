@@ -34,62 +34,69 @@ class AusgangInfo {
 	// return weissInt;
 	// }
 
-	static private boolean istWeiss(BufferedImage image, int x, int y, boolean istSystemOut) {
-		int intRGB = image.getRGB(x, y);
-		boolean istWeissPixel = intRGB == weissInt;
+	/**
+	 * @param image
+	 * @param rechteck
+	 * @param istOben
+	 * @param start
+	 * @return null oder die Info zu dem einen Ausgang
+	 */
+	static private Ausgang gibAusgang(BufferedImage image, Rectangle rechteck, boolean istOben, Point start,
+			boolean istSystemOut) {
+		int xMin = rechteck.x + 1;
+		int xMax = rechteck.x + rechteck.width - 1;
+		int yAusweich = istOben ? 1 : -1;
+
 		if (istSystemOut) {
-			String s = String.format("[x=%d, y=%d] : %s", x, y, istWeissPixel ? "weiss" : "schwarz");
+			String s = String.format("gibAusgang: oben=%d xStart=%d yStart=%d xMin=%d xMax=%d yAusweich=%d",
+					istOben ? 1 : 0, start.x, start.y, xMin, xMax, yAusweich);
 			System.out.println(s);
 		}
-		return istWeissPixel;
+
+		boolean istAusgangLinks = istAusgang(image, start, xMin, yAusweich, istSystemOut);
+		if (istAusgangLinks) {
+			return Ausgang.LINKS;
+		}
+
+		boolean istAusgangRechts = istAusgang(image, start, xMax, yAusweich, istSystemOut);
+		if (istAusgangRechts) {
+			return Ausgang.RECHTS;
+		}
+
+		return Ausgang.KEINER;
 	}
 
 	/**
 	 * @param image
 	 * @param rechteck
-	 * @param istOben
-	 * @return null oder Startpunkt (etwa Mittelpunkt) in einem wei�en Feld mit
-	 *         schwarzer (teilweiser) Umrandung
+	 *            Das Zahlenrechteck im image
+	 * @return AusgangInfo zum Rechteck oder null falls keine solche ermittelbar
+	 *         ist
 	 */
-	static private Point gibStart(BufferedImage image, Rectangle rechteck, boolean istOben, boolean istSystemOut) {
-		int x = rechteck.x + Math.round(rechteck.width * startX);
-
-		float yFaktor = istOben ? startYoben : startYunten;
-		int y = rechteck.y + Math.round(rechteck.height * yFaktor);
-
-		if (istSystemOut) {
-			String s = String.format("gibStart: oben=%d xStart=%d yStart=%d Rechteck=%s", istOben ? 1 : 0, x, y,
-					rechteck);
-			System.out.println(s);
-		}
-
-		if (istWeiss(image, x, y, istSystemOut)) {
+	static public AusgangInfo gibAusgangInfo(BufferedImage image, Rectangle rechteck, boolean istSystemOut) {
+		Point startOben = gibStart(image, rechteck, true, istSystemOut);
+		if (startOben == null) {
 			if (istSystemOut) {
-				String s = String.format("gibStart: Gefunden x=%d y=%d", x, y);
-				System.out.println(s);
+				System.out.println("Kein Startpunkt oben gefunden");
 			}
-			return new Point(x, y);
+			return null;
 		}
+		Ausgang oben = gibAusgang(image, rechteck, true, startOben, istSystemOut);
 
-		float yDifferenz = istOben ? -1 * yDifferenzMax : yDifferenzMax;
-		int yRichtung = istOben ? -1 : 1;
-		int yZiel = rechteck.y + Math.round(rechteck.height * yDifferenz);
-
-		while (y != yZiel) {
-			y += yRichtung;
-			if (istWeiss(image, x, y, istSystemOut)) {
-				if (istSystemOut) {
-					String s = String.format("gibStart: Gefunden x=%d y=%d", x, y);
-					System.out.println(s);
-				}
-				return new Point(x, y);
+		Point startUnten = gibStart(image, rechteck, false, istSystemOut);
+		if (startUnten == null) {
+			if (istSystemOut) {
+				System.out.println("Kein Startpunkt unten gefunden");
 			}
+			return null;
 		}
+		Ausgang unten = gibAusgang(image, rechteck, false, startUnten, istSystemOut);
 
+		AusgangInfo ausgangInfo = new AusgangInfo(oben, unten);
 		if (istSystemOut) {
-			System.out.println("gibStart: Kein Start gefunden ");
+			System.out.println(ausgangInfo.toString());
 		}
-		return null;
+		return ausgangInfo;
 	}
 
 	/**
@@ -155,6 +162,54 @@ class AusgangInfo {
 
 		if (istSystemOut) {
 			System.out.println("Illegaler Ausgang au�erhalb der While-Schleife");
+		}
+		return null;
+	}
+
+	/**
+	 * @param image
+	 * @param rechteck
+	 * @param istOben
+	 * @return null oder Startpunkt (etwa Mittelpunkt) in einem wei�en Feld mit
+	 *         schwarzer (teilweiser) Umrandung
+	 */
+	static private Point gibStart(BufferedImage image, Rectangle rechteck, boolean istOben, boolean istSystemOut) {
+		int x = rechteck.x + Math.round(rechteck.width * startX);
+
+		float yFaktor = istOben ? startYoben : startYunten;
+		int y = rechteck.y + Math.round(rechteck.height * yFaktor);
+
+		if (istSystemOut) {
+			String s = String.format("gibStart: oben=%d xStart=%d yStart=%d Rechteck=%s", istOben ? 1 : 0, x, y,
+					rechteck);
+			System.out.println(s);
+		}
+
+		if (istWeiss(image, x, y, istSystemOut)) {
+			if (istSystemOut) {
+				String s = String.format("gibStart: Gefunden x=%d y=%d", x, y);
+				System.out.println(s);
+			}
+			return new Point(x, y);
+		}
+
+		float yDifferenz = istOben ? -1 * yDifferenzMax : yDifferenzMax;
+		int yRichtung = istOben ? -1 : 1;
+		int yZiel = rechteck.y + Math.round(rechteck.height * yDifferenz);
+
+		while (y != yZiel) {
+			y += yRichtung;
+			if (istWeiss(image, x, y, istSystemOut)) {
+				if (istSystemOut) {
+					String s = String.format("gibStart: Gefunden x=%d y=%d", x, y);
+					System.out.println(s);
+				}
+				return new Point(x, y);
+			}
+		}
+
+		if (istSystemOut) {
+			System.out.println("gibStart: Kein Start gefunden ");
 		}
 		return null;
 	}
@@ -229,69 +284,14 @@ class AusgangInfo {
 		return false;
 	}
 
-	/**
-	 * @param image
-	 * @param rechteck
-	 * @param istOben
-	 * @param start
-	 * @return null oder die Info zu dem einen Ausgang
-	 */
-	static private Ausgang gibAusgang(BufferedImage image, Rectangle rechteck, boolean istOben, Point start,
-			boolean istSystemOut) {
-		int xMin = rechteck.x + 1;
-		int xMax = rechteck.x + rechteck.width - 1;
-		int yAusweich = istOben ? 1 : -1;
-
+	static private boolean istWeiss(BufferedImage image, int x, int y, boolean istSystemOut) {
+		int intRGB = image.getRGB(x, y);
+		boolean istWeissPixel = intRGB == weissInt;
 		if (istSystemOut) {
-			String s = String.format("gibAusgang: oben=%d xStart=%d yStart=%d xMin=%d xMax=%d yAusweich=%d",
-					istOben ? 1 : 0, start.x, start.y, xMin, xMax, yAusweich);
+			String s = String.format("[x=%d, y=%d] : %s", x, y, istWeissPixel ? "weiss" : "schwarz");
 			System.out.println(s);
 		}
-
-		boolean istAusgangLinks = istAusgang(image, start, xMin, yAusweich, istSystemOut);
-		if (istAusgangLinks) {
-			return Ausgang.LINKS;
-		}
-
-		boolean istAusgangRechts = istAusgang(image, start, xMax, yAusweich, istSystemOut);
-		if (istAusgangRechts) {
-			return Ausgang.RECHTS;
-		}
-
-		return Ausgang.KEINER;
-	}
-
-	/**
-	 * @param image
-	 * @param rechteck
-	 *            Das Zahlenrechteck im image
-	 * @return AusgangInfo zum Rechteck oder null falls keine solche ermittelbar
-	 *         ist
-	 */
-	static public AusgangInfo gibAusgangInfo(BufferedImage image, Rectangle rechteck, boolean istSystemOut) {
-		Point startOben = gibStart(image, rechteck, true, istSystemOut);
-		if (startOben == null) {
-			if (istSystemOut) {
-				System.out.println("Kein Startpunkt oben gefunden");
-			}
-			return null;
-		}
-		Ausgang oben = gibAusgang(image, rechteck, true, startOben, istSystemOut);
-
-		Point startUnten = gibStart(image, rechteck, false, istSystemOut);
-		if (startUnten == null) {
-			if (istSystemOut) {
-				System.out.println("Kein Startpunkt unten gefunden");
-			}
-			return null;
-		}
-		Ausgang unten = gibAusgang(image, rechteck, false, startUnten, istSystemOut);
-
-		AusgangInfo ausgangInfo = new AusgangInfo(oben, unten);
-		if (istSystemOut) {
-			System.out.println(ausgangInfo.toString());
-		}
-		return ausgangInfo;
+		return istWeissPixel;
 	}
 
 	// ================================================================
@@ -301,15 +301,6 @@ class AusgangInfo {
 	public AusgangInfo(Ausgang oben, Ausgang unten) {
 		this.oben = oben;
 		this.unten = unten;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((oben == null) ? 0 : oben.hashCode());
-		result = prime * result + ((unten == null) ? 0 : unten.hashCode());
-		return result;
 	}
 
 	@Override
@@ -331,6 +322,15 @@ class AusgangInfo {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((oben == null) ? 0 : oben.hashCode());
+		result = prime * result + ((unten == null) ? 0 : unten.hashCode());
+		return result;
 	}
 
 	@Override

@@ -14,25 +14,6 @@ import sudoku.logik.tipinfo.TipInfo;
 import sudoku.logik.tipinfo.TipInfo0;
 
 abstract class LogikKastenN implements Logik__Interface {
-	/**
-	 * @param gruppen
-	 * @param freieFelderMin
-	 *            Anzahl Felder, die mindestens je Gruppe frei sein sollen
-	 * @return
-	 */
-	static private ArrayList<Kasten> gibFreieKaesten(ArrayList<Kasten> kaesten, int freieFelderMin) {
-		ArrayList<Kasten> freieKaesten = new ArrayList<>();
-
-		for (int i = 0; i < kaesten.size(); i++) {
-			Kasten kasten = kaesten.get(i);
-			int anzahlFreieFelder = kasten.gibAnzahlFreieFelder();
-			if (anzahlFreieFelder >= freieFelderMin) {
-				freieKaesten.add(kasten);
-			}
-		}
-		return freieKaesten;
-	}
-
 	// =========================================================
 	protected class KastenErgebnis {
 
@@ -50,28 +31,28 @@ abstract class LogikKastenN implements Logik__Interface {
 			this.nachbarUrsacheFelder = nachbarUrsacheFelder;
 		}
 
-		public boolean istSpalte() {
-			return istSpalte;
-		}
-
-		public int gibLoeschZahl() {
-			return loeschZahl;
-		}
-
-		public FeldNummerListe gibLoeschFelder() {
-			return loeschFelder;
-		}
-
-		public FeldNummerListe gibUrsacheFelder() {
-			return nachbarUrsacheFelder;
-		}
-
 		public void addloeschFelder(FeldNummerListe felder) {
 			loeschFelder.addAll(felder);
 		}
 
 		public void addUrsacheFelder(FeldNummerListe felder) {
 			nachbarUrsacheFelder.addAll(felder);
+		}
+
+		public FeldNummerListe gibLoeschFelder() {
+			return loeschFelder;
+		}
+
+		public int gibLoeschZahl() {
+			return loeschZahl;
+		}
+
+		public FeldNummerListe gibUrsacheFelder() {
+			return nachbarUrsacheFelder;
+		}
+
+		public boolean istSpalte() {
+			return istSpalte;
 		}
 	}
 
@@ -95,6 +76,49 @@ abstract class LogikKastenN implements Logik__Interface {
 			super(logik, mitSpieler);
 			this.textInGruppe = textInGruppe;
 			this.ergebnis = ergebnis;
+		}
+
+		@Override
+		public FeldNummerListe gibAktiveFelder() {
+			FeldNummerListe feldNummerListe = new FeldNummerListe();
+
+			feldNummerListe.add(ergebnis.gibLoeschFelder());
+
+			return feldNummerListe;
+		}
+
+		@Override
+		public ZahlenListe gibLoeschZahlen() {
+			ZahlenListe loeschZahlen = new ZahlenListe();
+
+			FeldNummerListe felderNummern = ergebnis.gibLoeschFelder();
+			int geloeschteZahl = ergebnis.gibLoeschZahl();
+
+			for (FeldNummer feldNummer : felderNummern) {
+				FeldNummerMitZahl feldNummerMitZahl = new FeldNummerMitZahl(feldNummer, geloeschteZahl);
+				loeschZahlen.add(feldNummerMitZahl);
+			}
+
+			return loeschZahlen;
+		}
+
+		@Override
+		public EinTipText[] gibTip() {
+			ArrayList<EinTipText> texte = new ArrayList<>();
+
+			FeldNummerListe geloeschte = ergebnis.gibLoeschFelder();
+			if (!geloeschte.isEmpty()) {
+				if (this.logik == Logik_ID.KASTEN1) {
+					EinTipText tipTexte = gibTipKasten1(ergebnis);
+					texte.add(tipTexte);
+				} else {
+					EinTipText tipTexte = gibTipKasten2(ergebnis);
+					texte.add(tipTexte);
+				}
+			}
+
+			EinTipText[] texteArr = texte.toArray(new EinTipText[texte.size()]);
+			return texteArr;
 		}
 
 		private EinTipText gibTipKasten1(KastenErgebnis ergebnis1) {
@@ -156,46 +180,8 @@ abstract class LogikKastenN implements Logik__Interface {
 		}
 
 		@Override
-		public EinTipText[] gibTip() {
-			ArrayList<EinTipText> texte = new ArrayList<>();
-
-			FeldNummerListe geloeschte = ergebnis.gibLoeschFelder();
-			if (!geloeschte.isEmpty()) {
-				if (this.logik == Logik_ID.KASTEN1) {
-					EinTipText tipTexte = gibTipKasten1(ergebnis);
-					texte.add(tipTexte);
-				} else {
-					EinTipText tipTexte = gibTipKasten2(ergebnis);
-					texte.add(tipTexte);
-				}
-			}
-
-			EinTipText[] texteArr = texte.toArray(new EinTipText[texte.size()]);
-			return texteArr;
-		}
-
-		@Override
-		public FeldNummerListe gibAktiveFelder() {
-			FeldNummerListe feldNummerListe = new FeldNummerListe();
-
-			feldNummerListe.add(ergebnis.gibLoeschFelder());
-
-			return feldNummerListe;
-		}
-
-		@Override
-		public ZahlenListe gibLoeschZahlen() {
-			ZahlenListe loeschZahlen = new ZahlenListe();
-
-			FeldNummerListe felderNummern = ergebnis.gibLoeschFelder();
-			int geloeschteZahl = ergebnis.gibLoeschZahl();
-
-			for (FeldNummer feldNummer : felderNummern) {
-				FeldNummerMitZahl feldNummerMitZahl = new FeldNummerMitZahl(feldNummer, geloeschteZahl);
-				loeschZahlen.add(feldNummerMitZahl);
-			}
-
-			return loeschZahlen;
+		public FeldNummerMitZahl gibZahlFeld() {
+			return null;
 		}
 
 		@Override
@@ -203,11 +189,25 @@ abstract class LogikKastenN implements Logik__Interface {
 			return false;
 		}
 
-		@Override
-		public FeldNummerMitZahl gibZahlFeld() {
-			return null;
-		}
+	}
 
+	/**
+	 * @param gruppen
+	 * @param freieFelderMin
+	 *            Anzahl Felder, die mindestens je Gruppe frei sein sollen
+	 * @return
+	 */
+	static private ArrayList<Kasten> gibFreieKaesten(ArrayList<Kasten> kaesten, int freieFelderMin) {
+		ArrayList<Kasten> freieKaesten = new ArrayList<>();
+
+		for (int i = 0; i < kaesten.size(); i++) {
+			Kasten kasten = kaesten.get(i);
+			int anzahlFreieFelder = kasten.gibAnzahlFreieFelder();
+			if (anzahlFreieFelder >= freieFelderMin) {
+				freieKaesten.add(kasten);
+			}
+		}
+		return freieKaesten;
 	}
 
 	// =========================================================
@@ -233,14 +233,6 @@ abstract class LogikKastenN implements Logik__Interface {
 		}
 		return false;
 	}
-
-	/**
-	 * Die Logik laufen lassen f�r den Kasten.
-	 * 
-	 * @return Wenn die Logik erfolgreich gelaufen ist, d.h. L�sch-Zahlen
-	 *         erkannt wurden, dies Ergebnis, sonst null
-	 */
-	protected abstract KastenErgebnis laufen(Kasten kasten) throws Exc;
 
 	@Override
 	public LogikErgebnis laufen(boolean istTip, List<TipInfo> ignorierTips) throws Exc {
@@ -287,5 +279,13 @@ abstract class LogikKastenN implements Logik__Interface {
 
 		return null;
 	}
+
+	/**
+	 * Die Logik laufen lassen f�r den Kasten.
+	 * 
+	 * @return Wenn die Logik erfolgreich gelaufen ist, d.h. L�sch-Zahlen
+	 *         erkannt wurden, dies Ergebnis, sonst null
+	 */
+	protected abstract KastenErgebnis laufen(Kasten kasten) throws Exc;
 
 }

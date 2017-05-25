@@ -7,15 +7,15 @@ public class KB_KlareSetzeKlare1 extends KB_Eintrag1Zeile {
 		this.nKlare = nKlare;
 	}
 
-	@Override
-	public String toString() {
-		return "TreibeKlare Klare1: " + nKlare + " Feld(er)";
-	}
-
 	/**
 	 * @return Anzahl der Felder, die bei diesem Klare-Setzen gesetzt wurden
 	 */
 	public int gibAnzahlKlare() {
 		return nKlare;
+	}
+
+	@Override
+	public String toString() {
+		return "TreibeKlare Klare1: " + nKlare + " Feld(er)";
 	}
 }

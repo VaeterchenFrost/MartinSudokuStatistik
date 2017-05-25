@@ -2,6 +2,22 @@ package sudoku.neu.pool;
 
 public class TopfInfo {
 	/**
+	 * @return F�llstand des Topfes in % der max. m�glichen Anzahl Sudokus in
+	 *         diesem Topfe
+	 */
+	static private int gibFuellstand(int maxAnzahl, int anzahl) {
+		int fuellstand = 0;
+		if (anzahl < 20) {
+			fuellstand = anzahl / 2;
+		} else {
+			if (anzahl <= maxAnzahl) {
+				fuellstand = (anzahl * 100) / maxAnzahl;
+			}
+		}
+		return fuellstand;
+	}
+
+	/**
 	 * Anzahl aller Sudokus
 	 */
 	private int anzahl;
@@ -25,6 +41,7 @@ public class TopfInfo {
 	 * Vom File.lastModified
 	 */
 	private Long aeltestes;
+
 	/**
 	 * Vom File.lastModified
 	 */
@@ -63,79 +80,6 @@ public class TopfInfo {
 		this.schwerstes = schwerstes;
 		this.aeltestes = aeltestes;
 		this.juengstes = juengstes;
-	}
-
-	public int gibAnzahl() {
-		return anzahl;
-	}
-
-	public int gibAnzahlDoppel() {
-		return anzahlDoppel;
-	}
-
-	public long gibGroesse() {
-		return groesse;
-	}
-
-	public Integer gibLeichtestes() {
-		return leichtestes;
-	}
-
-	public Integer gibSchwerstes() {
-		return schwerstes;
-	}
-
-	public Long gibAeltestes() {
-		return aeltestes;
-	}
-
-	public Long gibJuengstes() {
-		return juengstes;
-	}
-
-	/**
-	 * @return F�llstand des Topfes in % der max. m�glichen Anzahl Sudokus in
-	 *         diesem Topfe
-	 */
-	static private int gibFuellstand(int maxAnzahl, int anzahl) {
-		int fuellstand = 0;
-		if (anzahl < 20) {
-			fuellstand = anzahl / 2;
-		} else {
-			if (anzahl <= maxAnzahl) {
-				fuellstand = (anzahl * 100) / maxAnzahl;
-			}
-		}
-		return fuellstand;
-	}
-
-	/**
-	 * @return F�llstand der Basis-Sudokus des Topfes in % der max. m�glichen
-	 *         Anzahl Bais-Sudokus in diesem Topfe
-	 */
-	public int gibFuellstand1() {
-		int fuellstand = 0;
-
-		if ((schwerstes != null) & (leichtestes != null)) {
-			int maxAnzahl = schwerstes - leichtestes + 1;
-			int meineAnzahl = anzahl - anzahlDoppel;
-			fuellstand = gibFuellstand(maxAnzahl, meineAnzahl);
-		}
-		return fuellstand;
-	}
-
-	/**
-	 * @return F�llstand der Doppel-Sudokus des Topfes in % der max. m�glichen
-	 *         Anzahl Basis-Sudokus in diesem Topfe
-	 */
-	public int gibFuellstand2() {
-		int fuellstand = 0;
-
-		if ((schwerstes != null) & (leichtestes != null)) {
-			int maxAnzahl = schwerstes - leichtestes + 1;
-			fuellstand = gibFuellstand(maxAnzahl, anzahlDoppel);
-		}
-		return fuellstand;
 	}
 
 	/**
@@ -185,5 +129,62 @@ public class TopfInfo {
 				}
 			}
 		}
+	}
+
+	public Long gibAeltestes() {
+		return aeltestes;
+	}
+
+	public int gibAnzahl() {
+		return anzahl;
+	}
+
+	public int gibAnzahlDoppel() {
+		return anzahlDoppel;
+	}
+
+	/**
+	 * @return F�llstand der Basis-Sudokus des Topfes in % der max. m�glichen
+	 *         Anzahl Bais-Sudokus in diesem Topfe
+	 */
+	public int gibFuellstand1() {
+		int fuellstand = 0;
+
+		if ((schwerstes != null) & (leichtestes != null)) {
+			int maxAnzahl = schwerstes - leichtestes + 1;
+			int meineAnzahl = anzahl - anzahlDoppel;
+			fuellstand = gibFuellstand(maxAnzahl, meineAnzahl);
+		}
+		return fuellstand;
+	}
+
+	/**
+	 * @return F�llstand der Doppel-Sudokus des Topfes in % der max. m�glichen
+	 *         Anzahl Basis-Sudokus in diesem Topfe
+	 */
+	public int gibFuellstand2() {
+		int fuellstand = 0;
+
+		if ((schwerstes != null) & (leichtestes != null)) {
+			int maxAnzahl = schwerstes - leichtestes + 1;
+			fuellstand = gibFuellstand(maxAnzahl, anzahlDoppel);
+		}
+		return fuellstand;
+	}
+
+	public long gibGroesse() {
+		return groesse;
+	}
+
+	public Long gibJuengstes() {
+		return juengstes;
+	}
+
+	public Integer gibLeichtestes() {
+		return leichtestes;
+	}
+
+	public Integer gibSchwerstes() {
+		return schwerstes;
 	}
 }

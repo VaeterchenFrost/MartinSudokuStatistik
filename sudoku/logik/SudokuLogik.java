@@ -24,10 +24,140 @@ import sudoku.logik.tipinfo.TipInfo0;
 import sudoku.logik.tipinfo.TipKurier;
 
 public class SudokuLogik extends FeldMatrix {
+	// static
+	// ============================================================
+	// interne Klassen
+	/**
+	 * @author heroe Enth�lt das Ergebnis von setzeMoegliche(): Entweder ein
+	 *         erkanntes Problem oder ein zu setzender Eintrag oder leer.
+	 */
+	public class SetzeMoeglicheErgebnis {
+		final Problem problem;
+		final FeldNummerMitZahl eintrag;
+
+		SetzeMoeglicheErgebnis() {
+			this.problem = null;
+			this.eintrag = null;
+		}
+
+		SetzeMoeglicheErgebnis(FeldNummerMitZahl eintrag) {
+			this.problem = null;
+			this.eintrag = eintrag;
+		}
+
+		SetzeMoeglicheErgebnis(Problem problem) {
+			this.eintrag = null;
+			this.problem = problem;
+		}
+
+		public FeldNummerMitZahl gibEintrag() {
+			return eintrag;
+		}
+
+		public Problem gibProblem() {
+			return problem;
+		}
+	}
+
+	/**
+	 * @author heroe Beinhaltet die Infos zum Ergebnis des Tips
+	 */
+	private class TipInfoEnde extends TipInfo0 {
+		private Problem problem;
+		private FeldNummerMitZahl eintrag;
+
+		// public Problem gibProblem() {
+		// return problem;
+		// }
+
+		public TipInfoEnde(Problem problem, FeldNummerMitZahl eintrag, InfoSudoku infoSudoku) {
+			super(null, null);
+			setzeSudoku(infoSudoku);
+			this.problem = problem;
+			this.eintrag = eintrag;
+		}
+
+		@Override
+		public FeldNummerListe gibAktiveFelder() {
+			FeldNummerListe feldNummerListe = new FeldNummerListe();
+			if (eintrag != null) {
+				feldNummerListe.add(eintrag.gibFeldNummer());
+			}
+			return feldNummerListe;
+		}
+
+		@Override
+		public ZahlenListe gibLoeschZahlen() {
+			return null;
+		}
+
+		@Override
+		public EinTipText[] gibTip() {
+			if (this.eintrag != null) {
+				String s1 = String.format("Im Feld %s ist einzig die Zahl %d m�glich.", this.eintrag.gibFeldNummer(),
+						this.eintrag.gibZahl());
+
+				EinTipText[] sArray = new EinTipText[] { new EinTipText(s1, null) };
+				return sArray;
+			} else {
+				if (problem != null) {
+					EinTipText[] sArray = new EinTipText[] { new EinTipText(problem.gibProblem(), null) };
+					return sArray;
+				} else {
+					EinTipText[] erfolglosTip = {
+							new EinTipText("Entweder mu� die Klugheit (rechts oben) vergr��ert werden", null),
+							new EinTipText("oder das Sudoku ist nicht ohne Versuche l�sbar:", null),
+							new EinTipText("   - 'Gib Zahl' benutzen", null),
+							new EinTipText("   - oder die L�sung durch 'Knacke' erstellen.", null) };
+					return erfolglosTip;
+				}
+			}
+		}
+
+		public String gibUeberschrift(int tipNummer) {
+			String s = null;
+			if (this.eintrag != null) {
+				s = String.format("%d. Tip: Jetzt steht ein Eintrag fest:", tipNummer);
+			} else {
+				s = String.format("%d. Tip: Es ist kein Tip m�glich:", tipNummer);
+			}
+			return s;
+		}
+
+		@Override
+		public FeldNummerMitZahl gibZahlFeld() {
+			return eintrag;
+		}
+
+		@Override
+		public boolean istZahl() {
+			return eintrag != null;
+		}
+	}
+
 	// ab dieser Anzahl an Vorgaben k�nnte das Sudoku ausreichend festgelegt
 	// sein
 	static private int nVorgabenLogik = 17;
+
 	static private EnumMap<Logik_ID, Logik__Infos> logikenInfos = gibLogiken();
+
+	/**
+	 * @return true wenn die Logik zur Erstellung von m�glichen Zahlen (schon)
+	 *         l�uft
+	 */
+	static public int gibAnzahlVorgabenMin() {
+		return nVorgabenLogik;
+	}
+
+	static public double gibKontrollZeit1(Logik_ID logik) {
+		Logik__Infos infos = logikenInfos.get(logik);
+
+		if (infos == null) {
+			throw new UnerwarteteLogik(logik.toString());
+		}
+		double zeit = infos.gibKontrollZeit1();
+		return zeit;
+	}
 
 	static private EnumMap<Logik_ID, Logik__Infos> gibLogiken() {
 		EnumMap<Logik_ID, Logik__Infos> logikMap = new EnumMap<Logik_ID, Logik__Infos>(Logik_ID.class);
@@ -87,93 +217,9 @@ public class SudokuLogik extends FeldMatrix {
 		return logikMap;
 	}
 
-	private void initLogiken() {
-		basisLogik = new BasisLogik(super.felder);
-		Logik_ID[] logikArray = Logik_ID.values();
-		logiken = new Logik__Interface[logikArray.length];
-
-		for (int iLogik = 0; iLogik < logikArray.length; iLogik++) {
-			switch (logikArray[iLogik]) {
-			case ORTFEST1:
-				logiken[iLogik] = new Logik_OrtFest1(gruppen);
-				break;
-			case ORTFEST2:
-				logiken[iLogik] = new Logik_OrtFest2(gruppen);
-				break;
-			case KASTEN1:
-				logiken[iLogik] = new Logik_Kasten1(kaesten);
-				break;
-			case KASTEN2:
-				logiken[iLogik] = new Logik_Kasten2(kaesten);
-				break;
-			// case KASTENLINIE:
-			// logiken[iLogik] = new Logik_KastenLinie(kaesten, zeilen,
-			// spalten);
-			// break;
-			case FELD:
-				logiken[iLogik] = new Logik_Feld(super.felder);
-				break;
-			case KREUZFLUEGEL:
-				logiken[iLogik] = new Logik_KreuzFluegel(zeilen, spalten);
-				break;
-			case SCHWERTFISCH:
-				logiken[iLogik] = new Logik_SchwertFisch(zeilen, spalten);
-				break;
-			case ORTFEST3:
-				logiken[iLogik] = new Logik_OrtFest3(gruppen);
-				break;
-			// case ORTFEST4:
-			// logiken[iLogik] = new Logik_OrtFest4(gruppen);
-			// break;
-			case TEILMENGEFEST2:
-				logiken[iLogik] = new Logik_TeilMengeFest2(gruppen);
-				break;
-			case TEILMENGEFEST3:
-				logiken[iLogik] = new Logik_TeilMengeFest3(gruppen);
-				break;
-			// case TEILMENGEFEST4:
-			// logiken[iLogik] = new Logik_TeilMengeFest4(gruppen);
-			// break;
-			case AUSWIRKUNGSKETTE:
-				logiken[iLogik] = new Logik_Auswirkungskette(gruppen, this);
-				break;
-			default:
-				throw new UnerwarteteLogik(logikArray[iLogik].toString());
-			}
-		}
-	}
-
-	/**
-	 * @return true wenn die Logik zur Erstellung von m�glichen Zahlen (schon)
-	 *         l�uft
-	 */
-	static public int gibAnzahlVorgabenMin() {
-		return nVorgabenLogik;
-	}
-
 	static public Logik__Infos gibLogikInfos(Logik_ID logik) {
 		Logik__Infos texte = logikenInfos.get(logik);
 		return texte;
-	}
-
-	static public String gibNameKurz(Logik_ID logik) {
-		Logik__Infos texte = logikenInfos.get(logik);
-
-		if (texte == null) {
-			throw new UnerwarteteLogik(logik.toString());
-		}
-		String s = texte.gibKurzName();
-		return s;
-	}
-
-	static public double gibKontrollZeit1(Logik_ID logik) {
-		Logik__Infos infos = logikenInfos.get(logik);
-
-		if (infos == null) {
-			throw new UnerwarteteLogik(logik.toString());
-		}
-		double zeit = infos.gibKontrollZeit1();
-		return zeit;
 	}
 
 	static public String gibNameExtrem(boolean istMaximum) {
@@ -194,121 +240,21 @@ public class SudokuLogik extends FeldMatrix {
 	// return startNummer;
 	// }
 
-	// static
-	// ============================================================
-	// interne Klassen
-	/**
-	 * @author heroe Enth�lt das Ergebnis von setzeMoegliche(): Entweder ein
-	 *         erkanntes Problem oder ein zu setzender Eintrag oder leer.
-	 */
-	public class SetzeMoeglicheErgebnis {
-		final Problem problem;
-		final FeldNummerMitZahl eintrag;
+	static public String gibNameKurz(Logik_ID logik) {
+		Logik__Infos texte = logikenInfos.get(logik);
 
-		public Problem gibProblem() {
-			return problem;
+		if (texte == null) {
+			throw new UnerwarteteLogik(logik.toString());
 		}
-
-		public FeldNummerMitZahl gibEintrag() {
-			return eintrag;
-		}
-
-		SetzeMoeglicheErgebnis() {
-			this.problem = null;
-			this.eintrag = null;
-		}
-
-		SetzeMoeglicheErgebnis(FeldNummerMitZahl eintrag) {
-			this.problem = null;
-			this.eintrag = eintrag;
-		}
-
-		SetzeMoeglicheErgebnis(Problem problem) {
-			this.eintrag = null;
-			this.problem = problem;
-		}
+		String s = texte.gibKurzName();
+		return s;
 	}
 
-	/**
-	 * @author heroe Beinhaltet die Infos zum Ergebnis des Tips
-	 */
-	private class TipInfoEnde extends TipInfo0 {
-		private Problem problem;
-		private FeldNummerMitZahl eintrag;
-
-		// public Problem gibProblem() {
-		// return problem;
-		// }
-
-		public TipInfoEnde(Problem problem, FeldNummerMitZahl eintrag, InfoSudoku infoSudoku) {
-			super(null, null);
-			setzeSudoku(infoSudoku);
-			this.problem = problem;
-			this.eintrag = eintrag;
-		}
-
-		@Override
-		public EinTipText[] gibTip() {
-			if (this.eintrag != null) {
-				String s1 = String.format("Im Feld %s ist einzig die Zahl %d m�glich.", this.eintrag.gibFeldNummer(),
-						this.eintrag.gibZahl());
-
-				EinTipText[] sArray = new EinTipText[] { new EinTipText(s1, null) };
-				return sArray;
-			} else {
-				if (problem != null) {
-					EinTipText[] sArray = new EinTipText[] { new EinTipText(problem.gibProblem(), null) };
-					return sArray;
-				} else {
-					EinTipText[] erfolglosTip = {
-							new EinTipText("Entweder mu� die Klugheit (rechts oben) vergr��ert werden", null),
-							new EinTipText("oder das Sudoku ist nicht ohne Versuche l�sbar:", null),
-							new EinTipText("   - 'Gib Zahl' benutzen", null),
-							new EinTipText("   - oder die L�sung durch 'Knacke' erstellen.", null) };
-					return erfolglosTip;
-				}
-			}
-		}
-
-		public String gibUeberschrift(int tipNummer) {
-			String s = null;
-			if (this.eintrag != null) {
-				s = String.format("%d. Tip: Jetzt steht ein Eintrag fest:", tipNummer);
-			} else {
-				s = String.format("%d. Tip: Es ist kein Tip m�glich:", tipNummer);
-			}
-			return s;
-		}
-
-		@Override
-		public FeldNummerListe gibAktiveFelder() {
-			FeldNummerListe feldNummerListe = new FeldNummerListe();
-			if (eintrag != null) {
-				feldNummerListe.add(eintrag.gibFeldNummer());
-			}
-			return feldNummerListe;
-		}
-
-		@Override
-		public ZahlenListe gibLoeschZahlen() {
-			return null;
-		}
-
-		@Override
-		public boolean istZahl() {
-			return eintrag != null;
-		}
-
-		@Override
-		public FeldNummerMitZahl gibZahlFeld() {
-			return eintrag;
-		}
-	}
+	private LogikBerichtKurier berichtKurier;
 
 	// Ende interne Klassen
 	// ============================================================
 
-	private LogikBerichtKurier berichtKurier;
 	private TipKurier tipKurier;
 	private ArrayList<Gruppe> gruppen;
 	private ArrayList<Gruppe> zeilen;
@@ -365,85 +311,6 @@ public class SudokuLogik extends FeldMatrix {
 		initLogiken();
 	}
 
-	public void registriereBerichtKurier(LogikBerichtKurier berichtKurier) {
-		this.berichtKurier = berichtKurier;
-	}
-
-	public void registriereTipKurier(TipKurier tipKurier) {
-		this.tipKurier = tipKurier;
-	}
-
-	/**
-	 * Diese package-interne Methode bietet allen Logiken den Zugang zum Feld
-	 * per FeldNummer.
-	 * 
-	 * @param feldNummer
-	 * @return Das Feld zur FeldNummer.
-	 * @throws Exc
-	 */
-	Feld gibLogikFeld(FeldNummer feldNummer) throws Exc {
-		return super.gibFeld(feldNummer);
-	}
-
-	/**
-	 * @param gruppe
-	 * @return Problem innerhalb der gruppe oder (besser) null
-	 */
-	private Problem sucheGruppenProblem(Gruppe gruppe) {
-		ZahlenFeldNummern alleVorhandeneZahlen = gruppe.gibVorhandeneZahlen();
-
-		if (alleVorhandeneZahlen.gibAnzahlVorhandene() < 9) {
-			return Problem.nichtAlleZahlenInDerGruppe(gruppe.gibInText(true), alleVorhandeneZahlen);
-		}
-		// Das ist Laufzeit und die obige generelle Logik sollte reichen!
-
-		// FeldListe0Bis9 moeglicheFelderJeZahl =
-		// gruppe.gibMoeglicheFelderJeZahl();
-		//
-		// // Wenn eine Zahl n m�gliche Felder hat, m�ssen in diesen n Feldern
-		// auch mindestens n Zahlen m�glich sein
-		// // Mit jedem Kulgheitsgrad bzw. Anzahl Felder je Zahl
-		// for (int anzahlFelder = 2; anzahlFelder<9; anzahlFelder++){
-		//
-		// // Jede Zahl wird kontrolliert
-		// for (int basisZahl=1; basisZahl<10; basisZahl++){
-		//
-		// FeldListe basisZahlFelder = moeglicheFelderJeZahl.get(basisZahl);
-		// int basisZahlFeldAnzahl = basisZahlFelder.size();
-		//
-		// // Wenn die basisZahl genau anzahlFelder besitzt:
-		// if (basisZahlFeldAnzahl == anzahlFelder) {
-		// VorhandeneZahlen moeglicheZahlen =
-		// basisZahlFelder.gibMoeglicheZahlen();
-		// if (anzahlFelder > moeglicheZahlen.gibAnzahlVorhandene()){
-		// return Problem.zuwenigMoeglicheInFreienFeldern(
-		// gruppe, basisZahl, anzahlFelder,
-		// moeglicheZahlen.gibAnzahlVorhandene());
-		// }
-		// }
-		// }
-		// } // for
-
-		return null;
-	}
-
-	private Problem sucheProblem() {
-		// Felder suchen ein Problem
-		Problem problem = super.sucheFeldProblem();
-
-		// Gruppen suchen ein Problem
-		if ((problem == null)) {
-			for (int i = 0; i < gruppen.size(); i++) {
-				Gruppe gruppe = gruppen.get(i);
-				problem = sucheGruppenProblem(gruppe);
-				if (problem != null) {
-					break;
-				}
-			}
-		}
-		return problem;
-	}
-
 	/**
 	 * @return Anzahl der Gruppen mit einem oder mehr freien Feldern
 	 */
@@ -470,6 +337,119 @@ public class SudokuLogik extends FeldMatrix {
 			}
 		}
 		return n;
+	}
+
+	/**
+	 * Die Ansiedelung dieser Funktionalit�t an dieser Stelle hat den
+	 * bedeutenden Effekt, dass die Liste der Felder private bleibt!
+	 * 
+	 * @return Die Liste von FeldNummerMitZahl, die Felder benennt, die jeweils
+	 *         genau zwei m�gliche Zahlen beinhalten.
+	 * @throws Exc
+	 */
+	public ArrayList<KnackerPartner> gibFelderMit2Moeglichen() throws Exc {
+		FeldListe zweier = felder.gibFreieFelderMit2Moeglichen();
+
+		ArrayList<KnackerPartner> partnerListe = new ArrayList<KnackerPartner>(zweier.size());
+		for (Feld feld : zweier) {
+			partnerListe.add(new KnackerPartner(feld));
+		}
+		return partnerListe;
+	}
+
+	/**
+	 * @return Die Liste von Partnern, die FelderPaare benennt.
+	 * @throws Exc
+	 */
+	public ArrayList<KnackerPartner> gibKnackerPartnerFeldPaare() throws Exc {
+		ArrayList<KnackerPartner> knackerPartnerListe = new ArrayList<KnackerPartner>();
+		ArrayList<FeldPaar> feldPaare = FeldPaar.gibFeldPaare(gruppen);
+
+		for (FeldPaar feldPaar : feldPaare) {
+			FeldNummer feldNummer = new FeldNummer(feldPaar.feld2.gibFeldNummer());
+			FeldNummerListe feldNummerListe = new FeldNummerListe();
+			feldNummerListe.add(feldNummer);
+			KnackerPartner knackerPartner = new KnackerPartner(feldPaar.zahl, feldPaar.feld1, feldNummerListe);
+			knackerPartnerListe.add(knackerPartner);
+		}
+
+		return knackerPartnerListe;
+	}
+
+	/**
+	 * Diese package-interne Methode bietet allen Logiken den Zugang zum Feld
+	 * per FeldNummer.
+	 * 
+	 * @param feldNummer
+	 * @return Das Feld zur FeldNummer.
+	 * @throws Exc
+	 */
+	Feld gibLogikFeld(FeldNummer feldNummer) throws Exc {
+		return super.gibFeld(feldNummer);
+	}
+
+	private void initLogiken() {
+		basisLogik = new BasisLogik(super.felder);
+		Logik_ID[] logikArray = Logik_ID.values();
+		logiken = new Logik__Interface[logikArray.length];
+
+		for (int iLogik = 0; iLogik < logikArray.length; iLogik++) {
+			switch (logikArray[iLogik]) {
+			case ORTFEST1:
+				logiken[iLogik] = new Logik_OrtFest1(gruppen);
+				break;
+			case ORTFEST2:
+				logiken[iLogik] = new Logik_OrtFest2(gruppen);
+				break;
+			case KASTEN1:
+				logiken[iLogik] = new Logik_Kasten1(kaesten);
+				break;
+			case KASTEN2:
+				logiken[iLogik] = new Logik_Kasten2(kaesten);
+				break;
+			// case KASTENLINIE:
+			// logiken[iLogik] = new Logik_KastenLinie(kaesten, zeilen,
+			// spalten);
+			// break;
+			case FELD:
+				logiken[iLogik] = new Logik_Feld(super.felder);
+				break;
+			case KREUZFLUEGEL:
+				logiken[iLogik] = new Logik_KreuzFluegel(zeilen, spalten);
+				break;
+			case SCHWERTFISCH:
+				logiken[iLogik] = new Logik_SchwertFisch(zeilen, spalten);
+				break;
+			case ORTFEST3:
+				logiken[iLogik] = new Logik_OrtFest3(gruppen);
+				break;
+			// case ORTFEST4:
+			// logiken[iLogik] = new Logik_OrtFest4(gruppen);
+			// break;
+			case TEILMENGEFEST2:
+				logiken[iLogik] = new Logik_TeilMengeFest2(gruppen);
+				break;
+			case TEILMENGEFEST3:
+				logiken[iLogik] = new Logik_TeilMengeFest3(gruppen);
+				break;
+			// case TEILMENGEFEST4:
+			// logiken[iLogik] = new Logik_TeilMengeFest4(gruppen);
+			// break;
+			case AUSWIRKUNGSKETTE:
+				logiken[iLogik] = new Logik_Auswirkungskette(gruppen, this);
+				break;
+			default:
+				throw new UnerwarteteLogik(logikArray[iLogik].toString());
+			}
+		}
+	}
+
+	public void registriereBerichtKurier(LogikBerichtKurier berichtKurier) {
+		this.berichtKurier = berichtKurier;
+	}
+
+	public void registriereTipKurier(TipKurier tipKurier) {
+		this.tipKurier = tipKurier;
 	}
 
 	/**
@@ -521,43 +501,6 @@ public class SudokuLogik extends FeldMatrix {
 		}
 
 		return feldListe;
-	}
-
-	/**
-	 * Die Ansiedelung dieser Funktionalit�t an dieser Stelle hat den
-	 * bedeutenden Effekt, dass die Liste der Felder private bleibt!
-	 * 
-	 * @return Die Liste von FeldNummerMitZahl, die Felder benennt, die jeweils
-	 *         genau zwei m�gliche Zahlen beinhalten.
-	 * @throws Exc
-	 */
-	public ArrayList<KnackerPartner> gibFelderMit2Moeglichen() throws Exc {
-		FeldListe zweier = felder.gibFreieFelderMit2Moeglichen();
-
-		ArrayList<KnackerPartner> partnerListe = new ArrayList<KnackerPartner>(zweier.size());
-		for (Feld feld : zweier) {
-			partnerListe.add(new KnackerPartner(feld));
-		}
-		return partnerListe;
-	}
-
-	/**
-	 * @return Die Liste von Partnern, die FelderPaare benennt.
-	 * @throws Exc
-	 */
-	public ArrayList<KnackerPartner> gibKnackerPartnerFeldPaare() throws Exc {
-		ArrayList<KnackerPartner> knackerPartnerListe = new ArrayList<KnackerPartner>();
-		ArrayList<FeldPaar> feldPaare = FeldPaar.gibFeldPaare(gruppen);
-
-		for (FeldPaar feldPaar : feldPaare) {
-			FeldNummer feldNummer = new FeldNummer(feldPaar.feld2.gibFeldNummer());
-			FeldNummerListe feldNummerListe = new FeldNummerListe();
-			feldNummerListe.add(feldNummer);
-			KnackerPartner knackerPartner = new KnackerPartner(feldPaar.zahl, feldPaar.feld1, feldNummerListe);
-			knackerPartnerListe.add(knackerPartner);
-		}
-
-		return knackerPartnerListe;
 	}
 
 	/**
@@ -729,6 +672,65 @@ public class SudokuLogik extends FeldMatrix {
 		}
 
 		return new SetzeMoeglicheErgebnis(problem);
+	}
+
+	/**
+	 * @param gruppe
+	 * @return Problem innerhalb der gruppe oder (besser) null
+	 */
+	private Problem sucheGruppenProblem(Gruppe gruppe) {
+		ZahlenFeldNummern alleVorhandeneZahlen = gruppe.gibVorhandeneZahlen();
+
+		if (alleVorhandeneZahlen.gibAnzahlVorhandene() < 9) {
+			return Problem.nichtAlleZahlenInDerGruppe(gruppe.gibInText(true), alleVorhandeneZahlen);
+		}
+		// Das ist Laufzeit und die obige generelle Logik sollte reichen!
+
+		// FeldListe0Bis9 moeglicheFelderJeZahl =
+		// gruppe.gibMoeglicheFelderJeZahl();
+		//
+		// // Wenn eine Zahl n m�gliche Felder hat, m�ssen in diesen n Feldern
+		// auch mindestens n Zahlen m�glich sein
+		// // Mit jedem Kulgheitsgrad bzw. Anzahl Felder je Zahl
+		// for (int anzahlFelder = 2; anzahlFelder<9; anzahlFelder++){
+		//
+		// // Jede Zahl wird kontrolliert
+		// for (int basisZahl=1; basisZahl<10; basisZahl++){
+		//
+		// FeldListe basisZahlFelder = moeglicheFelderJeZahl.get(basisZahl);
+		// int basisZahlFeldAnzahl = basisZahlFelder.size();
+		//
+		// // Wenn die basisZahl genau anzahlFelder besitzt:
+		// if (basisZahlFeldAnzahl == anzahlFelder) {
+		// VorhandeneZahlen moeglicheZahlen =
+		// basisZahlFelder.gibMoeglicheZahlen();
+		// if (anzahlFelder > moeglicheZahlen.gibAnzahlVorhandene()){
+		// return Problem.zuwenigMoeglicheInFreienFeldern(
+		// gruppe, basisZahl, anzahlFelder,
+		// moeglicheZahlen.gibAnzahlVorhandene());
+		// }
+		// }
+		// }
+		// } // for
+
+		return null;
+	}
+
+	private Problem sucheProblem() {
+		// Felder suchen ein Problem
+		Problem problem = super.sucheFeldProblem();
+
+		// Gruppen suchen ein Problem
+		if ((problem == null)) {
+			for (int i = 0; i < gruppen.size(); i++) {
+				Gruppe gruppe = gruppen.get(i);
+				problem = sucheGruppenProblem(gruppe);
+				if (problem != null) {
+					break;
+				}
+			}
+		}
+		return problem;
 	}
 
 }

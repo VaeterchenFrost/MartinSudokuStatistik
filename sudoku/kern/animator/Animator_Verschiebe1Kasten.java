@@ -8,6 +8,16 @@ import sudoku.kern.feldmatrix.FeldNummer;
  */
 public class Animator_Verschiebe1Kasten {
 	/**
+	 * @param feldNummer
+	 * @return Zeile und Spalte der feldNummer im Bereich von 1 bis 9
+	 */
+	protected FeldNummer garantiereBereich(FeldNummer feldNummer, int nummerMax) {
+		int spalte = garantiereBereich(feldNummer.gibSpalte(), nummerMax);
+		int zeile = garantiereBereich(feldNummer.gibZeile(), nummerMax);
+		return new FeldNummer(spalte, zeile);
+	}
+
+	/**
 	 * @param nummer
 	 * @return
 	 */
@@ -19,16 +29,6 @@ public class Animator_Verschiebe1Kasten {
 			nummer += nummerMax;
 		}
 		return nummer;
-	}
-
-	/**
-	 * @param feldNummer
-	 * @return Zeile und Spalte der feldNummer im Bereich von 1 bis 9
-	 */
-	protected FeldNummer garantiereBereich(FeldNummer feldNummer, int nummerMax) {
-		int spalte = garantiereBereich(feldNummer.gibSpalte(), nummerMax);
-		int zeile = garantiereBereich(feldNummer.gibZeile(), nummerMax);
-		return new FeldNummer(spalte, zeile);
 	}
 
 }

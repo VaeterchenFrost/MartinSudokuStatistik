@@ -21,28 +21,28 @@ public class ProtokollKursorInfo {
 		this.istRueckwaertsMoeglich = istRueckwaertsMoeglich;
 	}
 
-	public MinMax gibEintrag() {
-		return eintrag;
-	}
-
 	public MinMax gibEbene() {
 		return ebene;
 	}
 
-	public int gibKursorEintrag() {
-		return kursorEintrag;
+	public MinMax gibEintrag() {
+		return eintrag;
 	}
 
 	public int gibKursorEbene() {
 		return kursorEbene;
 	}
 
-	public boolean istVorwaertsMoeglich() {
-		return istVorwaertsMoeglich;
+	public int gibKursorEintrag() {
+		return kursorEintrag;
 	}
 
 	public boolean istRueckwaertsMoeglich() {
 		return istRueckwaertsMoeglich;
+	}
+
+	public boolean istVorwaertsMoeglich() {
+		return istVorwaertsMoeglich;
 	}
 
 }

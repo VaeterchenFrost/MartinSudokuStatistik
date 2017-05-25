@@ -15,42 +15,6 @@ import sudoku.logik.tipinfo.TipInfo;
 import sudoku.logik.tipinfo.TipInfo0;
 
 class LogikTeilMengeFestN implements Logik__Interface {
-	static private boolean istSystemOut = false;
-
-	static private void systemOut(String s) {
-		if (istSystemOut) {
-			System.out.println(s);
-		}
-	}
-
-	private void systemOut2(String titel, ArrayList<Gruppe> gruppen) {
-		systemOut(String.format("%s %s %d %s", titel, this.gibKurzName(), anzahlZahlen, this.getClass().getName()));
-		if (gruppen == null) {
-			return;
-		}
-		if (anzahlZahlen > 2) {
-			return;
-		}
-		for (int i = 0; i < gruppen.size(); i++) {
-			Gruppe gruppe = gruppen.get(i);
-			systemOut(String.format("%d: Gruppe=%s", i, gruppe.gibTyp()));
-		}
-	}
-
-	/**
-	 * @param anzahlZahlen
-	 * @return Die id f�r diese Logik. Diese Logiken m�ssen im enum Logik nicht
-	 *         hintereinander stehen!
-	 */
-	static private Logik_ID gibLogikID(int anzahlZahlen) {
-		String name2 = Logik_ID.TEILMENGEFEST2.name();
-
-		String name = name2.substring(0, name2.length() - 1);
-		name += anzahlZahlen;
-		Logik_ID id = Logik_ID.valueOf(name);
-		return id;
-	}
-
 	// =========================================================
 	private class TipInfoTeilMengeFestN extends TipInfo0 {
 		int anzahlZahlen;
@@ -73,6 +37,16 @@ class LogikTeilMengeFestN implements Logik__Interface {
 			this.anzahlZahlen = anzahlZahlen;
 			this.geschwister = geschwister;
 			this.textInGruppe = textInGruppe;
+		}
+
+		@Override
+		public FeldNummerListe gibAktiveFelder() {
+			return geschwister.gibFelder();
+		}
+
+		@Override
+		public ZahlenListe gibLoeschZahlen() {
+			return geschwister.gibLoeschZahlen();
 		}
 
 		public EinTipText[] gibTip() {
@@ -104,28 +78,41 @@ class LogikTeilMengeFestN implements Logik__Interface {
 		}
 
 		@Override
-		public FeldNummerListe gibAktiveFelder() {
-			return geschwister.gibFelder();
-		}
-
-		@Override
-		public ZahlenListe gibLoeschZahlen() {
-			return geschwister.gibLoeschZahlen();
+		public FeldNummerMitZahl gibZahlFeld() {
+			return null;
 		}
 
 		@Override
 		public boolean istZahl() {
 			return false;
 		}
+	}
 
-		@Override
-		public FeldNummerMitZahl gibZahlFeld() {
-			return null;
+	static private boolean istSystemOut = false;
+
+	/**
+	 * @param anzahlZahlen
+	 * @return Die id f�r diese Logik. Diese Logiken m�ssen im enum Logik nicht
+	 *         hintereinander stehen!
+	 */
+	static private Logik_ID gibLogikID(int anzahlZahlen) {
+		String name2 = Logik_ID.TEILMENGEFEST2.name();
+
+		String name = name2.substring(0, name2.length() - 1);
+		name += anzahlZahlen;
+		Logik_ID id = Logik_ID.valueOf(name);
+		return id;
+	}
+
+	static private void systemOut(String s) {
+		if (istSystemOut) {
+			System.out.println(s);
 		}
 	}
 
 	// =========================================================
 	private final Logik_ID idLogik;
+
 	private final int anzahlZahlen;
 	private final ArrayList<Gruppe> gruppen;
 
@@ -137,8 +124,14 @@ class LogikTeilMengeFestN implements Logik__Interface {
 	}
 
 	@Override
-	public Logik_ID gibLogikID() {
-		return idLogik;
+	public String gibErgebnis() {
+		String s = "In allen anderen Feldern (der Gruppe) werden diese Zahlen aus den m�glichen gel�scht.";
+		return s;
+	}
+
+	@Override
+	public double gibKontrollZeit1() {
+		return 3 * anzahlZahlen;
 	}
 
 	@Override
@@ -147,20 +140,14 @@ class LogikTeilMengeFestN implements Logik__Interface {
 	}
 
 	@Override
+	public Logik_ID gibLogikID() {
+		return idLogik;
+	}
+
+	@Override
 	public String gibName() {
 		String s = String.format("Teilmenge ist fest f�r %d Zahlen", anzahlZahlen);
 		return s;
-	}
-
-	@Override
-	public String[] gibWo() {
-		return new String[] { "In einer Gruppe (Zeile, Spalte bzw. Kasten)" };
-	}
-
-	@Override
-	public String[] gibSituationAbstrakt() {
-		String s = String.format("Die Teilmenge f�r %d Zahlen ist festgelegt.", anzahlZahlen);
-		return new String[] { s };
 	}
 
 	@Override
@@ -171,14 +158,14 @@ class LogikTeilMengeFestN implements Logik__Interface {
 	}
 
 	@Override
-	public String gibErgebnis() {
-		String s = "In allen anderen Feldern (der Gruppe) werden diese Zahlen aus den m�glichen gel�scht.";
-		return s;
+	public String[] gibSituationAbstrakt() {
+		String s = String.format("Die Teilmenge f�r %d Zahlen ist festgelegt.", anzahlZahlen);
+		return new String[] { s };
 	}
 
 	@Override
-	public double gibKontrollZeit1() {
-		return 3 * anzahlZahlen;
+	public String[] gibWo() {
+		return new String[] { "In einer Gruppe (Zeile, Spalte bzw. Kasten)" };
 	}
 
 	private boolean istErgebnisIgnorieren(List<TipInfo> ignorierTips, TipInfoTeilMengeFestN tipInfoLogik) {
@@ -299,6 +286,20 @@ class LogikTeilMengeFestN implements Logik__Interface {
 		} // if ( ! freieGruppen.isEmpty()){
 
 		return null;
+	}
+
+	private void systemOut2(String titel, ArrayList<Gruppe> gruppen) {
+		systemOut(String.format("%s %s %d %s", titel, this.gibKurzName(), anzahlZahlen, this.getClass().getName()));
+		if (gruppen == null) {
+			return;
+		}
+		if (anzahlZahlen > 2) {
+			return;
+		}
+		for (int i = 0; i < gruppen.size(); i++) {
+			Gruppe gruppe = gruppen.get(i);
+			systemOut(String.format("%d: Gruppe=%s", i, gruppe.gibTyp()));
+		}
 	}
 
 }

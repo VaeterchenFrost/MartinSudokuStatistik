@@ -7,15 +7,8 @@ import sudoku.kern.info.FeldInfo;
  */
 public class VersuchStart {
 
-	public int gibVersuchNr() {
-		return versuchNr;
-	}
-
-	public FeldInfo gibFeldInfo() {
-		return feldInfo;
-	}
-
 	private int versuchNr;
+
 	private FeldInfo feldInfo;
 
 	/**
@@ -56,6 +49,14 @@ public class VersuchStart {
 			return false;
 		}
 		return true;
+	}
+
+	public FeldInfo gibFeldInfo() {
+		return feldInfo;
+	}
+
+	public int gibVersuchNr() {
+		return versuchNr;
 	}
 
 }

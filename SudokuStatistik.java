@@ -17,88 +17,6 @@ import sudoku.neu.pool.TopfInfo;
 
 public class SudokuStatistik implements GeneratorStatistik {
 
-	static public void main(String args[]) throws Exc {
-		SudokuStatistik statistik = new SudokuStatistik();
-		SudokuPool.setzeGeneratorStatistik(statistik);
-		SudokuBedienung sudokuBedienung = new SudokuBedienung(null);
-
-		// ==Auslesen Fuellstand============
-		PoolInfo pinfo = sudokuBedienung.gibSudokuPoolInfo();
-		EnumMap<Schwierigkeit, TopfInfo> verfuegbare = pinfo.verfuegbare;
-		Collection<TopfInfo> values = verfuegbare.values();
-		TopfInfo summe = PoolInfo.gibSumme(values);
-
-		System.out.println("Gesamtzahl Sudokus aller Toepfe: " + summe.gibAnzahl());
-		// ===================================
-		while (true) {
-		}
-	}
-
-	// ===================================================
-	public SudokuStatistik() {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see sudoku.neu.GeneratorStatistik#neuesSudoku(sudoku.neu.NeuTyp,
-	 * sudoku.kern.info.InfoSudoku, java.lang.Boolean, int) 
-	 * Alles basiert auf NICHT NULL von infoSudoku
-	 */
-
-	@Override
-	public void neuesSudoku(final NeuTyp forderung, final InfoSudoku infoSudoku, final NeuTyp neuTyp,
-			final int laufNummer, final Boolean istErstesDerLoesungsZeit, final int loesungsZeit,
-			final String topfName) {
-		// Wenn null -> return ohne Funktionalität.
-		if (infoSudoku == null || forderung == null || neuTyp == null) {
-			return;
-		}
-		if (loesungsZeit < 1) {
-			return;
-		}
-		// ---------------------------------
-		String dname = neuTyp.gibName();
-
-		try (RandomAccessFile f = new RandomAccessFile(String.format("%s%s%s", topfName, dname, ".txt"), "rws");) {
-
-			String sSudoku = forderung.gibName().equals(dname) ? "-ok-" : "-> " + dname.toUpperCase() + "";
-
-			String sGespeichert = "nicht gespeichert";
-			if (istErstesDerLoesungsZeit != null) {
-				if (istErstesDerLoesungsZeit) {
-					sGespeichert = "gespeichert als 1.";
-				} else {
-					sGespeichert = "gespeichert als 2.";
-				}
-			}
-
-			DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss O");
-			String zeitString = ZonedDateTime.now().format(df); // ZonedDateTime
-																// fuer
-																// time-zone
-																// information
-																// (offsets)
-			// Log Console:
-			System.out.println("(" + zeitString + ") Hallo SudokuStatistik :: Forderung="
-					+ padRight(forderung.gibName(), 7) + " " + padLeft(sSudoku, 10) + " ("
-					+ padLeft("x" + laufNummer, 3) + ")" + ": " + sGespeichert + " " + new Integer(loesungsZeit));
-			// Log Datei:
-			System.out.println("Logge t=" + loesungsZeit + " in " + topfName);
-			incrementOnLine(f, loesungsZeit);
-
-		} catch (Exception e) { // ========Exceptions========
-			try {
-				// TODO: handle exception
-				System.err.println("Error occured while trying to log: " + neuTyp + ": " + new Integer(loesungsZeit));
-				System.err.println("To " + topfName);
-			} catch (Exception e2) {
-				// TODO: handle output-exception
-			}
-			e.printStackTrace();
-		}
-	}
-
 	/*
 	 * f: Beschreibbarer File
 	 * 
@@ -159,16 +77,97 @@ public class SudokuStatistik implements GeneratorStatistik {
 		}
 		// Überschreibe alten Inhalt:
 		f.seek(pos_prevline);
-		f.writeBytes(Integer.toString((int) oldnum + 1));
+		f.writeBytes(Integer.toString(oldnum + 1));
 
 		return true;
 	}
 
-	public static String padRight(String s, int n) {
+	static public void main(String args[]) throws Exc {
+		SudokuStatistik statistik = new SudokuStatistik();
+		SudokuPool.setzeGeneratorStatistik(statistik);
+		SudokuBedienung sudokuBedienung = new SudokuBedienung(null);
+
+		// ==Auslesen Fuellstand============
+		PoolInfo pinfo = sudokuBedienung.gibSudokuPoolInfo();
+		EnumMap<Schwierigkeit, TopfInfo> verfuegbare = pinfo.verfuegbare;
+		Collection<TopfInfo> values = verfuegbare.values();
+		TopfInfo summe = PoolInfo.gibSumme(values);
+
+		System.out.println("Gesamtzahl Sudokus aller Toepfe: " + summe.gibAnzahl());
+		// ===================================
+		while (true) {
+		}
+	}
+
+	static String padLeft(String s, int n) {
+		return String.format("%1$" + n + "s", s);
+	}
+
+	static String padRight(String s, int n) {
 		return String.format("%1$-" + n + "s", s);
 	}
 
-	public static String padLeft(String s, int n) {
-		return String.format("%1$" + n + "s", s);
+	// ===================================================
+	public SudokuStatistik() {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see sudoku.neu.GeneratorStatistik#neuesSudoku(sudoku.neu.NeuTyp,
+	 * sudoku.kern.info.InfoSudoku, java.lang.Boolean, int) Alles basiert auf
+	 * NICHT NULL von infoSudoku
+	 */
+	@Override
+	public void neuesSudoku(final NeuTyp forderung, final InfoSudoku infoSudoku, final NeuTyp neuTyp,
+			final int laufNummer, final Boolean istErstesDerLoesungsZeit, final int loesungsZeit,
+			final String topfName) {
+		// Wenn null -> return ohne Funktionalität.
+		if (infoSudoku == null || forderung == null || neuTyp == null) {
+			return;
+		}
+		if (loesungsZeit < 1) {
+			return;
+		}
+		// ---------------------------------
+		String dname = neuTyp.gibName();
+
+		try (RandomAccessFile f = new RandomAccessFile(String.format("%s%s%s", topfName, dname, ".txt"), "rws");) {
+
+			String sSudoku = forderung.gibName().equals(dname) ? "-ok-" : "-> " + dname.toUpperCase() + "";
+
+			String sGespeichert = "nicht gespeichert";
+			if (istErstesDerLoesungsZeit != null) {
+				if (istErstesDerLoesungsZeit) {
+					sGespeichert = "gespeichert als 1.";
+				} else {
+					sGespeichert = "gespeichert als 2.";
+				}
+			}
+
+			DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss O");
+			String zeitString = ZonedDateTime.now().format(df); // ZonedDateTime
+																// fuer
+																// time-zone
+																// information
+																// (offsets)
+			// Log Console:
+			System.out.println("(" + zeitString + ") Hallo SudokuStatistik :: Forderung="
+					+ padRight(forderung.gibName(), 7) + " " + padLeft(sSudoku, 10) + " ("
+					+ padLeft("x" + laufNummer, 3) + ")" + ": " + sGespeichert + " " + new Integer(loesungsZeit));
+			// Log Datei:
+			System.out.println("Logge t=" + loesungsZeit + " in " + topfName);
+			incrementOnLine(f, loesungsZeit);
+
+		} catch (Exception e) { // ========Exceptions========
+			try {
+				// TODO: handle exception
+				System.err.println("Error occured while trying to log: " + neuTyp + ": " + new Integer(loesungsZeit));
+				System.err.println("To " + topfName);
+			} catch (Exception e2) {
+				// TODO: handle output-exception
+			}
+			e.printStackTrace();
+		}
 	}
 }

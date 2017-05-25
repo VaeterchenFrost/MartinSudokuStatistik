@@ -18,7 +18,34 @@ import sudoku.kern.feldmatrix.ZahlenListe;
  *         (Spalte) und [Z4,S4] (Kasten).
  */
 public class KnackerPartner {
+	/**
+	 * @param partnerList
+	 * @return true wenn das Feld neuer bereits als Alternative vermerkt ist in
+	 *         partnerList
+	 */
+	public static boolean istAlternativeIn(ArrayList<KnackerPartner> partnerList, FeldNummerMitZahl neuer) {
+
+		for (int iPartner = 0; iPartner < partnerList.size(); iPartner++) {
+
+			KnackerPartner partner = partnerList.get(iPartner);
+			ZahlenListe alternativen = partner.gibAlternativen();
+
+			for (int iAlternativen = 0; iAlternativen < alternativen.size(); iAlternativen++) {
+
+				FeldNummerMitZahl alternative = alternativen.get(iAlternativen);
+				FeldNummer altFeldNummer = alternative.gibFeldNummer();
+				FeldNummer neuFeldNummer = neuer.gibFeldNummer();
+
+				if (altFeldNummer.equals(neuFeldNummer)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	private FeldNummerMitZahl basis;
+
 	private ZahlenListe alternativen;
 
 	/**
@@ -56,10 +83,6 @@ public class KnackerPartner {
 		}
 	}
 
-	public FeldNummerMitZahl gibBasis() {
-		return basis;
-	}
-
 	public ZahlenListe gibAlternativen() {
 		return alternativen;
 	}
@@ -68,30 +91,8 @@ public class KnackerPartner {
 		return alternativen.size();
 	}
 
-	/**
-	 * @param partnerList
-	 * @return true wenn das Feld neuer bereits als Alternative vermerkt ist in
-	 *         partnerList
-	 */
-	public static boolean istAlternativeIn(ArrayList<KnackerPartner> partnerList, FeldNummerMitZahl neuer) {
-
-		for (int iPartner = 0; iPartner < partnerList.size(); iPartner++) {
-
-			KnackerPartner partner = partnerList.get(iPartner);
-			ZahlenListe alternativen = partner.gibAlternativen();
-
-			for (int iAlternativen = 0; iAlternativen < alternativen.size(); iAlternativen++) {
-
-				FeldNummerMitZahl alternative = alternativen.get(iAlternativen);
-				FeldNummer altFeldNummer = alternative.gibFeldNummer();
-				FeldNummer neuFeldNummer = neuer.gibFeldNummer();
-
-				if (altFeldNummer.equals(neuFeldNummer)) {
-					return true;
-				}
-			}
-		}
-		return false;
+	public FeldNummerMitZahl gibBasis() {
+		return basis;
 	}
 
 	/**

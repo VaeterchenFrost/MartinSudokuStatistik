@@ -8,16 +8,13 @@ public class Ergebnis {
 		FERTIG, UNGELOEST, PROBLEM
 	};
 
-	private Art art;
-	private Problem problem;
-
-	private Ergebnis(Art art, Problem problem) {
-		this.art = art;
-		this.problem = problem;
-	}
-
 	public static Ergebnis fertig() {
 		Ergebnis ergebnis = new Ergebnis(Art.FERTIG, null);
+		return ergebnis;
+	}
+
+	public static Ergebnis problem(Problem problem) {
+		Ergebnis ergebnis = new Ergebnis(Art.PROBLEM, problem);
 		return ergebnis;
 	}
 
@@ -26,9 +23,13 @@ public class Ergebnis {
 		return ergebnis;
 	}
 
-	public static Ergebnis problem(Problem problem) {
-		Ergebnis ergebnis = new Ergebnis(Art.PROBLEM, problem);
-		return ergebnis;
+	private Art art;
+
+	private Problem problem;
+
+	private Ergebnis(Art art, Problem problem) {
+		this.art = art;
+		this.problem = problem;
 	}
 
 	public Art gibArt() {

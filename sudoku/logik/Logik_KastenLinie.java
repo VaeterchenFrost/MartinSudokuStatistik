@@ -23,14 +23,6 @@ import sudoku.logik.tipinfo.TipInfo0;
  */
 class Logik_KastenLinie implements Logik__Interface {
 
-	// =========================================================
-	static private FeldNummerListe gibMitspieler(Gruppe linie, Kasten kasten) {
-		FeldNummerListe mitspieler = new FeldNummerListe(linie);
-		FeldNummerListe kastenMitspieler = new FeldNummerListe(kasten);
-		mitspieler.addAll(kastenMitspieler);
-		return mitspieler;
-	}
-
 	private class TipInfoKastenLinie extends TipInfo0 {
 
 		final int zahl;
@@ -47,6 +39,16 @@ class Logik_KastenLinie implements Logik__Interface {
 			this.linie = linie;
 			this.kasten = kasten;
 			this.loeschZahlen = loeschZahlen;
+		}
+
+		@Override
+		public FeldNummerListe gibAktiveFelder() {
+			return zahlFeldNummern;
+		}
+
+		@Override
+		public ZahlenListe gibLoeschZahlen() {
+			return loeschZahlen;
 		}
 
 		public EinTipText[] gibTip() {
@@ -75,13 +77,8 @@ class Logik_KastenLinie implements Logik__Interface {
 		}
 
 		@Override
-		public FeldNummerListe gibAktiveFelder() {
-			return zahlFeldNummern;
-		}
-
-		@Override
-		public ZahlenListe gibLoeschZahlen() {
-			return loeschZahlen;
+		public FeldNummerMitZahl gibZahlFeld() {
+			return null;
 		}
 
 		@Override
@@ -89,82 +86,14 @@ class Logik_KastenLinie implements Logik__Interface {
 			return false;
 		}
 
-		@Override
-		public FeldNummerMitZahl gibZahlFeld() {
-			return null;
-		}
-
 	}
 
 	// =========================================================
-	private ArrayList<Kasten> kaesten;
-	private ArrayList<Gruppe> linien;
-
-	public Logik_KastenLinie(ArrayList<Kasten> kaesten, ArrayList<Gruppe> zeilen, ArrayList<Gruppe> spalten) {
-		this.kaesten = kaesten;
-		this.linien = null;
-		if (zeilen != null) {
-			this.linien = new ArrayList<>();
-			this.linien.addAll(zeilen);
-			this.linien.addAll(spalten);
-		}
-	}
-
-	@Override
-	public Logik_ID gibLogikID() {
-		return null; // LogikID.KASTENLINIE;
-	}
-
-	@Override
-	public String gibKurzName() {
-		return "KL";
-	}
-
-	@Override
-	public String gibName() {
-		return "Kastenlinie";
-	}
-
-	@Override
-	public String[] gibWo() {
-		return new String[] { "Auf einer Linie eines Kastens" };
-	}
-
-	@Override
-	public String[] gibSituationAbstrakt() {
-		return new String[] {
-				"1 Zahl ist in einer Zeile bzw. Spalte nur auf Feldern innerhald eines Kastens m�glich." };
-	}
-
-	@Override
-	public String[] gibSituation() {
-		return new String[] {
-				"1 Zahl ist in einer Zeile bzw. Spalte nur auf Feldern innerhald eines Kastens m�glich." };
-	}
-
-	@Override
-	public String gibErgebnis() {
-		return "Diese 1 Zahl ist innerhalb des Kastens nirgendwoanders m�glich. Auf den anderen Feldern wird die Zahl also gel�scht.";
-	}
-
-	@Override
-	public double gibKontrollZeit1() {
-		return 6;
-	}
-
-	/**
-	 * @param felder
-	 * @return null wenn die felder nicht in einem Kasten liegen
-	 */
-	private KastenIndex gibKastenIndex(FeldListe felder) {
-		KastenIndex kastenIndex = Kasten.gibKastenIndex(felder.get(0).gibFeldNummer());
-		for (Feld feld : felder) {
-			KastenIndex kastenIndex2 = Kasten.gibKastenIndex(feld.gibFeldNummer());
-			if (!kastenIndex.equals(kastenIndex2)) {
-				return null;
-			}
-		}
-		return kastenIndex;
+	static private FeldNummerListe gibMitspieler(Gruppe linie, Kasten kasten) {
+		FeldNummerListe mitspieler = new FeldNummerListe(linie);
+		FeldNummerListe kastenMitspieler = new FeldNummerListe(kasten);
+		mitspieler.addAll(kastenMitspieler);
+		return mitspieler;
 	}
 
 	static private boolean istErgebnisIgnorieren(List<TipInfo> ignorierTips, TipInfoKastenLinie tipInfoLogik) {
@@ -184,6 +113,78 @@ class Logik_KastenLinie implements Logik__Interface {
 			}
 		}
 		return false;
+	}
+
+	// =========================================================
+	private ArrayList<Kasten> kaesten;
+
+	private ArrayList<Gruppe> linien;
+
+	public Logik_KastenLinie(ArrayList<Kasten> kaesten, ArrayList<Gruppe> zeilen, ArrayList<Gruppe> spalten) {
+		this.kaesten = kaesten;
+		this.linien = null;
+		if (zeilen != null) {
+			this.linien = new ArrayList<>();
+			this.linien.addAll(zeilen);
+			this.linien.addAll(spalten);
+		}
+	}
+
+	@Override
+	public String gibErgebnis() {
+		return "Diese 1 Zahl ist innerhalb des Kastens nirgendwoanders m�glich. Auf den anderen Feldern wird die Zahl also gel�scht.";
+	}
+
+	/**
+	 * @param felder
+	 * @return null wenn die felder nicht in einem Kasten liegen
+	 */
+	private KastenIndex gibKastenIndex(FeldListe felder) {
+		KastenIndex kastenIndex = Kasten.gibKastenIndex(felder.get(0).gibFeldNummer());
+		for (Feld feld : felder) {
+			KastenIndex kastenIndex2 = Kasten.gibKastenIndex(feld.gibFeldNummer());
+			if (!kastenIndex.equals(kastenIndex2)) {
+				return null;
+			}
+		}
+		return kastenIndex;
+	}
+
+	@Override
+	public double gibKontrollZeit1() {
+		return 6;
+	}
+
+	@Override
+	public String gibKurzName() {
+		return "KL";
+	}
+
+	@Override
+	public Logik_ID gibLogikID() {
+		return null; // LogikID.KASTENLINIE;
+	}
+
+	@Override
+	public String gibName() {
+		return "Kastenlinie";
+	}
+
+	@Override
+	public String[] gibSituation() {
+		return new String[] {
+				"1 Zahl ist in einer Zeile bzw. Spalte nur auf Feldern innerhald eines Kastens m�glich." };
+	}
+
+	@Override
+	public String[] gibSituationAbstrakt() {
+		return new String[] {
+				"1 Zahl ist in einer Zeile bzw. Spalte nur auf Feldern innerhald eines Kastens m�glich." };
+	}
+
+	@Override
+	public String[] gibWo() {
+		return new String[] { "Auf einer Linie eines Kastens" };
 	}
 
 	@Override

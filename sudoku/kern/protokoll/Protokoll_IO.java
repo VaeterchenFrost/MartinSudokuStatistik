@@ -38,11 +38,6 @@ public class Protokoll_IO {
 		this.eintraege = eintraege;
 	}
 
-	private void init() {
-		kursor = -1;
-		eintraege = new ArrayList<ProtokollEintrag>();
-	}
-
 	/**
 	 * Initialisierung aus der Textdatei
 	 * 
@@ -102,43 +97,6 @@ public class Protokoll_IO {
 		return eintraege;
 	}
 
-	public int gibKursor() {
-		return kursor;
-	}
-
-	private int gibWert(String text, String sID) throws Exc {
-		int indexOfID = text.indexOf(sID);
-		if (indexOfID < 0) {
-			throw Exc.protokoll_IOWertFehlt(sID);
-		}
-		String inhalt = text.substring(indexOfID + sID.length(), text.length());
-		int indexOfLeerZeichen = inhalt.indexOf(' ');
-		inhalt = inhalt.substring(1, indexOfLeerZeichen);
-		int wert = Integer.valueOf(inhalt);
-		return wert;
-	}
-
-	/**
-	 * @param text
-	 * @param sID
-	 *            dieser Text steht direkt am Anfang von text als Identifikator
-	 * @return text ohne Identifikator und Leerzeichen am Rand
-	 */
-	private String gibInhalt(String text, String sID) {
-		String inhalt = text.substring(sID.length(), text.length());
-		// inhalt = inhalt.trim();
-		return inhalt;
-	}
-
-	ProtokollEintrag gibProtokollEintrag(String text) throws Exc {
-		int zeile = gibWert(text, strIDZeile);
-		int spalte = gibWert(text, strIDSpalte);
-		Eintrag eintragAlt = gibEintrag(text, strIDAlt);
-		Eintrag eintragNeu = gibEintrag(text, strIDNeu);
-		ProtokollEintrag protokollEintrag = new ProtokollEintrag(new FeldNummer(spalte, zeile), eintragAlt, eintragNeu);
-		return protokollEintrag;
-	}
-
 	Eintrag gibEintrag(String text, String sID) throws Exc {
 		int indexOfID = text.indexOf(sID);
 		if (indexOfID < 0) {
@@ -165,6 +123,42 @@ public class Protokoll_IO {
 	}
 
 	/**
+	 * @param text
+	 * @param sID
+	 *            dieser Text steht direkt am Anfang von text als Identifikator
+	 * @return text ohne Identifikator und Leerzeichen am Rand
+	 */
+	private String gibInhalt(String text, String sID) {
+		String inhalt = text.substring(sID.length(), text.length());
+		// inhalt = inhalt.trim();
+		return inhalt;
+	}
+
+	public int gibKursor() {
+		return kursor;
+	}
+
+	ProtokollEintrag gibProtokollEintrag(String text) throws Exc {
+		int zeile = gibWert(text, strIDZeile);
+		int spalte = gibWert(text, strIDSpalte);
+		Eintrag eintragAlt = gibEintrag(text, strIDAlt);
+		Eintrag eintragNeu = gibEintrag(text, strIDNeu);
+		ProtokollEintrag protokollEintrag = new ProtokollEintrag(new FeldNummer(spalte, zeile), eintragAlt, eintragNeu);
+		return protokollEintrag;
+	}
+
+	private String gibSpeicherText(Eintrag eintrag, String strID) {
+		String sEintrag = " ";
+		if (eintrag != null) {
+			sEintrag = String.format(" %s=%d %s=%d %s=%d %s=%d ", strIDZahl, eintrag.gibZahl(), strIDEbene,
+					eintrag.gibEbene(), strIDIstEbenenStart, eintrag.istEbenenStart() ? 1 : 0, strIDIstTipZahl,
+					eintrag.istTipZahl() ? 1 : 0);
+		}
+		String text = String.format("%s %s %s", strID, sEintrag, strID);
+		return text;
+	}
+
+	/**
 	 * @return Die Protokoll-Infos in Textform zum Ablegen
 	 */
 	public ArrayList<String> gibSpeicherTexte() {
@@ -186,15 +180,21 @@ public class Protokoll_IO {
 		return texte;
 	}
 
-	private String gibSpeicherText(Eintrag eintrag, String strID) {
-		String sEintrag = " ";
-		if (eintrag != null) {
-			sEintrag = String.format(" %s=%d %s=%d %s=%d %s=%d ", strIDZahl, eintrag.gibZahl(), strIDEbene,
-					eintrag.gibEbene(), strIDIstEbenenStart, eintrag.istEbenenStart() ? 1 : 0, strIDIstTipZahl,
-					eintrag.istTipZahl() ? 1 : 0);
+	private int gibWert(String text, String sID) throws Exc {
+		int indexOfID = text.indexOf(sID);
+		if (indexOfID < 0) {
+			throw Exc.protokoll_IOWertFehlt(sID);
 		}
-		String text = String.format("%s %s %s", strID, sEintrag, strID);
-		return text;
+		String inhalt = text.substring(indexOfID + sID.length(), text.length());
+		int indexOfLeerZeichen = inhalt.indexOf(' ');
+		inhalt = inhalt.substring(1, indexOfLeerZeichen);
+		int wert = Integer.valueOf(inhalt);
+		return wert;
+	}
+
+	private void init() {
+		kursor = -1;
+		eintraege = new ArrayList<ProtokollEintrag>();
 	}
 
 }

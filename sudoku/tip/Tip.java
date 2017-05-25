@@ -19,6 +19,10 @@ public class Tip {
 			this.tipInfo = tipInfo;
 		}
 
+		EinTipText[] gibTipTexteArray() {
+			return tipInfo.gibTip();
+		}
+
 		String gibUeberschrift() {
 			return this.ueberschrift;
 		}
@@ -34,10 +38,6 @@ public class Tip {
 				ZahlenListe markierZahlen = tipInfo.gibLoeschZahlen();
 				sudoku.markiereMoeglicheZahlen(markierZahlen);
 			}
-		}
-
-		EinTipText[] gibTipTexteArray() {
-			return tipInfo.gibTip();
 		}
 	}
 	// --------------------------------------------------------------------------------------------------

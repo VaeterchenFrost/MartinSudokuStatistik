@@ -7,18 +7,6 @@ package sudoku.langerprozess;
  *         Aufrufer-Programmpfad w�hrend des Prozess-Laufes angehalten wird.
  */
 public class ProcessOrganisator {
-	/**
-	 * @param prozess
-	 *            Dieser (lange) Prozess wird als extra Thread laufen gelassen.
-	 * @param fortschrittAnzeige
-	 *            Erscheint w�hrend des Prozess-Laufes
-	 */
-	public static void laufenLassen(LangerProzess prozess, FortschrittAnzeige fortschrittAnzeige) {
-		new ProcessOrganisator().new MeinThread(prozess, fortschrittAnzeige).start();
-
-		fortschrittAnzeige.starten(prozess.gibTitel(), prozess.gibFortschrittBereich());
-	}
-
 	// ====================================================================
 	private class MeinThread extends Thread {
 		private LangerProzess prozess;
@@ -38,6 +26,18 @@ public class ProcessOrganisator {
 				this.fortschrittAnzeige.beenden();
 			}
 		}
+	}
+
+	/**
+	 * @param prozess
+	 *            Dieser (lange) Prozess wird als extra Thread laufen gelassen.
+	 * @param fortschrittAnzeige
+	 *            Erscheint w�hrend des Prozess-Laufes
+	 */
+	public static void laufenLassen(LangerProzess prozess, FortschrittAnzeige fortschrittAnzeige) {
+		new ProcessOrganisator().new MeinThread(prozess, fortschrittAnzeige).start();
+
+		fortschrittAnzeige.starten(prozess.gibTitel(), prozess.gibFortschrittBereich());
 	}
 
 	ProcessOrganisator() {

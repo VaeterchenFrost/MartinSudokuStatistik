@@ -21,14 +21,6 @@ import sudoku.schwer.daten.LogikAnzahlen;
  */
 public class SudokuSchwierigkeit {
 
-	public static SudokuSchwierigkeit unbekannt() {
-		return new SudokuSchwierigkeit();
-	}
-
-	public static SudokuSchwierigkeit unbestimmt(int nVorgaben) {
-		return new SudokuSchwierigkeit(nVorgaben);
-	}
-
 	/**
 	 * @param vorgaben
 	 * @return null oder die Schwierigkeit (bei klaren Sudokus nie null)
@@ -43,6 +35,14 @@ public class SudokuSchwierigkeit {
 		return schwierigkeit;
 	}
 
+	public static SudokuSchwierigkeit unbekannt() {
+		return new SudokuSchwierigkeit();
+	}
+
+	public static SudokuSchwierigkeit unbestimmt(int nVorgaben) {
+		return new SudokuSchwierigkeit(nVorgaben);
+	}
+
 	// =============================================================
 	private ArrayList<InfoKlareDetail> klareDetails;
 	private InfoKlareZeit klareZeit;
@@ -52,13 +52,6 @@ public class SudokuSchwierigkeit {
 	private SudokuSchwierigkeit() {
 		super();
 		init();
-	}
-
-	private void init() {
-		this.klareDetails = new ArrayList<>();
-		this.klareZeit = null;
-		this.versuchStarts = null;
-		this.versucheOK = new InfoUnbekannt();
 	}
 
 	private SudokuSchwierigkeit(int nVorgaben) {
@@ -79,33 +72,8 @@ public class SudokuSchwierigkeit {
 		this.versucheOK = AnalysatorVersuch.gibVersucheOK(bericht);
 	}
 
-	public String gibName() {
-		Schwierigkeit wieSchwer = this.gibKlareWieSchwer();
-
-		String name = Schwierigkeit.gibName(wieSchwer);
-		return name;
-	}
-
-	public ArrayList<InfoVersuche> gibVersuchStarts() {
-		return versuchStarts;
-	}
-
 	public AnzeigeInfo gibAnzahlOKVersuche() {
 		return versucheOK;
-	}
-
-	public InfoKlareZeit gibKlareZeit() {
-		return klareZeit;
-	}
-
-	/**
-	 * @return Die Zeit (ohne Versuche) in Minuten
-	 */
-	public int gibZeit() {
-		if (klareZeit == null) {
-			return 999;
-		}
-		return klareZeit.gibZeit();
 	}
 
 	/**
@@ -152,6 +120,38 @@ public class SudokuSchwierigkeit {
 		}
 
 		return schwierigkeit;
+	}
+
+	public InfoKlareZeit gibKlareZeit() {
+		return klareZeit;
+	}
+
+	public String gibName() {
+		Schwierigkeit wieSchwer = this.gibKlareWieSchwer();
+
+		String name = Schwierigkeit.gibName(wieSchwer);
+		return name;
+	}
+
+	public ArrayList<InfoVersuche> gibVersuchStarts() {
+		return versuchStarts;
+	}
+
+	/**
+	 * @return Die Zeit (ohne Versuche) in Minuten
+	 */
+	public int gibZeit() {
+		if (klareZeit == null) {
+			return 999;
+		}
+		return klareZeit.gibZeit();
+	}
+
+	private void init() {
+		this.klareDetails = new ArrayList<>();
+		this.klareZeit = null;
+		this.versuchStarts = null;
+		this.versucheOK = new InfoUnbekannt();
 	}
 
 	public void systemOut() {

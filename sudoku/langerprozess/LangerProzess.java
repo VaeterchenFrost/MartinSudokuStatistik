@@ -4,16 +4,16 @@ import sudoku.Paar;
 
 public interface LangerProzess {
 	/**
-	 * @return Titel, der in der FortschrittAnzeige erscheint
-	 */
-	public String gibTitel();
-
-	/**
 	 * @return null: Es erfolgt einfach die Darstellung eines animierten Bildes.
 	 *         != null: Pair.Key ist das Minimum, Pair.Value das Maximum des
 	 *         anzuzeigenden Bereiches.
 	 */
 	public Paar<Integer, Integer> gibFortschrittBereich();
+
+	/**
+	 * @return Titel, der in der FortschrittAnzeige erscheint
+	 */
+	public String gibTitel();
 
 	/**
 	 * Dies ist die lang dauernde Routine. Hierin muss zyklisch

@@ -8,13 +8,13 @@ import sudoku.kern.protokoll.ProtokollKursorInfo;
  */
 public interface BedienElement {
 	/**
-	 * Sperrt das Bedienelement (gegen Bedienung)
-	 */
-	public abstract void sperre();
-
-	/**
 	 * Entsperrt das Bedienelement
 	 */
 	public abstract void entsperre(boolean istVorgabenMin, ProtokollKursorInfo protokollKursorInfo);
+
+	/**
+	 * Sperrt das Bedienelement (gegen Bedienung)
+	 */
+	public abstract void sperre();
 
 }

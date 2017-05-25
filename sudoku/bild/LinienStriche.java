@@ -14,6 +14,67 @@ import sudoku.bild.WerteGruppeComparator.VergleichsArt;
 
 class LinienStriche {
 
+	// ===================================================
+	/**
+	 * @author heroe iteriert in einer Linie (Spalte bzw. Zeile) des Bildes
+	 */
+	private class IteratorLinie1 implements Iterator<Boolean> {
+		final BufferedImage image;
+		final boolean istSpalte;
+		final int iLinie;
+		final int weissInt;
+		final int indexMax;
+		private int currentIndex;
+
+		IteratorLinie1(BufferedImage image, boolean istSpalte, int iLinie, int index0, int laenge, int weissInt) {
+			this.image = image;
+			this.istSpalte = istSpalte;
+			this.iLinie = iLinie;
+			this.weissInt = weissInt;
+			this.currentIndex = index0 - 1;
+			// this.indexMax = istSpalte ? image.getHeight()-1 :
+			// image.getWidth()-1;
+			this.indexMax = index0 + laenge - 1;
+		}
+
+		@Override
+		public void forEachRemaining(Consumer<? super Boolean> action) {
+		}
+
+		/**
+		 * @return Den Index beim letzten Ruf auf next()
+		 */
+		public int gibIndex() {
+			return currentIndex - 1;
+		}
+
+		String gibLinienName() {
+			String s = istSpalte ? "Spalte" : "Zeile";
+			return s;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return currentIndex <= indexMax;
+		}
+
+		@Override
+		public Boolean next() {
+			currentIndex++;
+			int intRGB = 0;
+			if (istSpalte) {
+				intRGB = image.getRGB(iLinie, currentIndex);
+			} else {
+				intRGB = image.getRGB(currentIndex, iLinie);
+			}
+			return intRGB != weissInt;
+		}
+
+		@Override
+		public void remove() {
+		}
+	}
+
 	/**
 	 * @author heroe Beinhaltet die Striche-Start-Indizees der Striche einer
 	 *         bestimmten L�nge
@@ -25,11 +86,6 @@ class LinienStriche {
 		public Strich(int startIndex, int laenge) {
 			this.startIndex = startIndex;
 			this.laenge = laenge;
-		}
-
-		public int gibEndeIndex() {
-			int ende = startIndex + laenge - 1;
-			return ende;
 		}
 
 		@Override
@@ -50,6 +106,11 @@ class LinienStriche {
 				return 1;
 			}
 			return 0;
+		}
+
+		public int gibEndeIndex() {
+			int ende = startIndex + laenge - 1;
+			return ende;
 		}
 	}
 
@@ -96,69 +157,63 @@ class LinienStriche {
 	}
 
 	// ===================================================
-	/**
-	 * @author heroe iteriert in einer Linie (Spalte bzw. Zeile) des Bildes
-	 */
-	private class IteratorLinie1 implements Iterator<Boolean> {
-		final BufferedImage image;
-		final boolean istSpalte;
-		final int iLinie;
-		final int weissInt;
-		final int indexMax;
-		private int currentIndex;
-
-		IteratorLinie1(BufferedImage image, boolean istSpalte, int iLinie, int index0, int laenge, int weissInt) {
-			this.image = image;
-			this.istSpalte = istSpalte;
-			this.iLinie = iLinie;
-			this.weissInt = weissInt;
-			this.currentIndex = index0 - 1;
-			// this.indexMax = istSpalte ? image.getHeight()-1 :
-			// image.getWidth()-1;
-			this.indexMax = index0 + laenge - 1;
-		}
-
-		String gibLinienName() {
-			String s = istSpalte ? "Spalte" : "Zeile";
-			return s;
-		}
-
-		@Override
-		public boolean hasNext() {
-			return currentIndex <= indexMax;
-		}
-
-		@Override
-		public Boolean next() {
-			currentIndex++;
-			int intRGB = 0;
-			if (istSpalte) {
-				intRGB = image.getRGB(iLinie, currentIndex);
-			} else {
-				intRGB = image.getRGB(currentIndex, iLinie);
-			}
-			return intRGB != weissInt;
-		}
-
-		/**
-		 * @return Den Index beim letzten Ruf auf next()
-		 */
-		public int gibIndex() {
-			return currentIndex - 1;
-		}
-
-		@Override
-		public void remove() {
-		}
-
-		@Override
-		public void forEachRemaining(Consumer<? super Boolean> action) {
-		}
-	}
-
-	// ===================================================
 	final ArrayList<StricheEinerLinie> spaltenStriche;
 	final ArrayList<StricheEinerLinie> zeilenStriche;
+
+	public LinienStriche(ArrayList<StricheEinerLinie> spaltenStriche, ArrayList<StricheEinerLinie> zeilenStriche) {
+		this.spaltenStriche = spaltenStriche;
+		this.zeilenStriche = zeilenStriche;
+	}
+
+	public LinienStriche(BufferedImage image, Rectangle r) {
+		if (r == null) {
+			r = new Rectangle(0, 0, image.getWidth(), image.getHeight());
+		}
+
+		zeilenStriche = new ArrayList<StricheEinerLinie>();
+		spaltenStriche = new ArrayList<StricheEinerLinie>();
+
+		// Ein Weiss-Pixelwert erstellen
+		int hell = 255;
+		Color weissColor = new Color(hell, hell, hell);
+		int weissInt = weissColor.getRGB();
+
+		for (int iZeile = r.y; iZeile < r.y + r.height; iZeile++) {
+			IteratorLinie1 iteratorZeile = new IteratorLinie1(image, false, iZeile, r.x, r.width, weissInt);
+			StricheEinerLinie stricheEinerLinie = gibLinienStriche(iteratorZeile);
+			if (!stricheEinerLinie.isEmpty()) {
+				zeilenStriche.add(stricheEinerLinie);
+			}
+		} // for
+
+		for (int iSpalte = r.x; iSpalte < r.x + r.width; iSpalte++) {
+			IteratorLinie1 iteratorSpalte = new IteratorLinie1(image, true, iSpalte, r.y, r.height, weissInt);
+			StricheEinerLinie stricheEinerLinie = gibLinienStriche(iteratorSpalte);
+			if (!stricheEinerLinie.isEmpty()) {
+				spaltenStriche.add(stricheEinerLinie);
+			}
+		} // for
+	}
+
+	private ArrayList<StricheEinerLinie> gibLangeStricheAb(ArrayList<StricheEinerLinie> striche, int minStrichLaenge) {
+		ArrayList<StricheEinerLinie> neueStriche = new ArrayList<StricheEinerLinie>();
+
+		for (int i = 0; i < striche.size(); i++) {
+			StricheEinerLinie stricheEinerLinie = striche.get(i);
+			StricheEinerLinie langeStriche = stricheEinerLinie.gibLangeStriche(minStrichLaenge);
+			if (!langeStriche.isEmpty()) {
+				neueStriche.add(langeStriche);
+			}
+		} // for
+		return neueStriche;
+	}
+
+	public LinienStriche gibLangeStricheAb(int minStrichLaenge) {
+		ArrayList<StricheEinerLinie> neueSpaltenStriche = gibLangeStricheAb(spaltenStriche, minStrichLaenge);
+		ArrayList<StricheEinerLinie> neueZeilenStriche = gibLangeStricheAb(zeilenStriche, minStrichLaenge);
+		LinienStriche neueStriche = new LinienStriche(neueSpaltenStriche, neueZeilenStriche);
+		return neueStriche;
+	}
 
 	/**
 	 * @param iterator
@@ -195,39 +250,13 @@ class LinienStriche {
 		return stricheDieserLinie;
 	}
 
-	public LinienStriche(BufferedImage image, Rectangle r) {
-		if (r == null) {
-			r = new Rectangle(0, 0, image.getWidth(), image.getHeight());
+	public void sortierenNachLaenge() {
+		for (StricheEinerLinie stricheEinerLinie : spaltenStriche) {
+			Collections.sort(stricheEinerLinie);
 		}
-
-		zeilenStriche = new ArrayList<StricheEinerLinie>();
-		spaltenStriche = new ArrayList<StricheEinerLinie>();
-
-		// Ein Weiss-Pixelwert erstellen
-		int hell = 255;
-		Color weissColor = new Color(hell, hell, hell);
-		int weissInt = weissColor.getRGB();
-
-		for (int iZeile = r.y; iZeile < r.y + r.height; iZeile++) {
-			IteratorLinie1 iteratorZeile = new IteratorLinie1(image, false, iZeile, r.x, r.width, weissInt);
-			StricheEinerLinie stricheEinerLinie = gibLinienStriche(iteratorZeile);
-			if (!stricheEinerLinie.isEmpty()) {
-				zeilenStriche.add(stricheEinerLinie);
-			}
-		} // for
-
-		for (int iSpalte = r.x; iSpalte < r.x + r.width; iSpalte++) {
-			IteratorLinie1 iteratorSpalte = new IteratorLinie1(image, true, iSpalte, r.y, r.height, weissInt);
-			StricheEinerLinie stricheEinerLinie = gibLinienStriche(iteratorSpalte);
-			if (!stricheEinerLinie.isEmpty()) {
-				spaltenStriche.add(stricheEinerLinie);
-			}
-		} // for
-	}
-
-	public LinienStriche(ArrayList<StricheEinerLinie> spaltenStriche, ArrayList<StricheEinerLinie> zeilenStriche) {
-		this.spaltenStriche = spaltenStriche;
-		this.zeilenStriche = zeilenStriche;
+		for (StricheEinerLinie stricheEinerLinie : zeilenStriche) {
+			Collections.sort(stricheEinerLinie);
+		}
 	}
 
 	public void systemOut() {
@@ -242,26 +271,6 @@ class LinienStriche {
 		for (int iSpalte = 0; iSpalte < Math.min(nMax, spaltenStriche.size()); iSpalte++) {
 			spaltenStriche.get(iSpalte).systemOut();
 		} // for
-	}
-
-	private ArrayList<StricheEinerLinie> gibLangeStricheAb(ArrayList<StricheEinerLinie> striche, int minStrichLaenge) {
-		ArrayList<StricheEinerLinie> neueStriche = new ArrayList<StricheEinerLinie>();
-
-		for (int i = 0; i < striche.size(); i++) {
-			StricheEinerLinie stricheEinerLinie = striche.get(i);
-			StricheEinerLinie langeStriche = stricheEinerLinie.gibLangeStriche(minStrichLaenge);
-			if (!langeStriche.isEmpty()) {
-				neueStriche.add(langeStriche);
-			}
-		} // for
-		return neueStriche;
-	}
-
-	public LinienStriche gibLangeStricheAb(int minStrichLaenge) {
-		ArrayList<StricheEinerLinie> neueSpaltenStriche = gibLangeStricheAb(spaltenStriche, minStrichLaenge);
-		ArrayList<StricheEinerLinie> neueZeilenStriche = gibLangeStricheAb(zeilenStriche, minStrichLaenge);
-		LinienStriche neueStriche = new LinienStriche(neueSpaltenStriche, neueZeilenStriche);
-		return neueStriche;
 	}
 
 	/**
@@ -318,14 +327,5 @@ class LinienStriche {
 	public void systemOutLaengen(Dimension dimension) {
 		systemOutLaengen(spaltenStriche, dimension, true);
 		systemOutLaengen(zeilenStriche, dimension, false);
-	}
-
-	public void sortierenNachLaenge() {
-		for (StricheEinerLinie stricheEinerLinie : spaltenStriche) {
-			Collections.sort(stricheEinerLinie);
-		}
-		for (StricheEinerLinie stricheEinerLinie : zeilenStriche) {
-			Collections.sort(stricheEinerLinie);
-		}
 	}
 }

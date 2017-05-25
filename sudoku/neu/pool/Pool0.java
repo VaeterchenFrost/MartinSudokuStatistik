@@ -5,6 +5,16 @@ import sudoku.neu.NeuTyp;
 
 public interface Pool0 {
 	/**
+	 * @return Angeforderter Typ wenn ein Sudoku ben�tigt wird oder null
+	 */
+	public NeuTyp gibForderung();
+
+	/**
+	 * @return Info zum aktuellen Zustand des Pools
+	 */
+	public PoolInfo gibPoolInfo();
+
+	/**
 	 * @param neuTyp
 	 * @param option
 	 * @return Sudoku des angeforderten Typs oder null wenn ein solches nicht
@@ -13,9 +23,10 @@ public interface Pool0 {
 	public InfoSudoku gibSudoku(NeuTyp neuTyp, NeuTypOption option);
 
 	/**
-	 * @return Angeforderter Typ wenn ein Sudoku ben�tigt wird oder null
+	 * @param neuTyp
+	 * @return Name des dem neuTyp entsprechenden Topfes im Pool.
 	 */
-	public NeuTyp gibForderung();
+	public String gibTopfName(NeuTyp neuTyp);
 
 	/**
 	 * Setzt in den Pool das Sudoku zur Aufbewahrung
@@ -28,15 +39,4 @@ public interface Pool0 {
 	 *         als 1. Sudoku mit dieser L�sungszeit.
 	 */
 	public Boolean setze(NeuTyp neuTyp, InfoSudoku sudoku, int loesungsZeit);
-
-	/**
-	 * @return Info zum aktuellen Zustand des Pools
-	 */
-	public PoolInfo gibPoolInfo();
-
-	/**
-	 * @param neuTyp
-	 * @return Name des dem neuTyp entsprechenden Topfes im Pool.
-	 */
-	public String gibTopfName(NeuTyp neuTyp);
 }

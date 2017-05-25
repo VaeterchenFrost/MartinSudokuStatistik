@@ -9,8 +9,8 @@ import java.util.Map;
 
 import sudoku.kern.exception.Exc;
 import sudoku.kern.feldmatrix.Feld;
-import sudoku.kern.feldmatrix.FeldNummer;
 import sudoku.kern.feldmatrix.FeldListe;
+import sudoku.kern.feldmatrix.FeldNummer;
 import sudoku.kern.feldmatrix.FeldNummerListe;
 import sudoku.kern.feldmatrix.FeldNummerMitZahl;
 import sudoku.kern.feldmatrix.ZahlenListe;
@@ -23,52 +23,12 @@ import sudoku.tools.TextDatei;
  */
 @SuppressWarnings("serial")
 public class InfoSudoku extends HashMap<FeldNummer, FeldInfo> {
-	/**
-	 * @param dateiName
-	 * @return dateiName sicher mit der Standard-Datei-Erweiterung f�r ein
-	 *         gespeichertes Sudoku
-	 */
-	static public String dateiEndungSichern(String dateiName) {
-		String s = dateiName;
-		String fnLower = dateiName.toLowerCase();
-		if (!fnLower.endsWith(dateiErweiterung)) {
-			s += dateiErweiterung;
-		}
-		return s;
-	}
-
-	// Datei-Erweiterung einer InfoSudoku-Datei
-	public static final String dateiErweiterung = ".sdk";
-
-	/**
-	 * @param dateiName
-	 * @return InfoSudoku aus der Datei geladen
-	 * @throws IOException
-	 * @throws Exc
-	 */
-	public static InfoSudoku lade(String dateiName) throws IOException, Exc {
-		String sudokuText = new String();
-		sudokuText = TextDatei.lese1String(dateiName);
-		InfoSudoku vorgaben = TextKonverter.gibVorgaben(sudokuText);
-		return vorgaben;
-	}
-
-	public static ArrayList<InfoSudoku> sortiereNachTitel2Zeit(ArrayList<InfoSudoku> liste) {
-		ArrayList<InfoSudoku> listeSortiert = new ArrayList<>();
-		listeSortiert.addAll(liste);
-		Collections.sort(listeSortiert, new ComparatorTitel2Zeit());
-		return listeSortiert;
-	}
-
 	// ==========================================================================
 	/**
 	 * @author heroe Sortiert InfoSudokus nach ihrem Titel2, der die
 	 *         L�sungs-Zeit ist
 	 */
 	static private class ComparatorTitel2Zeit implements Comparator<InfoSudoku> {
-
-		public ComparatorTitel2Zeit() {
-		}
 
 		private static int gibCompareResult(int me, int other) {
 			if (me > other) {
@@ -78,6 +38,9 @@ public class InfoSudoku extends HashMap<FeldNummer, FeldInfo> {
 				return -1;
 			}
 			return 0;
+		}
+
+		public ComparatorTitel2Zeit() {
 		}
 
 		@Override
@@ -100,6 +63,43 @@ public class InfoSudoku extends HashMap<FeldNummer, FeldInfo> {
 		}
 	}
 
+	// Datei-Erweiterung einer InfoSudoku-Datei
+	public static final String dateiErweiterung = ".sdk";
+
+	/**
+	 * @param dateiName
+	 * @return dateiName sicher mit der Standard-Datei-Erweiterung f�r ein
+	 *         gespeichertes Sudoku
+	 */
+	static public String dateiEndungSichern(String dateiName) {
+		String s = dateiName;
+		String fnLower = dateiName.toLowerCase();
+		if (!fnLower.endsWith(dateiErweiterung)) {
+			s += dateiErweiterung;
+		}
+		return s;
+	}
+
+	/**
+	 * @param dateiName
+	 * @return InfoSudoku aus der Datei geladen
+	 * @throws IOException
+	 * @throws Exc
+	 */
+	public static InfoSudoku lade(String dateiName) throws IOException, Exc {
+		String sudokuText = new String();
+		sudokuText = TextDatei.lese1String(dateiName);
+		InfoSudoku vorgaben = TextKonverter.gibVorgaben(sudokuText);
+		return vorgaben;
+	}
+
+	public static ArrayList<InfoSudoku> sortiereNachTitel2Zeit(ArrayList<InfoSudoku> liste) {
+		ArrayList<InfoSudoku> listeSortiert = new ArrayList<>();
+		listeSortiert.addAll(liste);
+		Collections.sort(listeSortiert, new ComparatorTitel2Zeit());
+		return listeSortiert;
+	}
+
 	// ==========================================================================
 	// Linker Titelteil bei titel2 != null, ansonsten zentrierter Titel
 	private String titel1;
@@ -111,21 +111,6 @@ public class InfoSudoku extends HashMap<FeldNummer, FeldInfo> {
 	 */
 	public InfoSudoku() {
 		super();
-		titel1 = null;
-		titel2 = null;
-	}
-
-	/**
-	 * Erstellt das Info-Sudoku mit allen Infos zum aktuellen Stand der Felder
-	 * 
-	 * @param felder
-	 */
-	public InfoSudoku(FeldListe felder) {
-		super();
-		for (int i = 0; i < felder.size(); i++) {
-			Feld feld = felder.get(i);
-			this.put(feld.gibFeldNummer(), new FeldInfo(feld));
-		}
 		titel1 = null;
 		titel2 = null;
 	}
@@ -146,37 +131,19 @@ public class InfoSudoku extends HashMap<FeldNummer, FeldInfo> {
 		titel2 = null;
 	}
 
-	public void setzeTitel(String titel) {
-		this.titel1 = titel;
-		this.titel2 = null;
-	}
-
-	public void setzeTitel(String titel1, String titel2) {
-		this.titel1 = titel1;
-		this.titel2 = titel2;
-	}
-
-	public String gibTitel1() {
-		return titel1;
-	}
-
-	public String gibTitel2() {
-		return titel2;
-	}
-
-	public int gibAnzahlVorgaben() {
-		int nVorgaben = 0;
-		for (Map.Entry<FeldNummer, FeldInfo> entry : this.entrySet()) {
-			FeldInfo feldInfo = entry.getValue();
-			if (feldInfo.istVorgabe()) {
-				nVorgaben++;
-			}
+	/**
+	 * Erstellt das Info-Sudoku mit allen Infos zum aktuellen Stand der Felder
+	 * 
+	 * @param felder
+	 */
+	public InfoSudoku(FeldListe felder) {
+		super();
+		for (int i = 0; i < felder.size(); i++) {
+			Feld feld = felder.get(i);
+			this.put(feld.gibFeldNummer(), new FeldInfo(feld));
 		}
-		return nVorgaben;
-	}
-
-	public boolean istLeer() {
-		return gibAnzahlVorgaben() == 0;
+		titel1 = null;
+		titel2 = null;
 	}
 
 	public boolean existiertMarkierungMoeglicherZahl() {
@@ -189,48 +156,15 @@ public class InfoSudoku extends HashMap<FeldNummer, FeldInfo> {
 		return false;
 	}
 
-	public String gibSpeicherText() {
-		String sudokuText = TextKonverter.gibText(this);
-		return sudokuText;
-	}
-
-	public void speichern(String dateiName) throws IOException {
-		// Datei-Erweiterung erzwingen
-		String sichererDateiName = dateiEndungSichern(dateiName);
-
-		String sudokuText = TextKonverter.gibText(this);
-		TextDatei.erstelle(sichererDateiName, sudokuText);
-	}
-
-	/**
-	 * @param aktiveFelder
-	 *            aktiven Feldern wird eine ev. vorhandene Markierung gel�scht,
-	 *            den anderen eine passive Markierung gesetzt.
-	 */
-	public void markiereAllePassivAusser(FeldNummerListe aktiveFelder) {
+	public int gibAnzahlVorgaben() {
+		int nVorgaben = 0;
 		for (Map.Entry<FeldNummer, FeldInfo> entry : this.entrySet()) {
-			FeldNummer feldNummer = entry.getKey();
 			FeldInfo feldInfo = entry.getValue();
-			if (!aktiveFelder.contains(feldNummer)) {
-				feldInfo.setzeMarkierung(false);
-			} else {
-				feldInfo.loescheMarkierung();
+			if (feldInfo.istVorgabe()) {
+				nVorgaben++;
 			}
 		}
-	}
-
-	public void markiereAktiv(FeldNummerListe aktiveFelder) {
-		for (FeldNummer feldNummer : aktiveFelder) {
-			FeldInfo feldInfo = this.get(feldNummer);
-			feldInfo.setzeMarkierung(true);
-		}
-	}
-
-	public void markiereMoeglicheZahlen(ZahlenListe moeglicheZahlen) {
-		for (FeldNummerMitZahl feldNummerMitZahl : moeglicheZahlen) {
-			FeldInfo feldInfo = this.get(feldNummerMitZahl.gibFeldNummer());
-			feldInfo.markiereMoeglicheZahl(feldNummerMitZahl.gibZahl());
-		}
+		return nVorgaben;
 	}
 
 	/**
@@ -254,6 +188,72 @@ public class InfoSudoku extends HashMap<FeldNummer, FeldInfo> {
 		}
 
 		return freieFelder;
+	}
+
+	public String gibSpeicherText() {
+		String sudokuText = TextKonverter.gibText(this);
+		return sudokuText;
+	}
+
+	public String gibTitel1() {
+		return titel1;
+	}
+
+	public String gibTitel2() {
+		return titel2;
+	}
+
+	public boolean istLeer() {
+		return gibAnzahlVorgaben() == 0;
+	}
+
+	public void markiereAktiv(FeldNummerListe aktiveFelder) {
+		for (FeldNummer feldNummer : aktiveFelder) {
+			FeldInfo feldInfo = this.get(feldNummer);
+			feldInfo.setzeMarkierung(true);
+		}
+	}
+
+	/**
+	 * @param aktiveFelder
+	 *            aktiven Feldern wird eine ev. vorhandene Markierung gel�scht,
+	 *            den anderen eine passive Markierung gesetzt.
+	 */
+	public void markiereAllePassivAusser(FeldNummerListe aktiveFelder) {
+		for (Map.Entry<FeldNummer, FeldInfo> entry : this.entrySet()) {
+			FeldNummer feldNummer = entry.getKey();
+			FeldInfo feldInfo = entry.getValue();
+			if (!aktiveFelder.contains(feldNummer)) {
+				feldInfo.setzeMarkierung(false);
+			} else {
+				feldInfo.loescheMarkierung();
+			}
+		}
+	}
+
+	public void markiereMoeglicheZahlen(ZahlenListe moeglicheZahlen) {
+		for (FeldNummerMitZahl feldNummerMitZahl : moeglicheZahlen) {
+			FeldInfo feldInfo = this.get(feldNummerMitZahl.gibFeldNummer());
+			feldInfo.markiereMoeglicheZahl(feldNummerMitZahl.gibZahl());
+		}
+	}
+
+	public void setzeTitel(String titel) {
+		this.titel1 = titel;
+		this.titel2 = null;
+	}
+
+	public void setzeTitel(String titel1, String titel2) {
+		this.titel1 = titel1;
+		this.titel2 = titel2;
+	}
+
+	public void speichern(String dateiName) throws IOException {
+		// Datei-Erweiterung erzwingen
+		String sichererDateiName = dateiEndungSichern(dateiName);
+
+		String sudokuText = TextKonverter.gibText(this);
+		TextDatei.erstelle(sichererDateiName, sudokuText);
 	}
 
 	@Override

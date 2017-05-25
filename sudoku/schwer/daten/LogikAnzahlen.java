@@ -13,6 +13,15 @@ import sudoku.logik.SudokuLogik;
  * @author Hendrick Jede m�gliche Logik mit der Anzahl ihrer Nutzung
  */
 public class LogikAnzahlen {
+	public interface LogikAnzahlFormatierer {
+		/**
+		 * @param logikID
+		 * @param anzahl
+		 * @return Text des Parameter-Paares
+		 */
+		public String gibString(Logik_ID logikID, int anzahl);
+	}
+
 	private EnumMap<Logik_ID, Integer> logikAnzahlen;
 
 	public LogikAnzahlen() {
@@ -68,28 +77,6 @@ public class LogikAnzahlen {
 	}
 
 	/**
-	 * @return Alle Logiken mit Anzahl > 0. Auf Index 0 steht die leichteste
-	 *         Logik, auf dem gr��ten Index die schwerste Logik
-	 */
-	public Logik_ID[] gibLogiken() {
-		ArrayList<Logik_ID> logikListe = new ArrayList<>();
-		Logik_ID logiken[] = Logik_ID.values();
-
-		for (int i = 0; i < logiken.length; i++) {
-			Logik_ID logik = logiken[i];
-
-			int anzahl = gibAnzahl(logik);
-			if (anzahl > 0) {
-				logikListe.add(logik);
-			}
-		}
-
-		Logik_ID[] logikArray = new Logik_ID[logikListe.size()];
-		logikListe.toArray(logikArray);
-		return logikArray;
-	}
-
-	/**
 	 */
 	public int gibAnzahlSumme() {
 		int summe = 0;
@@ -100,44 +87,6 @@ public class LogikAnzahlen {
 			summe += anzahl1;
 		}
 		return summe;
-	}
-
-	/**
-	 * @param klugheit
-	 * @return true wenn ich die gr��te der geforderten Klugheiten besitze
-	 */
-	public boolean istSoKlug(Klugheit klugheit) {
-		Klugheit soll = new Klugheit(klugheit);
-		Logik_ID maxSoll = soll.gibGroessteLogik();
-		if (maxSoll == null) {
-			return true;
-		}
-		// besitze ich max?
-		Integer ist = logikAnzahlen.get(maxSoll);
-		if (ist == null) {
-			return false;
-		}
-		return (ist > 0);
-	}
-
-	/**
-	 * @return true wenn die Logik SOLISTEN vorhanden ist und zwar als einzige
-	 *         mit Anzahl > 0. Es wird eine Anzahl-Summe von > 0 vorausgesetzt.
-	 */
-	public boolean istNurLogikOrtFest1() {
-		Integer solistAnzahl = logikAnzahlen.get(Logik_ID.ORTFEST1);
-
-		if (solistAnzahl == null) {
-			return false;
-		}
-
-		if (solistAnzahl == 0) {
-			return false;
-		}
-
-		int anzahlSumme = this.gibAnzahlSumme();
-
-		return solistAnzahl == anzahlSumme;
 	}
 
 	/**
@@ -160,13 +109,26 @@ public class LogikAnzahlen {
 		return logik;
 	}
 
-	public interface LogikAnzahlFormatierer {
-		/**
-		 * @param logikID
-		 * @param anzahl
-		 * @return Text des Parameter-Paares
-		 */
-		public String gibString(Logik_ID logikID, int anzahl);
+	/**
+	 * @return Alle Logiken mit Anzahl > 0. Auf Index 0 steht die leichteste
+	 *         Logik, auf dem gr��ten Index die schwerste Logik
+	 */
+	public Logik_ID[] gibLogiken() {
+		ArrayList<Logik_ID> logikListe = new ArrayList<>();
+		Logik_ID logiken[] = Logik_ID.values();
+
+		for (int i = 0; i < logiken.length; i++) {
+			Logik_ID logik = logiken[i];
+
+			int anzahl = gibAnzahl(logik);
+			if (anzahl > 0) {
+				logikListe.add(logik);
+			}
+		}
+
+		Logik_ID[] logikArray = new Logik_ID[logikListe.size()];
+		logikListe.toArray(logikArray);
+		return logikArray;
 	}
 
 	/**
@@ -202,6 +164,44 @@ public class LogikAnzahlen {
 			sAnzeige += texte.get(i);
 		}
 		return sAnzeige;
+	}
+
+	/**
+	 * @return true wenn die Logik SOLISTEN vorhanden ist und zwar als einzige
+	 *         mit Anzahl > 0. Es wird eine Anzahl-Summe von > 0 vorausgesetzt.
+	 */
+	public boolean istNurLogikOrtFest1() {
+		Integer solistAnzahl = logikAnzahlen.get(Logik_ID.ORTFEST1);
+
+		if (solistAnzahl == null) {
+			return false;
+		}
+
+		if (solistAnzahl == 0) {
+			return false;
+		}
+
+		int anzahlSumme = this.gibAnzahlSumme();
+
+		return solistAnzahl == anzahlSumme;
+	}
+
+	/**
+	 * @param klugheit
+	 * @return true wenn ich die gr��te der geforderten Klugheiten besitze
+	 */
+	public boolean istSoKlug(Klugheit klugheit) {
+		Klugheit soll = new Klugheit(klugheit);
+		Logik_ID maxSoll = soll.gibGroessteLogik();
+		if (maxSoll == null) {
+			return true;
+		}
+		// besitze ich max?
+		Integer ist = logikAnzahlen.get(maxSoll);
+		if (ist == null) {
+			return false;
+		}
+		return (ist > 0);
 	}
 
 	@Override

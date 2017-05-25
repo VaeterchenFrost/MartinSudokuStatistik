@@ -19,20 +19,12 @@ public class Schreiber {
 		bericht = new BerichtLogik();
 	}
 
-	public BerichtLogik gibBericht() {
-		return bericht;
-	}
-
-	public void addStart(Klugheit klugheit, int nFreieFelder, int nFreieZeilen, int nFreieSpalten, int nFreieKaesten) {
-		bericht.add(new BE_Start(klugheit, nFreieFelder, nFreieZeilen, nFreieSpalten, nFreieKaesten));
+	public void addDurchlauf(int durchlauf) {
+		bericht.add(new BE_Durchlauf(durchlauf));
 	}
 
 	public void addEnde(Problem problem, FeldNummerMitZahl eintrag) {
 		bericht.add(new BE_Ende(problem, eintrag));
-	}
-
-	public void addDurchlauf(int durchlauf) {
-		bericht.add(new BE_Durchlauf(durchlauf));
 	}
 
 	// /**
@@ -66,6 +58,14 @@ public class Schreiber {
 	public void addLogik(Logik_ID logik, GruppenLaeufeListe gruppenlaeufeListe, FeldNummerMitZahl eintrag,
 			ZahlenListe loeschZahlen) {
 		bericht.add(new BE_Logik(logik, gruppenlaeufeListe, eintrag, loeschZahlen));
+	}
+
+	public void addStart(Klugheit klugheit, int nFreieFelder, int nFreieZeilen, int nFreieSpalten, int nFreieKaesten) {
+		bericht.add(new BE_Start(klugheit, nFreieFelder, nFreieZeilen, nFreieSpalten, nFreieKaesten));
+	}
+
+	public BerichtLogik gibBericht() {
+		return bericht;
 	}
 
 	public void systemOut() {

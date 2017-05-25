@@ -49,16 +49,6 @@ public class NeuTyp {
 
 	/**
 	 * @param typ
-	 *            LEER oder VOLL
-	 */
-	public NeuTyp(Typ typ) {
-		super();
-		this.typ = typ;
-		this.wieSchwer = null;
-	}
-
-	/**
-	 * @param typ
 	 *            typisch SCHWER
 	 * @param wieSchwer
 	 */
@@ -68,45 +58,14 @@ public class NeuTyp {
 		this.wieSchwer = wieSchwer;
 	}
 
-	public Typ gibTyp() {
-		return this.typ;
-	}
-
-	public Schwierigkeit gibWieSchwer() {
-		return this.wieSchwer;
-	}
-
-	public String gibName() {
-		switch (typ) {
-		case LEER:
-			return "Leer";
-		case VOLL:
-			return "Voll";
-		case VORLAGE:
-			return "Nach Vorlage";
-		case SCHWER:
-			return Schwierigkeit.gibName(this.wieSchwer);
-		default:
-			return "???";
-		}
-	}
-
-	@Override
-	public String toString() {
-		if (wieSchwer == null) {
-			return " NeuTyp=" + typ;
-		} else {
-			return " NeuTyp=" + typ + ": " + wieSchwer;
-		}
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((typ == null) ? 0 : typ.hashCode());
-		result = prime * result + ((wieSchwer == null) ? 0 : wieSchwer.hashCode());
-		return result;
+	/**
+	 * @param typ
+	 *            LEER oder VOLL
+	 */
+	public NeuTyp(Typ typ) {
+		super();
+		this.typ = typ;
+		this.wieSchwer = null;
 	}
 
 	@Override
@@ -128,6 +87,47 @@ public class NeuTyp {
 			return false;
 		}
 		return true;
+	}
+
+	public String gibName() {
+		switch (typ) {
+		case LEER:
+			return "Leer";
+		case VOLL:
+			return "Voll";
+		case VORLAGE:
+			return "Nach Vorlage";
+		case SCHWER:
+			return Schwierigkeit.gibName(this.wieSchwer);
+		default:
+			return "???";
+		}
+	}
+
+	public Typ gibTyp() {
+		return this.typ;
+	}
+
+	public Schwierigkeit gibWieSchwer() {
+		return this.wieSchwer;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((typ == null) ? 0 : typ.hashCode());
+		result = prime * result + ((wieSchwer == null) ? 0 : wieSchwer.hashCode());
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		if (wieSchwer == null) {
+			return " NeuTyp=" + typ;
+		} else {
+			return " NeuTyp=" + typ + ": " + wieSchwer;
+		}
 	}
 
 }

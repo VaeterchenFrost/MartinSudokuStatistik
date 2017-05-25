@@ -18,18 +18,6 @@ public class Zaehler {
 		}
 	}
 
-	public void start() {
-		auswerten();
-	}
-
-	public void inc() {
-		n++;
-	}
-
-	public void inc(int inc) {
-		n += inc;
-	}
-
 	public int gib() {
 		return n;
 	}
@@ -43,6 +31,18 @@ public class Zaehler {
 			}
 		}
 		return nMax;
+	}
+
+	public void inc() {
+		n++;
+	}
+
+	public void inc(int inc) {
+		n += inc;
+	}
+
+	public void start() {
+		auswerten();
 	}
 
 	/*

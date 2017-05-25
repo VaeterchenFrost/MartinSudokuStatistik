@@ -39,13 +39,13 @@ class KriteriumOder implements KriteriumBildInfo {
 		return grad;
 	}
 
+	public String gibName() {
+		return this.toString();
+	}
+
 	@Override
 	public String toString() {
 		return "KriteriumOder [" + name + ": Kriterium1=" + kriterium1.gibName() + " Kriterium2=" + kriterium2.gibName()
 				+ "]";
-	}
-
-	public String gibName() {
-		return this.toString();
 	}
 }

@@ -36,21 +36,21 @@ class Geschwister {
 		this.loeschZahlen = loeschZahlen;
 	}
 
-	@Override
-	public String toString() {
-		return "[ " + felder + ": (" + zahlen + ") ]";
-	}
-
-	public ArrayList<Integer> gibZahlen() {
-		return zahlen;
-	}
-
 	public FeldNummerListe gibFelder() {
 		return felder;
 	}
 
 	public ZahlenListe gibLoeschZahlen() {
 		return this.loeschZahlen;
+	}
+
+	public ArrayList<Integer> gibZahlen() {
+		return zahlen;
+	}
+
+	@Override
+	public String toString() {
+		return "[ " + felder + ": (" + zahlen + ") ]";
 	}
 
 }

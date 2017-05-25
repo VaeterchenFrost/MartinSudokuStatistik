@@ -4,36 +4,22 @@ package sudoku.kern.feldmatrix;
  * @author Hendrick Zeigt ein Problem innerhalb des Sudoku an.
  */
 public class Problem {
-	private String problem;
-
-	@Override
-	public String toString() {
-		return problem;
-	}
-
-	public Problem(String text) {
-		problem = text;
-	}
-
-	public String gibProblem() {
-		return problem;
-	}
-
-	// public static Problem sudokuException(Exc e){
-	// String text = String.format("Sudoku-Exception %s", e.getMessage());
-	//
-	// return new Problem(text);
-	// }
-
-	public static Problem nichtAlleZahlenInDerGruppe(String gruppeInText, ZahlenFeldNummern vorhandeneZahlen) {
-		String text = String.format("%s fehlt die Zahl %s", gruppeInText,
-				vorhandeneZahlen.toStringNichtVorhandeneZahlen());
+	public static Problem freiesFeldOhneMoegliche(FeldNummer feldNummer) {
+		String text = String.format("Das freie Feld %s besitzt keine m�glichen Zahlen", feldNummer);
 
 		return new Problem(text);
 	}
 
-	public static Problem freiesFeldOhneMoegliche(FeldNummer feldNummer) {
-		String text = String.format("Das freie Feld %s besitzt keine m�glichen Zahlen", feldNummer);
+	public static Problem gruppeOhneZahl(String gruppeInText, ZahlenFeldNummern alleVorhandeneZahlen) {
+		String text = String.format("%s besitzt nur %d Zahlen: %s", gruppeInText,
+				alleVorhandeneZahlen.gibAnzahlVorhandene(), alleVorhandeneZahlen.toStringVorhandeneZahlen());
+
+		return new Problem(text);
+	}
+
+	public static Problem nichtAlleZahlenInDerGruppe(String gruppeInText, ZahlenFeldNummern vorhandeneZahlen) {
+		String text = String.format("%s fehlt die Zahl %s", gruppeInText,
+				vorhandeneZahlen.toStringNichtVorhandeneZahlen());
 
 		return new Problem(text);
 	}
@@ -46,24 +32,16 @@ public class Problem {
 		return new Problem(text);
 	}
 
-	public static Problem gruppeOhneZahl(String gruppeInText, ZahlenFeldNummern alleVorhandeneZahlen) {
-		String text = String.format("%s besitzt nur %d Zahlen: %s", gruppeInText,
-				alleVorhandeneZahlen.gibAnzahlVorhandene(), alleVorhandeneZahlen.toStringVorhandeneZahlen());
+	// public static Problem sudokuException(Exc e){
+	// String text = String.format("Sudoku-Exception %s", e.getMessage());
+	//
+	// return new Problem(text);
+	// }
 
-		return new Problem(text);
-	}
+	private String problem;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((problem == null) ? 0 : problem.hashCode());
-		return result;
+	public Problem(String text) {
+		problem = text;
 	}
 
 	/*
@@ -91,6 +69,28 @@ public class Problem {
 			return false;
 		}
 		return true;
+	}
+
+	public String gibProblem() {
+		return problem;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((problem == null) ? 0 : problem.hashCode());
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return problem;
 	}
 
 }

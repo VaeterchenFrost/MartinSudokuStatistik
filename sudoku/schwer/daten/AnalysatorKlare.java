@@ -24,51 +24,16 @@ public class AnalysatorKlare {
 	static private boolean istSystemOut = false;
 	static private boolean istSystemOutZeit = false; // true;
 
-	public static ArrayList<InfoKlareDetail> wandelUm(sudoku.knacker.bericht.BerichtKnacker bericht) {
+	// Zeit
+	// =================================================================
+	// Minimale Anzeigezeit in Minuten
+	private static int minimum = 10;
 
-		ArrayList<InfoKlareDetail> infos = wandelUmIntern(bericht);
-		if (istSystemOut) {
-			systemOut("wandleUmIntern", infos);
-		}
+	// Anzeigezeit-Raster in Minuten
+	private static int raster = 5;
 
-		ArrayList<InfoKlareDetail> laufListe = gibKomprimiert(infos);
-		if (istSystemOut) {
-			systemOut("gibKomprimiert", laufListe);
-		}
-
-		return laufListe;
-	}
-
-	private static void systemOut(String methode, ArrayList<InfoKlareDetail> infos) {
-		System.out.println(AnalysatorKlare.class.getName() + " " + methode);
-		for (int i = 0; i < infos.size(); i++) {
-			InfoKlareDetail info = infos.get(i);
-			info.systemOut(i);
-		}
-	}
-
-	/**
-	 * @param knackerBericht
-	 * @see SudokuLogik.setzeMoegliche()
-	 * @see SudokuLogik.setzeEintrag()
-	 * @return ArrayList<InfoKlareGruppen>: Zu jedem Berichteintrag
-	 *         KB_KlareSetzeMoegliche ein Eintrag InfoKlareGruppen.
-	 */
-	private static ArrayList<InfoKlareDetail> wandelUmIntern(sudoku.knacker.bericht.BerichtKnacker knackerBericht) {
-		ArrayList<InfoKlareDetail> laufListe = new ArrayList<>();
-
-		for (int i = 0; i < knackerBericht.size(); i++) {
-			Object o = knackerBericht.get(i);
-			if (o instanceof KB_KlareSetzeMoegliche) {
-				KB_KlareSetzeMoegliche infoMoegliche = (KB_KlareSetzeMoegliche) o;
-				// if (istSystemOut){
-				// infoMoegliche.systemOut();
-				// }
-				fuelleLaufListe(laufListe, infoMoegliche);
-			}
-		}
-		return laufListe;
-	}
+	// Halbe Anzeigezeit-Raster in Minuten
+	private static double rasterDiv2 = ((double) raster) / 2.5;
 
 	/**
 	 * F�llt die laufListe weiter auf entsprechend des �bergebenen
@@ -163,6 +128,40 @@ public class AnalysatorKlare {
 	// }
 
 	/**
+	 * @param zeit
+	 *            in Sekunden
+	 * @param gerastert
+	 *            Bei true wird die Zeit auf 5 Minuten gerastert
+	 * @return Anzeigezeit in Minuten
+	 */
+	public static int gibAnzeigeZeit(double zeit, boolean gerastert) {
+		zeit /= 60;
+		if (!gerastert) {
+			int i = (int) (zeit);
+			return i;
+		}
+
+		zeit += rasterDiv2;
+		int i = (int) (zeit / raster) * raster;
+		if (i < minimum) {
+			i = minimum;
+		}
+		return i;
+	}
+
+	/**
+	 * @return Die Anzahl gelaufener Logiken (je Logik)
+	 */
+	private static LogikAnzahlen gibGelaufeneLogiken(List<InfoKlareDetail> liste) {
+		LogikAnzahlen logikAnzahlen = new LogikAnzahlen();
+		for (InfoKlareDetail detail : liste) {
+			LogikAnzahlen detailLogikAnzahlen = detail.gibGelaufeneLogiken();
+			logikAnzahlen.add(detailLogikAnzahlen);
+		}
+		return logikAnzahlen;
+	}
+
+	/**
 	 * @param liste
 	 *            Soll komrimiert werden
 	 * @return liste so komprimiert, dass alle aufeinanderfolgenden
@@ -207,49 +206,6 @@ public class AnalysatorKlare {
 	}
 
 	/**
-	 * @return Die Anzahl gelaufener Logiken (je Logik)
-	 */
-	private static LogikAnzahlen gibGelaufeneLogiken(List<InfoKlareDetail> liste) {
-		LogikAnzahlen logikAnzahlen = new LogikAnzahlen();
-		for (InfoKlareDetail detail : liste) {
-			LogikAnzahlen detailLogikAnzahlen = detail.gibGelaufeneLogiken();
-			logikAnzahlen.add(detailLogikAnzahlen);
-		}
-		return logikAnzahlen;
-	}
-
-	// Zeit
-	// =================================================================
-	// Minimale Anzeigezeit in Minuten
-	private static int minimum = 10;
-	// Anzeigezeit-Raster in Minuten
-	private static int raster = 5;
-	// Halbe Anzeigezeit-Raster in Minuten
-	private static double rasterDiv2 = ((double) raster) / 2.5;
-
-	/**
-	 * @param zeit
-	 *            in Sekunden
-	 * @param gerastert
-	 *            Bei true wird die Zeit auf 5 Minuten gerastert
-	 * @return Anzeigezeit in Minuten
-	 */
-	public static int gibAnzeigeZeit(double zeit, boolean gerastert) {
-		zeit /= 60;
-		if (!gerastert) {
-			int i = (int) (zeit);
-			return i;
-		}
-
-		zeit += rasterDiv2;
-		int i = (int) (zeit / raster) * raster;
-		if (i < minimum) {
-			i = minimum;
-		}
-		return i;
-	}
-
-	/**
 	 * @return Die Zeit eines Menschen f�r die Realisierung des Ablaufes der
 	 *         Logiken in Sekunden
 	 */
@@ -291,6 +247,52 @@ public class AnalysatorKlare {
 		}
 
 		return zeit;
+	}
+
+	private static void systemOut(String methode, ArrayList<InfoKlareDetail> infos) {
+		System.out.println(AnalysatorKlare.class.getName() + " " + methode);
+		for (int i = 0; i < infos.size(); i++) {
+			InfoKlareDetail info = infos.get(i);
+			info.systemOut(i);
+		}
+	}
+
+	public static ArrayList<InfoKlareDetail> wandelUm(sudoku.knacker.bericht.BerichtKnacker bericht) {
+
+		ArrayList<InfoKlareDetail> infos = wandelUmIntern(bericht);
+		if (istSystemOut) {
+			systemOut("wandleUmIntern", infos);
+		}
+
+		ArrayList<InfoKlareDetail> laufListe = gibKomprimiert(infos);
+		if (istSystemOut) {
+			systemOut("gibKomprimiert", laufListe);
+		}
+
+		return laufListe;
+	}
+
+	/**
+	 * @param knackerBericht
+	 * @see SudokuLogik.setzeMoegliche()
+	 * @see SudokuLogik.setzeEintrag()
+	 * @return ArrayList<InfoKlareGruppen>: Zu jedem Berichteintrag
+	 *         KB_KlareSetzeMoegliche ein Eintrag InfoKlareGruppen.
+	 */
+	private static ArrayList<InfoKlareDetail> wandelUmIntern(sudoku.knacker.bericht.BerichtKnacker knackerBericht) {
+		ArrayList<InfoKlareDetail> laufListe = new ArrayList<>();
+
+		for (int i = 0; i < knackerBericht.size(); i++) {
+			Object o = knackerBericht.get(i);
+			if (o instanceof KB_KlareSetzeMoegliche) {
+				KB_KlareSetzeMoegliche infoMoegliche = (KB_KlareSetzeMoegliche) o;
+				// if (istSystemOut){
+				// infoMoegliche.systemOut();
+				// }
+				fuelleLaufListe(laufListe, infoMoegliche);
+			}
+		}
+		return laufListe;
 	}
 
 }

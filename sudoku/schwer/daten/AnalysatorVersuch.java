@@ -5,14 +5,18 @@ import java.util.ArrayList;
 import sudoku.kern.EintragsEbenen;
 import sudoku.knacker.bericht.BerichtKnacker;
 import sudoku.knacker.bericht.KB_LoeseInternEnde;
-import sudoku.knacker.bericht.KB_VersuchePaare;
 import sudoku.knacker.bericht.KB_VersuchStart;
+import sudoku.knacker.bericht.KB_VersuchePaare;
 
 /**
  * @author Hendrick Analysiert den sudoku.knacker.bericht.BerichtKnacker auf
  *         vorhandene Versuche
  */
 public class AnalysatorVersuch {
+
+	private static int gibAnzahlVersuche(int maxEbene) {
+		return maxEbene - EintragsEbenen.gibStandardEbene1();
+	}
 
 	/**
 	 * @param bericht
@@ -28,10 +32,6 @@ public class AnalysatorVersuch {
 			}
 		}
 		return 0;
-	}
-
-	private static int gibAnzahlVersuche(int maxEbene) {
-		return maxEbene - EintragsEbenen.gibStandardEbene1();
 	}
 
 	/**

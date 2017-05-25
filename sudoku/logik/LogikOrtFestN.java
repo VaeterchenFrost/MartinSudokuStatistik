@@ -18,6 +18,78 @@ import sudoku.logik.tipinfo.TipInfo0;
 
 class LogikOrtFestN implements Logik__Interface {
 
+	// =========================================================
+	private class TipInfoOrtFestN extends TipInfo0 {
+		final int anzahlZahlen;
+		final Geschwister geschwister;
+		final String textInGruppe;
+
+		/**
+		 * @param mitSpieler
+		 *            Sind diejenigen der Geschwisterlogik - ohne die des
+		 *            solistErgebnis
+		 * @param geschwister
+		 * @param textInGruppe
+		 *            beschreibt die Gruppe in der die Geschwister gefunden
+		 *            wurden
+		 * @param solistErgebnis
+		 *            null oder ein �ber die Geschwister-Felder gefundener
+		 *            Solist mit dessen Gruppe
+		 * @param infoSudoku
+		 */
+		private TipInfoOrtFestN(Logik_ID logik, int anzahlZahlen, FeldNummerListe mitSpieler, Geschwister geschwister,
+				String textInGruppe) {
+			super(logik, mitSpieler);
+			this.anzahlZahlen = anzahlZahlen;
+			this.geschwister = geschwister;
+			this.textInGruppe = textInGruppe;
+		}
+
+		@Override
+		public FeldNummerListe gibAktiveFelder() {
+			FeldNummerListe aktiveFelder = new FeldNummerListe();
+			FeldNummerListe felder = geschwister.gibFelder();
+			aktiveFelder.add(felder);
+			return aktiveFelder;
+		}
+
+		@Override
+		public ZahlenListe gibLoeschZahlen() {
+			return geschwister.gibLoeschZahlen();
+		}
+
+		public EinTipText[] gibTip() {
+			ArrayList<EinTipText> texte = new ArrayList<>();
+			ArrayList<Integer> zahlen = geschwister.gibZahlen();
+			String sZahlen = new ArrayListInt(zahlen).gibKette("+");
+			FeldNummerListe felder = geschwister.gibFelder();
+			String sFeldNummern = felder.gibKette("+");
+
+			String s1 = String.format("%s besetzen die %d Zahlen (%s)", textInGruppe, anzahlZahlen, sZahlen);
+			String s2 = String.format("die %d Felder %s.", anzahlZahlen, sFeldNummern);
+			EinTipText tipText1 = new EinTipText(s1, s2);
+			texte.add(tipText1);
+
+			String s3 = "Deshalb werden alle anderen Zahlen hier gel�scht.";
+			EinTipText tipText2 = new EinTipText(s3, "");
+			texte.add(tipText2);
+
+			EinTipText[] texteArr = texte.toArray(new EinTipText[texte.size()]);
+			return texteArr;
+		}
+
+		@Override
+		public FeldNummerMitZahl gibZahlFeld() {
+			return null;
+		}
+
+		@Override
+		public boolean istZahl() {
+			return false;
+		}
+
+	}
+
 	/**
 	 * @param anzahlZahlen
 	 * @return Die id f�r diese Logik. Diese Logiken m�ssen im enum Logik nicht
@@ -156,129 +228,6 @@ class LogikOrtFestN implements Logik__Interface {
 		return null;
 	}
 
-	// =========================================================
-	private class TipInfoOrtFestN extends TipInfo0 {
-		final int anzahlZahlen;
-		final Geschwister geschwister;
-		final String textInGruppe;
-
-		/**
-		 * @param mitSpieler
-		 *            Sind diejenigen der Geschwisterlogik - ohne die des
-		 *            solistErgebnis
-		 * @param geschwister
-		 * @param textInGruppe
-		 *            beschreibt die Gruppe in der die Geschwister gefunden
-		 *            wurden
-		 * @param solistErgebnis
-		 *            null oder ein �ber die Geschwister-Felder gefundener
-		 *            Solist mit dessen Gruppe
-		 * @param infoSudoku
-		 */
-		private TipInfoOrtFestN(Logik_ID logik, int anzahlZahlen, FeldNummerListe mitSpieler, Geschwister geschwister,
-				String textInGruppe) {
-			super(logik, mitSpieler);
-			this.anzahlZahlen = anzahlZahlen;
-			this.geschwister = geschwister;
-			this.textInGruppe = textInGruppe;
-		}
-
-		public EinTipText[] gibTip() {
-			ArrayList<EinTipText> texte = new ArrayList<>();
-			ArrayList<Integer> zahlen = geschwister.gibZahlen();
-			String sZahlen = new ArrayListInt(zahlen).gibKette("+");
-			FeldNummerListe felder = geschwister.gibFelder();
-			String sFeldNummern = felder.gibKette("+");
-
-			String s1 = String.format("%s besetzen die %d Zahlen (%s)", textInGruppe, anzahlZahlen, sZahlen);
-			String s2 = String.format("die %d Felder %s.", anzahlZahlen, sFeldNummern);
-			EinTipText tipText1 = new EinTipText(s1, s2);
-			texte.add(tipText1);
-
-			String s3 = "Deshalb werden alle anderen Zahlen hier gel�scht.";
-			EinTipText tipText2 = new EinTipText(s3, "");
-			texte.add(tipText2);
-
-			EinTipText[] texteArr = texte.toArray(new EinTipText[texte.size()]);
-			return texteArr;
-		}
-
-		@Override
-		public FeldNummerListe gibAktiveFelder() {
-			FeldNummerListe aktiveFelder = new FeldNummerListe();
-			FeldNummerListe felder = geschwister.gibFelder();
-			aktiveFelder.add(felder);
-			return aktiveFelder;
-		}
-
-		@Override
-		public ZahlenListe gibLoeschZahlen() {
-			return geschwister.gibLoeschZahlen();
-		}
-
-		@Override
-		public boolean istZahl() {
-			return false;
-		}
-
-		@Override
-		public FeldNummerMitZahl gibZahlFeld() {
-			return null;
-		}
-
-	}
-
-	// =========================================================
-	private final Logik_ID idLogik;
-	private final int anzahlZahlen;
-	private final ArrayList<Gruppe> gruppen;
-
-	public LogikOrtFestN(int anzahlZahlen, ArrayList<Gruppe> gruppen) {
-		this.idLogik = gibLogikID(anzahlZahlen);
-		this.anzahlZahlen = anzahlZahlen;
-		this.gruppen = gruppen;
-	}
-
-	@Override
-	public Logik_ID gibLogikID() {
-		return idLogik;
-	}
-
-	@Override
-	public String gibKurzName() {
-		return "O" + anzahlZahlen;
-	}
-
-	@Override
-	public String gibName() {
-		String s = String.format("Ort ist fest f�r %d Zahlen", anzahlZahlen);
-		return s;
-	}
-
-	@Override
-	public String[] gibWo() {
-		return new String[] { "In einer Gruppe (Zeile, Spalte bzw. Kasten)" };
-	}
-
-	@Override
-	public String[] gibSituationAbstrakt() {
-		String s = String.format("Der Ort f�r %d Zahlen ist festgelegt.", anzahlZahlen);
-		return new String[] { s };
-	}
-
-	@Override
-	public String[] gibSituation() {
-		String s = String.format("%d Zahlen sind nur in %d Feldern m�glich.", anzahlZahlen, anzahlZahlen);
-		return new String[] { s };
-	}
-
-	@Override
-	public String gibErgebnis() {
-		String s = String.format("Alle au�er diesen %d Zahlen werden aus den m�glichen dieser %d Felder gel�scht.",
-				anzahlZahlen, anzahlZahlen);
-		return s;
-	}
-
 	static private boolean istErgebnisIgnorieren(List<TipInfo> ignorierTips, TipInfoOrtFestN tipInfoLogik) {
 		if (ignorierTips == null) {
 			return false;
@@ -293,6 +242,63 @@ class LogikOrtFestN implements Logik__Interface {
 			}
 		}
 		return false;
+	}
+
+	// =========================================================
+	private final Logik_ID idLogik;
+	private final int anzahlZahlen;
+
+	private final ArrayList<Gruppe> gruppen;
+
+	public LogikOrtFestN(int anzahlZahlen, ArrayList<Gruppe> gruppen) {
+		this.idLogik = gibLogikID(anzahlZahlen);
+		this.anzahlZahlen = anzahlZahlen;
+		this.gruppen = gruppen;
+	}
+
+	@Override
+	public String gibErgebnis() {
+		String s = String.format("Alle au�er diesen %d Zahlen werden aus den m�glichen dieser %d Felder gel�scht.",
+				anzahlZahlen, anzahlZahlen);
+		return s;
+	}
+
+	@Override
+	public double gibKontrollZeit1() {
+		return 3 * anzahlZahlen;
+	}
+
+	@Override
+	public String gibKurzName() {
+		return "O" + anzahlZahlen;
+	}
+
+	@Override
+	public Logik_ID gibLogikID() {
+		return idLogik;
+	}
+
+	@Override
+	public String gibName() {
+		String s = String.format("Ort ist fest f�r %d Zahlen", anzahlZahlen);
+		return s;
+	}
+
+	@Override
+	public String[] gibSituation() {
+		String s = String.format("%d Zahlen sind nur in %d Feldern m�glich.", anzahlZahlen, anzahlZahlen);
+		return new String[] { s };
+	}
+
+	@Override
+	public String[] gibSituationAbstrakt() {
+		String s = String.format("Der Ort f�r %d Zahlen ist festgelegt.", anzahlZahlen);
+		return new String[] { s };
+	}
+
+	@Override
+	public String[] gibWo() {
+		return new String[] { "In einer Gruppe (Zeile, Spalte bzw. Kasten)" };
 	}
 
 	@Override
@@ -330,11 +336,6 @@ class LogikOrtFestN implements Logik__Interface {
 		} // if ( ! freieGruppen.isEmpty()){
 
 		return null;
-	}
-
-	@Override
-	public double gibKontrollZeit1() {
-		return 3 * anzahlZahlen;
 	}
 
 }

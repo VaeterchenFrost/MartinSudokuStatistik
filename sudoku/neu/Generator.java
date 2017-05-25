@@ -19,6 +19,45 @@ import sudoku.schwer.SudokuSchwierigkeit;
 import sudoku.schwer.daten.LogikAnzahlen;
 
 class Generator extends Generator1 {
+	// Ende static
+	// =================================================
+	public class GeneratorErgebnis {
+		public final NeuTyp neuTyp;
+		public final InfoSudoku infoSudoku;
+		public final int loesungsZeit;
+		public final int laufNummer;
+
+		/**
+		 * @param infoSudoku
+		 *            Auch null falls kein Sudoku erstellt werden konnte.
+		 * @param neuTyp
+		 *            Der Typ des erstellten Sudoku. Er muss nicht mit dem
+		 *            angeforderten Typ �bereinstimmen!
+		 * @param loesungsZeit
+		 * @param laufNummer
+		 *            Nummer des Laufes, der erfolgreich dies Sudoku erzeugt
+		 *            hat.
+		 */
+		GeneratorErgebnis(InfoSudoku infoSudoku, NeuTyp neuTyp, int loesungsZeit, int laufNummer) {
+			super();
+			this.neuTyp = neuTyp;
+			this.infoSudoku = infoSudoku;
+			this.loesungsZeit = loesungsZeit;
+			this.laufNummer = laufNummer;
+		}
+
+	}
+
+	/**
+	 * Nur zur Dokumentation
+	 */
+	private static Zaehler nVersuchStarts = new Zaehler();
+
+	/**
+	 * Zum Loggen der genutzten Logiken
+	 */
+	private static LogikAnzahlen erfolgreicheLogiken = new LogikAnzahlen();
+
 	/**
 	 * @param neuTyp
 	 * @return Neues Sudoku des neuTyp oder null falls keines erstellbar war.
@@ -42,21 +81,6 @@ class Generator extends Generator1 {
 		}
 
 		return ergebnis;
-	}
-
-	/**
-	 * Nur zur Dokumentation
-	 */
-	private static Zaehler nVersuchStarts = new Zaehler();
-
-	/**
-	 * Zum Loggen der genutzten Logiken
-	 */
-	private static LogikAnzahlen erfolgreicheLogiken = new LogikAnzahlen();
-
-	static void logErfolgreicheLogiken() {
-		LogikAnzahlenSpeicher.logLogikAnzahlen(erfolgreicheLogiken);
-		erfolgreicheLogiken = new LogikAnzahlen();
 	}
 
 	/**
@@ -108,33 +132,9 @@ class Generator extends Generator1 {
 		return loeschFelder;
 	}
 
-	// Ende static
-	// =================================================
-	public class GeneratorErgebnis {
-		public final NeuTyp neuTyp;
-		public final InfoSudoku infoSudoku;
-		public final int loesungsZeit;
-		public final int laufNummer;
-
-		/**
-		 * @param infoSudoku
-		 *            Auch null falls kein Sudoku erstellt werden konnte.
-		 * @param neuTyp
-		 *            Der Typ des erstellten Sudoku. Er muss nicht mit dem
-		 *            angeforderten Typ �bereinstimmen!
-		 * @param loesungsZeit
-		 * @param laufNummer
-		 *            Nummer des Laufes, der erfolgreich dies Sudoku erzeugt
-		 *            hat.
-		 */
-		GeneratorErgebnis(InfoSudoku infoSudoku, NeuTyp neuTyp, int loesungsZeit, int laufNummer) {
-			super();
-			this.neuTyp = neuTyp;
-			this.infoSudoku = infoSudoku;
-			this.loesungsZeit = loesungsZeit;
-			this.laufNummer = laufNummer;
-		}
-
+	static void logErfolgreicheLogiken() {
+		LogikAnzahlenSpeicher.logLogikAnzahlen(erfolgreicheLogiken);
+		erfolgreicheLogiken = new LogikAnzahlen();
 	}
 
 	// =================================================
@@ -143,127 +143,6 @@ class Generator extends Generator1 {
 	private Generator(NeuTyp neuTyp) {
 		super();
 		this.neuTyp = neuTyp;
-	}
-
-	/**
-	 * @param loesung
-	 * @param symmetrierer
-	 *            Falls != null soll das Sudoku symmetrisch aussehen
-	 * @return null wenn die Bestimmtheit f�r eine L�sung nicht ausreicht,
-	 *         ansonsten gesetzte Felder, die im weiteren nicht gel�scht werden
-	 *         d�rfen (ansonsten w�rde man die lineare L�sung wieder verlassen
-	 *         werden)
-	 * @throws Exc
-	 */
-	private FeldNummerListe sichereLineareLoesung(InfoSudoku loesung, Klugheit klugheit, Animator symmetrierer)
-			throws Exc {
-		if (istSystemOut() & istSystemOutAlles()) {
-			System.out.println("sichereLineareLoesung()");
-		}
-
-		FeldNummerListe versuchStarts = null;
-		this.gibKlugheit().setze(klugheit);
-		Ergebnis ergebnis = null;
-
-		do {
-			this.gibProtokoll().reset();
-			ergebnis = this.gibKnacker().loese(VersuchsEbenen.UNBEGRENZT, "sichereLineareLoesung");
-			if (ergebnis.gibArt() != Ergebnis.Art.FERTIG) {
-				this.gibProtokoll().gehe(Schrittweite.ALLES, false);
-				if (istSystemOut() & istSystemOutAlles()) {
-					System.out.println("sichereLineareLoesung(): Keine L�sung durch Knacker !!!");
-				}
-				return null;
-			}
-
-			nVersuchStarts.start();
-			int ebeneNr = this.gibFeldmatrix().ebeneGibNummer();
-			if (ebeneNr > 1) {
-				// Die Versuch-Starts wieder als Vorgaben setzen, so dass keine
-				// Versuche mehr n�tig sind
-				versuchStarts = this.gibFeldmatrix().gibFelderVersuchStart();
-
-				nVersuchStarts.inc(versuchStarts.size());
-				this.gibProtokoll().gehe(Schrittweite.ALLES, false);
-				for (FeldNummer feldNummer : versuchStarts) {
-					FeldInfo vorgabe = loesung.get(feldNummer);
-					this.gibFeldmatrix().setzeVorgabe(feldNummer, vorgabe.gibVorgabe());
-
-					if (symmetrierer != null) {
-						FeldNummer feldNummerSymmetrisch = symmetrierer.gibFeldNummer(feldNummer,
-								FeldMatrix.feldNummerMax);
-						if (!this.gibFeldmatrix().gibFeldInfo(feldNummerSymmetrisch).istVorgabe()) {
-							FeldInfo vorgabe2 = loesung.get(feldNummerSymmetrisch);
-							this.gibFeldmatrix().setzeVorgabe(feldNummerSymmetrisch, vorgabe2.gibVorgabe());
-						}
-					}
-				}
-			}
-
-			// Kontrolle:
-			ergebnis = this.gibKnacker().loese(VersuchsEbenen.KEINE, "sichereLineareLoesung");
-			this.gibProtokoll().gehe(Schrittweite.ALLES, false);
-		} while (ergebnis.gibArt() != Ergebnis.Art.FERTIG);
-
-		if (istSystemOut() & istSystemOutAlles()) {
-			System.out.println(String.format("sichereLineareLoesung(): %s nVersuche: %s", ergebnis, nVersuchStarts));
-		}
-		return versuchStarts;
-	}
-
-	/**
-	 * L�scht aus den verbliebenen Vorgaben soweit m�glich. Als erstes wird die
-	 * H�rde entsprechend NeuTyp.Klugheit eingebaut.
-	 * 
-	 * @param tabu
-	 *            Vorgaben, die nicht gel�scht werden d�rfen, um die eindeutige
-	 *            L�sung (ohne Versuche) nicht zu verlassen
-	 * @param symmetrierer
-	 *            Falls != null soll das Sudoku symmetrisch aussehen
-	 * @return BerichtKnacker Beinhaltet die erreichte Schwierigkeit
-	 * @throws Exc
-	 */
-	private BerichtKnacker leeren(FeldNummerListe tabu, Animator symmetrierer) throws Exc {
-		BerichtKnacker knackerBericht = null;
-
-		if (istSystemOut() & istSystemOutAlles()) {
-			System.out.println(String.format("leeren()"));
-		}
-		// Aus diesen Vorgaben soll gel�scht werden:
-		FeldNummerListe basisVorgaben = new FeldNummerListe();
-		InfoSudoku startVorgaben = this.gibFeldmatrix().gibVorgaben();
-		basisVorgaben.addAll(startVorgaben.keySet());
-		basisVorgaben.removeAll(tabu);
-
-		// gew�nschte einzusetzende Klugheit:
-		Schwierigkeit wieSchwerSoll = neuTyp.gibWieSchwer();
-		Klugheit klugheitNeu = Schwierigkeit.gibKlugheit(wieSchwerSoll);
-
-		// Liste zum munteren Rausl�schen
-		FeldNummerListe testVorgaben = new FeldNummerListe();
-		testVorgaben.addAll(basisVorgaben);
-		while (!testVorgaben.isEmpty()) {
-			// Vorgabe zuf�llig ausw�hlen + l�schen
-			FeldNummerListe loeschFelder = loesche1Vorgabe(this.gibFeldmatrix(), testVorgaben, symmetrierer);
-			// Diese Vorgabe ist danach getestet
-			testVorgaben.removeAll(loeschFelder);
-
-			// Ist das Sudoku l�sbar mit neuTyp-Klugheit ohne diese Vorgabe?
-			this.gibKlugheit().setze(klugheitNeu);
-			this.gibProtokoll().reset();
-			Ergebnis ergebnis = this.gibKnacker().loese(VersuchsEbenen.KEINE, "leeren");
-			this.gibProtokoll().gehe(Schrittweite.ALLES, false);
-			if (ergebnis.gibArt() == Ergebnis.Art.FERTIG) {
-				knackerBericht = this.gibKnacker().gibBericht();
-			} else {
-				// geht nicht: wieder reinsetzen in das Sudoku
-				for (FeldNummer loeschFeld : loeschFelder) {
-					FeldInfo vorgabe = startVorgaben.get(loeschFeld);
-					this.gibFeldmatrix().setzeVorgabe(loeschFeld, vorgabe.gibVorgabe());
-				}
-			} // if
-		} // while
-		return knackerBericht;
 	}
 
 	/**
@@ -389,6 +268,127 @@ class Generator extends Generator1 {
 
 		GeneratorErgebnis ergebnis = new GeneratorErgebnis(neuesSudoku, typDesNeuenSudoku, loesungsZeit, laufNummer);
 		return ergebnis;
+	}
+
+	/**
+	 * L�scht aus den verbliebenen Vorgaben soweit m�glich. Als erstes wird die
+	 * H�rde entsprechend NeuTyp.Klugheit eingebaut.
+	 * 
+	 * @param tabu
+	 *            Vorgaben, die nicht gel�scht werden d�rfen, um die eindeutige
+	 *            L�sung (ohne Versuche) nicht zu verlassen
+	 * @param symmetrierer
+	 *            Falls != null soll das Sudoku symmetrisch aussehen
+	 * @return BerichtKnacker Beinhaltet die erreichte Schwierigkeit
+	 * @throws Exc
+	 */
+	private BerichtKnacker leeren(FeldNummerListe tabu, Animator symmetrierer) throws Exc {
+		BerichtKnacker knackerBericht = null;
+
+		if (istSystemOut() & istSystemOutAlles()) {
+			System.out.println(String.format("leeren()"));
+		}
+		// Aus diesen Vorgaben soll gel�scht werden:
+		FeldNummerListe basisVorgaben = new FeldNummerListe();
+		InfoSudoku startVorgaben = this.gibFeldmatrix().gibVorgaben();
+		basisVorgaben.addAll(startVorgaben.keySet());
+		basisVorgaben.removeAll(tabu);
+
+		// gew�nschte einzusetzende Klugheit:
+		Schwierigkeit wieSchwerSoll = neuTyp.gibWieSchwer();
+		Klugheit klugheitNeu = Schwierigkeit.gibKlugheit(wieSchwerSoll);
+
+		// Liste zum munteren Rausl�schen
+		FeldNummerListe testVorgaben = new FeldNummerListe();
+		testVorgaben.addAll(basisVorgaben);
+		while (!testVorgaben.isEmpty()) {
+			// Vorgabe zuf�llig ausw�hlen + l�schen
+			FeldNummerListe loeschFelder = loesche1Vorgabe(this.gibFeldmatrix(), testVorgaben, symmetrierer);
+			// Diese Vorgabe ist danach getestet
+			testVorgaben.removeAll(loeschFelder);
+
+			// Ist das Sudoku l�sbar mit neuTyp-Klugheit ohne diese Vorgabe?
+			this.gibKlugheit().setze(klugheitNeu);
+			this.gibProtokoll().reset();
+			Ergebnis ergebnis = this.gibKnacker().loese(VersuchsEbenen.KEINE, "leeren");
+			this.gibProtokoll().gehe(Schrittweite.ALLES, false);
+			if (ergebnis.gibArt() == Ergebnis.Art.FERTIG) {
+				knackerBericht = this.gibKnacker().gibBericht();
+			} else {
+				// geht nicht: wieder reinsetzen in das Sudoku
+				for (FeldNummer loeschFeld : loeschFelder) {
+					FeldInfo vorgabe = startVorgaben.get(loeschFeld);
+					this.gibFeldmatrix().setzeVorgabe(loeschFeld, vorgabe.gibVorgabe());
+				}
+			} // if
+		} // while
+		return knackerBericht;
+	}
+
+	/**
+	 * @param loesung
+	 * @param symmetrierer
+	 *            Falls != null soll das Sudoku symmetrisch aussehen
+	 * @return null wenn die Bestimmtheit f�r eine L�sung nicht ausreicht,
+	 *         ansonsten gesetzte Felder, die im weiteren nicht gel�scht werden
+	 *         d�rfen (ansonsten w�rde man die lineare L�sung wieder verlassen
+	 *         werden)
+	 * @throws Exc
+	 */
+	private FeldNummerListe sichereLineareLoesung(InfoSudoku loesung, Klugheit klugheit, Animator symmetrierer)
+			throws Exc {
+		if (istSystemOut() & istSystemOutAlles()) {
+			System.out.println("sichereLineareLoesung()");
+		}
+
+		FeldNummerListe versuchStarts = null;
+		this.gibKlugheit().setze(klugheit);
+		Ergebnis ergebnis = null;
+
+		do {
+			this.gibProtokoll().reset();
+			ergebnis = this.gibKnacker().loese(VersuchsEbenen.UNBEGRENZT, "sichereLineareLoesung");
+			if (ergebnis.gibArt() != Ergebnis.Art.FERTIG) {
+				this.gibProtokoll().gehe(Schrittweite.ALLES, false);
+				if (istSystemOut() & istSystemOutAlles()) {
+					System.out.println("sichereLineareLoesung(): Keine L�sung durch Knacker !!!");
+				}
+				return null;
+			}
+
+			nVersuchStarts.start();
+			int ebeneNr = this.gibFeldmatrix().ebeneGibNummer();
+			if (ebeneNr > 1) {
+				// Die Versuch-Starts wieder als Vorgaben setzen, so dass keine
+				// Versuche mehr n�tig sind
+				versuchStarts = this.gibFeldmatrix().gibFelderVersuchStart();
+
+				nVersuchStarts.inc(versuchStarts.size());
+				this.gibProtokoll().gehe(Schrittweite.ALLES, false);
+				for (FeldNummer feldNummer : versuchStarts) {
+					FeldInfo vorgabe = loesung.get(feldNummer);
+					this.gibFeldmatrix().setzeVorgabe(feldNummer, vorgabe.gibVorgabe());
+
+					if (symmetrierer != null) {
+						FeldNummer feldNummerSymmetrisch = symmetrierer.gibFeldNummer(feldNummer,
+								FeldMatrix.feldNummerMax);
+						if (!this.gibFeldmatrix().gibFeldInfo(feldNummerSymmetrisch).istVorgabe()) {
+							FeldInfo vorgabe2 = loesung.get(feldNummerSymmetrisch);
+							this.gibFeldmatrix().setzeVorgabe(feldNummerSymmetrisch, vorgabe2.gibVorgabe());
+						}
+					}
+				}
+			}
+
+			// Kontrolle:
+			ergebnis = this.gibKnacker().loese(VersuchsEbenen.KEINE, "sichereLineareLoesung");
+			this.gibProtokoll().gehe(Schrittweite.ALLES, false);
+		} while (ergebnis.gibArt() != Ergebnis.Art.FERTIG);
+
+		if (istSystemOut() & istSystemOutAlles()) {
+			System.out.println(String.format("sichereLineareLoesung(): %s nVersuche: %s", ergebnis, nVersuchStarts));
+		}
+		return versuchStarts;
 	}
 
 }

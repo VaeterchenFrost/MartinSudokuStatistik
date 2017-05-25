@@ -9,8 +9,8 @@ class Logik_KreuzFluegel extends LogikFeldPaareRing {
 	}
 
 	@Override
-	public Logik_ID gibLogikID() {
-		return Logik_ID.KREUZFLUEGEL;
+	public double gibKontrollZeit1() {
+		return 60;
 	}
 
 	@Override
@@ -19,13 +19,13 @@ class Logik_KreuzFluegel extends LogikFeldPaareRing {
 	}
 
 	@Override
-	public String gibName() {
-		return "Kreuzflügel";
+	public Logik_ID gibLogikID() {
+		return Logik_ID.KREUZFLUEGEL;
 	}
 
 	@Override
-	public double gibKontrollZeit1() {
-		return 60;
+	public String gibName() {
+		return "Kreuzflï¿½gel";
 	}
 
 }

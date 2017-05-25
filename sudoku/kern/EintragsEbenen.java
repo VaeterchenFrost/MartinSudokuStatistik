@@ -20,12 +20,6 @@ import sudoku.kern.feldmatrix.Feld;
  */
 public class EintragsEbenen {
 
-	private int aktuelleEbene;
-
-	public EintragsEbenen() {
-		reset();
-	}
-
 	/**
 	 * @return Die Ebene Nr. 1 ist den Eintr�gen in freien Feldern mit 1
 	 *         m�glichen Zahl vorbehalten. (Versuche laufen auf den Ebenen ab
@@ -35,16 +29,18 @@ public class EintragsEbenen {
 		return 1;
 	}
 
-	public boolean laeuftEine() {
-		return aktuelleEbene > 0;
+	private int aktuelleEbene;
+
+	public EintragsEbenen() {
+		reset();
 	}
 
 	public int gibNummer() {
 		return aktuelleEbene;
 	}
 
-	public void reset() {
-		aktuelleEbene = 0;
+	public boolean laeuftEine() {
+		return aktuelleEbene > 0;
 	}
 
 	public void loesche() {
@@ -55,22 +51,8 @@ public class EintragsEbenen {
 		}
 	}
 
-	/**
-	 * Start des Eintrag-Setzens auf einem Feld mit nur einer m�glichen Zahl
-	 */
-	private void starteEbene() {
-		aktuelleEbene++;
-	}
-
-	/**
-	 * Ein Feld mit mehreren M�glichen erh�lt einen Eintrag
-	 */
-	private void starteVersuch() {
-		if (aktuelleEbene == 0) {
-			// Ebene 1 �berspringen
-			aktuelleEbene++;
-		}
-		aktuelleEbene++;
+	public void reset() {
+		aktuelleEbene = 0;
 	}
 
 	/**
@@ -113,5 +95,23 @@ public class EintragsEbenen {
 
 	public void setzeEintragsEbeneUnbedingt(int zahl) {
 		this.aktuelleEbene = zahl;
+	}
+
+	/**
+	 * Start des Eintrag-Setzens auf einem Feld mit nur einer m�glichen Zahl
+	 */
+	private void starteEbene() {
+		aktuelleEbene++;
+	}
+
+	/**
+	 * Ein Feld mit mehreren M�glichen erh�lt einen Eintrag
+	 */
+	private void starteVersuch() {
+		if (aktuelleEbene == 0) {
+			// Ebene 1 �berspringen
+			aktuelleEbene++;
+		}
+		aktuelleEbene++;
 	}
 }

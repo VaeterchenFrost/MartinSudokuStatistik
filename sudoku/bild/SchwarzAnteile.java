@@ -22,25 +22,6 @@ class SchwarzAnteile extends HashMap<FeldNummer, Float> implements ZahlBildInfo 
 		}
 	}
 
-	void systemOut(FeldNummer bildFeldNummer) {
-		System.out.println(String.format("BildFeld %s Schwarzanteile", bildFeldNummer)); // ,
-																							// getClass().getName()));
-		for (int zeile = 1; zeile <= ZahlBildInfo.nLinien; zeile++) {
-			for (int spalte = 1; spalte <= ZahlBildInfo.nLinien; spalte++) {
-				FeldNummer feldNummer = new FeldNummer(spalte, zeile);
-				Float f = this.get(feldNummer);
-				System.out.print(String.format(" %5.1f", f));
-			}
-			System.out.println();
-		}
-	}
-
-	@Override
-	public float gibSchwarzAnteil(FeldNummer feldNummer) {
-		Float f = this.get(feldNummer);
-		return f;
-	}
-
 	public void drehen(Animator animator) {
 		Set<Entry<FeldNummer, Float>> schwarzAnteile = this.entrySet();
 
@@ -52,6 +33,25 @@ class SchwarzAnteile extends HashMap<FeldNummer, Float> implements ZahlBildInfo 
 
 		this.clear();
 		this.putAll(gedrehte);
+	}
+
+	@Override
+	public float gibSchwarzAnteil(FeldNummer feldNummer) {
+		Float f = this.get(feldNummer);
+		return f;
+	}
+
+	void systemOut(FeldNummer bildFeldNummer) {
+		System.out.println(String.format("BildFeld %s Schwarzanteile", bildFeldNummer)); // ,
+																							// getClass().getName()));
+		for (int zeile = 1; zeile <= ZahlBildInfo.nLinien; zeile++) {
+			for (int spalte = 1; spalte <= ZahlBildInfo.nLinien; spalte++) {
+				FeldNummer feldNummer = new FeldNummer(spalte, zeile);
+				Float f = this.get(feldNummer);
+				System.out.print(String.format(" %5.1f", f));
+			}
+			System.out.println();
+		}
 	}
 
 }

@@ -12,6 +12,11 @@ import sudoku.kern.feldmatrix.FeldNummer;
  */
 @SuppressWarnings("serial")
 public class Gruppe extends FeldListe {
+	// =========================================================
+	public enum Typ {
+		KASTEN, ZEILE, SPALTE, MIX
+	}
+
 	/**
 	 * @param feldNummer
 	 * @param linienTyp0
@@ -40,6 +45,73 @@ public class Gruppe extends FeldListe {
 		}
 		FeldNummer neueFeldnummer = new FeldNummer(spalte, zeile);
 		return neueFeldnummer;
+	}
+
+	/**
+	 * @param gruppen
+	 * @param freieFelderMin
+	 *            Anzahl Felder, die mindestens je Gruppe frei sein sollen
+	 * @return
+	 */
+	static public ArrayList<Gruppe> gibFreieGruppen(ArrayList<Gruppe> gruppen, int freieFelderMin) {
+		ArrayList<Gruppe> freieGruppen = new ArrayList<>();
+
+		for (int i = 0; i < gruppen.size(); i++) {
+			Gruppe gruppe = gruppen.get(i);
+			int anzahlFreieFelder = gruppe.gibAnzahlFreieFelder();
+			if (anzahlFreieFelder >= freieFelderMin) {
+				freieGruppen.add(gruppe);
+			}
+		}
+		return freieGruppen;
+	}
+
+	/**
+	 * @param gruppen
+	 * @param istSatzStart
+	 * @return Sowas wie: In den Zeilen 1 + 2 + 3
+	 */
+	static public String gibInText(Gruppe[] gruppen, boolean istSatzStart) {
+		char textStart = istSatzStart ? 'I' : 'i';
+		String s = null;
+
+		switch (gruppen[0].typ) {
+		case ZEILE:
+			s = String.format("%cn den Zeilen %d", textStart, gruppen[0].get(0).gibZeile());
+			for (int i = 1; i < gruppen.length; i++) {
+				String s1 = String.format(" + %d", gruppen[i].get(0).gibZeile());
+				s += s1;
+			}
+			return s;
+		case SPALTE:
+			s = String.format("%cn den Spalten %d", textStart, gruppen[0].get(0).gibSpalte());
+			for (int i = 1; i < gruppen.length; i++) {
+				String s1 = String.format(" + %d", gruppen[i].get(0).gibSpalte());
+				s += s1;
+			}
+			return s;
+		case KASTEN:
+			KastenIndex kastenIndex = Kasten.gibKastenIndex(gruppen[0].get(0).gibFeldNummer());
+			s = String.format("%cn den K�sten %s", textStart, Kasten.gibNameVomKastenIndex(kastenIndex));
+			for (int i = 1; i < gruppen.length; i++) {
+				KastenIndex kastenIndex1 = Kasten.gibKastenIndex(gruppen[i].get(0).gibFeldNummer());
+				String sKasten = Kasten.gibNameVomKastenIndex(kastenIndex1);
+				String s1 = String.format(" + %s", sKasten);
+				s += s1;
+			}
+			return s;
+		default:
+			return String.format("Fehler: Gruppe mit falschem Typ %d", gruppen[0].typ);
+		}
+	}
+
+	static public char gibTypZeichen(Typ typ) {
+		if (typ == null) {
+			return ' ';
+		}
+		String s = typ.toString();
+		char c = s.charAt(0);
+		return c;
 	}
 
 	/**
@@ -94,78 +166,6 @@ public class Gruppe extends FeldListe {
 			break;
 		}
 		return mitglied;
-	}
-
-	/**
-	 * @param gruppen
-	 * @param freieFelderMin
-	 *            Anzahl Felder, die mindestens je Gruppe frei sein sollen
-	 * @return
-	 */
-	static public ArrayList<Gruppe> gibFreieGruppen(ArrayList<Gruppe> gruppen, int freieFelderMin) {
-		ArrayList<Gruppe> freieGruppen = new ArrayList<>();
-
-		for (int i = 0; i < gruppen.size(); i++) {
-			Gruppe gruppe = gruppen.get(i);
-			int anzahlFreieFelder = gruppe.gibAnzahlFreieFelder();
-			if (anzahlFreieFelder >= freieFelderMin) {
-				freieGruppen.add(gruppe);
-			}
-		}
-		return freieGruppen;
-	}
-
-	static public char gibTypZeichen(Typ typ) {
-		if (typ == null) {
-			return ' ';
-		}
-		String s = typ.toString();
-		char c = s.charAt(0);
-		return c;
-	}
-
-	/**
-	 * @param gruppen
-	 * @param istSatzStart
-	 * @return Sowas wie: In den Zeilen 1 + 2 + 3
-	 */
-	static public String gibInText(Gruppe[] gruppen, boolean istSatzStart) {
-		char textStart = istSatzStart ? 'I' : 'i';
-		String s = null;
-
-		switch (gruppen[0].typ) {
-		case ZEILE:
-			s = String.format("%cn den Zeilen %d", textStart, gruppen[0].get(0).gibZeile());
-			for (int i = 1; i < gruppen.length; i++) {
-				String s1 = String.format(" + %d", gruppen[i].get(0).gibZeile());
-				s += s1;
-			}
-			return s;
-		case SPALTE:
-			s = String.format("%cn den Spalten %d", textStart, gruppen[0].get(0).gibSpalte());
-			for (int i = 1; i < gruppen.length; i++) {
-				String s1 = String.format(" + %d", gruppen[i].get(0).gibSpalte());
-				s += s1;
-			}
-			return s;
-		case KASTEN:
-			KastenIndex kastenIndex = Kasten.gibKastenIndex(gruppen[0].get(0).gibFeldNummer());
-			s = String.format("%cn den K�sten %s", textStart, Kasten.gibNameVomKastenIndex(kastenIndex));
-			for (int i = 1; i < gruppen.length; i++) {
-				KastenIndex kastenIndex1 = Kasten.gibKastenIndex(gruppen[i].get(0).gibFeldNummer());
-				String sKasten = Kasten.gibNameVomKastenIndex(kastenIndex1);
-				String s1 = String.format(" + %s", sKasten);
-				s += s1;
-			}
-			return s;
-		default:
-			return String.format("Fehler: Gruppe mit falschem Typ %d", gruppen[0].typ);
-		}
-	}
-
-	// =========================================================
-	public enum Typ {
-		KASTEN, ZEILE, SPALTE, MIX
 	};
 
 	private Typ typ;
@@ -199,24 +199,6 @@ public class Gruppe extends FeldListe {
 	}
 
 	/**
-	 * @return the typ
-	 */
-	public Typ gibTyp() {
-		return typ;
-	}
-
-	public Typ gibTypDerSenkrechten() {
-		switch (typ) {
-		case ZEILE:
-			return Typ.SPALTE;
-		case SPALTE:
-			return Typ.ZEILE;
-		default:
-			throw new IllegalArgumentException("Gruppe besitzt weder Typ ZEILE noch SPALTE");
-		}
-	}
-
-	/**
 	 * @return Text "In ..." je Gruppen-Typ den Text
 	 */
 	public String gibInText(boolean istSatzStart) {
@@ -231,6 +213,24 @@ public class Gruppe extends FeldListe {
 			return String.format("%cm %s", textStart, Kasten.gibNameVomKastenIndex(kastenIndex));
 		default:
 			return String.format("Fehler: Gruppe mit falschem Typ %d", this.typ);
+		}
+	}
+
+	/**
+	 * @return the typ
+	 */
+	public Typ gibTyp() {
+		return typ;
+	}
+
+	public Typ gibTypDerSenkrechten() {
+		switch (typ) {
+		case ZEILE:
+			return Typ.SPALTE;
+		case SPALTE:
+			return Typ.ZEILE;
+		default:
+			throw new IllegalArgumentException("Gruppe besitzt weder Typ ZEILE noch SPALTE");
 		}
 	}
 

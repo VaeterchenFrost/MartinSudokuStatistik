@@ -13,49 +13,6 @@ class Logik_Kasten2 extends LogikKastenN {
 		super(kaesten);
 	}
 
-	@Override
-	public Logik_ID gibLogikID() {
-		return Logik_ID.KASTEN2;
-	}
-
-	@Override
-	public String gibKurzName() {
-		char c = Kasten.gibTypZeichen(Gruppe.Typ.KASTEN);
-		String s = String.format("%c2", c);
-		return s;
-	}
-
-	@Override
-	public String gibName() {
-		return "Kasten 2";
-	}
-
-	@Override
-	public String[] gibWo() {
-		return new String[] { "Im Kasten bezogen auf 2 Nachbark�sten waagerecht bzw. senkrecht" };
-	}
-
-	@Override
-	public String[] gibSituationAbstrakt() {
-		return new String[] { "Auf 2 gemeinsamen Linien sind in den 2 Nachbar-K�sten eine Zahl festgelegt." };
-	}
-
-	@Override
-	public String[] gibSituation() {
-		return new String[] {
-				"Auf 2 gemeinsamen Linien (Spalte bzw. Zeile) sind in den 2 Nachbar-K�sten eine Zahl festgelegt." };
-	}
-
-	@Override
-	public String gibErgebnis() {
-		return "Im Kasten wird die Zahl auf diesen 2 Linien aus den m�glichen dieser Felder gel�scht.";
-	}
-
-	@Override
-	public double gibKontrollZeit1() {
-		return 6;
-	}
-
 	/**
 	 * @param istSpalte
 	 * @return null oder Ergibnis der aktiven Logik
@@ -134,6 +91,49 @@ class Logik_Kasten2 extends LogikKastenN {
 		} // for (int zahl
 
 		return null;
+	}
+
+	@Override
+	public String gibErgebnis() {
+		return "Im Kasten wird die Zahl auf diesen 2 Linien aus den m�glichen dieser Felder gel�scht.";
+	}
+
+	@Override
+	public double gibKontrollZeit1() {
+		return 6;
+	}
+
+	@Override
+	public String gibKurzName() {
+		char c = Kasten.gibTypZeichen(Gruppe.Typ.KASTEN);
+		String s = String.format("%c2", c);
+		return s;
+	}
+
+	@Override
+	public Logik_ID gibLogikID() {
+		return Logik_ID.KASTEN2;
+	}
+
+	@Override
+	public String gibName() {
+		return "Kasten 2";
+	}
+
+	@Override
+	public String[] gibSituation() {
+		return new String[] {
+				"Auf 2 gemeinsamen Linien (Spalte bzw. Zeile) sind in den 2 Nachbar-K�sten eine Zahl festgelegt." };
+	}
+
+	@Override
+	public String[] gibSituationAbstrakt() {
+		return new String[] { "Auf 2 gemeinsamen Linien sind in den 2 Nachbar-K�sten eine Zahl festgelegt." };
+	}
+
+	@Override
+	public String[] gibWo() {
+		return new String[] { "Im Kasten bezogen auf 2 Nachbark�sten waagerecht bzw. senkrecht" };
 	}
 
 	@Override

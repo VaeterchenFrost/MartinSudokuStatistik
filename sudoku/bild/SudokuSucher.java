@@ -23,10 +23,32 @@ public class SudokuSucher { // implements LangerProzess{
 	// return istSystemOut;
 	// }
 
-	private static void systemOut(String text) {
-		if (istSystemOut) {
-			System.out.println(text);
-		}
+	/**
+	 * @param image
+	 * @param spaltenStriche
+	 * @param zeilenStriche
+	 * @return Bildausschnitt aus image, den das Kreuz der Striche bezeichnet.
+	 */
+	static private Rectangle gibBildAusschnitt(BufferedImage image, StricheKreuz stricheKreuz) {
+		Rectangle neuesRechteck = null;
+
+		// Horizontaler Bereich
+		Paar<Integer, Integer> ausschnittX = stricheKreuz.gibBereichSpalten();
+		int x = ausschnittX.getKey();
+		int letzterIndexX = ausschnittX.getValue();
+		int breite = letzterIndexX - x + 1;
+
+		// Vertikaler Bereich bleibt
+		Paar<Integer, Integer> ausschnittY = stricheKreuz.gibBereichZeilen();
+		int y = ausschnittY.getKey();
+		int letzterIndexY = ausschnittY.getValue();
+		int hoehe = letzterIndexY - y + 1;
+		neuesRechteck = new Rectangle(x, y, breite, hoehe);
+
+		return neuesRechteck;
+		// BufferedImage returnImage = Bild.gibBildAusschnitt(image,
+		// neuesRechteck);
+		// return returnImage;
 	}
 
 	// /**
@@ -100,67 +122,6 @@ public class SudokuSucher { // implements LangerProzess{
 	// }
 
 	/**
-	 * @param image
-	 * @param spaltenStriche
-	 * @param zeilenStriche
-	 * @return Bildausschnitt aus image, den das Kreuz der Striche bezeichnet.
-	 */
-	static private Rectangle gibBildAusschnitt(BufferedImage image, StricheKreuz stricheKreuz) {
-		Rectangle neuesRechteck = null;
-
-		// Horizontaler Bereich
-		Paar<Integer, Integer> ausschnittX = stricheKreuz.gibBereichSpalten();
-		int x = ausschnittX.getKey();
-		int letzterIndexX = ausschnittX.getValue();
-		int breite = letzterIndexX - x + 1;
-
-		// Vertikaler Bereich bleibt
-		Paar<Integer, Integer> ausschnittY = stricheKreuz.gibBereichZeilen();
-		int y = ausschnittY.getKey();
-		int letzterIndexY = ausschnittY.getValue();
-		int hoehe = letzterIndexY - y + 1;
-		neuesRechteck = new Rectangle(x, y, breite, hoehe);
-
-		return neuesRechteck;
-		// BufferedImage returnImage = Bild.gibBildAusschnitt(image,
-		// neuesRechteck);
-		// return returnImage;
-	}
-
-	/**
-	 * Ermittelt die Ver�nderung der weissAnzahlen von Index zu Index+1.
-	 * 
-	 * @param weissAnzahlen
-	 * @param minStrichLaenge
-	 * @param linienName
-	 * @return Alle Spr�nge, deren abs(H�he) gr��er/gleich minStrichLaenge sind.
-	 */
-	private static List<Sprung> gibSprunghoehen(int[] weissAnzahlen, int minStrichLaenge, String linienName) {
-		ArrayList<Sprung> spruenge = new ArrayList<Sprung>();
-
-		for (int i = 0; i < weissAnzahlen.length - 1; i++) {
-			int sprung = weissAnzahlen[i + 1] - weissAnzahlen[i];
-
-			if (Math.abs(sprung) >= minStrichLaenge) {
-				Sprung sprungSpeicher = new Sprung(i, sprung);
-				spruenge.add(sprungSpeicher);
-			}
-		}
-
-		// systemOut(String.format("%s: %s L�nge=%d",
-		// SudokuSucher.class.getName(), linienName, linienLaenge));
-		// Iterator<Sprung> iterator = spruenge.iterator();
-		// while(iterator.hasNext()){
-		// Sprung sprung = iterator.next();
-		// int weiss = weissAnzahlen[sprung.gibVonIndex()];
-		// systemOut(String.format("i%s=%4d Sprung=%3d von weiss=%4d",
-		// linienName, sprung.gibVonIndex(), sprung.gibSprungHoehe(), weiss));
-		// }
-
-		return spruenge;
-	}
-
-	/**
 	 * @param spruenge
 	 *            Nur Spr�nge, deren Absolutwert der Sprungh�he > 0 ist.
 	 * @return Striche, die aus den Spr�ngen erkennbar sind. Also ev. auch eine
@@ -201,41 +162,37 @@ public class SudokuSucher { // implements LangerProzess{
 		return striche;
 	}
 
-	// private static StricheKreuz gibStriche(BufferedImage image, StricheKreuz
-	// stricheKreuz,
-	// int minStrichLaengeSenkrechtProzent,
-	// int minStrichLaengeWaagerechtProzent,
-	// String titel)
-	// {
-	// LinienWeiss linienWeiss = new LinienWeiss(image, null);
-	// int minStrichLaengeSenkrecht = (minStrichLaengeSenkrechtProzent *
-	// image.getHeight()) / 100;
-	// int minStrichLaengeWaagerecht = (minStrichLaengeWaagerechtProzent *
-	// image.getWidth()) / 100;
-	//
-	// StricheKreuz returnStricheKreuz = gibStriche(linienWeiss, stricheKreuz,
-	// minStrichLaengeSenkrecht, minStrichLaengeWaagerecht, titel);
-	// return returnStricheKreuz;
-	// }
-
 	/**
-	 * @param linienWeiss
-	 *            Das Array mit der Weiss-Pixel-Anzahl: Wie oft tritt ein
-	 *            Weiss-Pixel auf Spalte[i] bzw. Zeile[i] auf?
-	 * @param linienLaenge
-	 *            L�nge von Spalte bzw. Zeile
+	 * Ermittelt die Ver�nderung der weissAnzahlen von Index zu Index+1.
+	 * 
+	 * @param weissAnzahlen
+	 * @param minStrichLaenge
 	 * @param linienName
-	 *            "Spalte" bzw. "Zeile"
-	 * @return Die Striche, die als Sudoku-Striche erkannt wurden.
+	 * @return Alle Spr�nge, deren abs(H�he) gr��er/gleich minStrichLaenge sind.
 	 */
-	static private StrichListe[] gibSudokuStriche(int[] linienWeiss, int minStrichLaenge, String titel,
-			String linienName) {
-		List<Sprung> spruenge = gibSprunghoehen(linienWeiss, minStrichLaenge, linienName);
-		StrichListe striche = gibLinienStriche(spruenge, titel, linienName);
+	private static List<Sprung> gibSprunghoehen(int[] weissAnzahlen, int minStrichLaenge, String linienName) {
+		ArrayList<Sprung> spruenge = new ArrayList<Sprung>();
 
-		StrichListe sudokuStriche[] = SudokuFinder.gibSudokuStriche(striche, linienName);
+		for (int i = 0; i < weissAnzahlen.length - 1; i++) {
+			int sprung = weissAnzahlen[i + 1] - weissAnzahlen[i];
 
-		return sudokuStriche;
+			if (Math.abs(sprung) >= minStrichLaenge) {
+				Sprung sprungSpeicher = new Sprung(i, sprung);
+				spruenge.add(sprungSpeicher);
+			}
+		}
+
+		// systemOut(String.format("%s: %s L�nge=%d",
+		// SudokuSucher.class.getName(), linienName, linienLaenge));
+		// Iterator<Sprung> iterator = spruenge.iterator();
+		// while(iterator.hasNext()){
+		// Sprung sprung = iterator.next();
+		// int weiss = weissAnzahlen[sprung.gibVonIndex()];
+		// systemOut(String.format("i%s=%4d Sprung=%3d von weiss=%4d",
+		// linienName, sprung.gibVonIndex(), sprung.gibSprungHoehe(), weiss));
+		// }
+
+		return spruenge;
 	}
 
 	/**
@@ -296,6 +253,49 @@ public class SudokuSucher { // implements LangerProzess{
 		}
 		StricheKreuz sudokuStriche = new StricheKreuz(spaltenSudokuStriche, zeilenSudokuStriche);
 		return sudokuStriche;
+	}
+
+	// private static StricheKreuz gibStriche(BufferedImage image, StricheKreuz
+	// stricheKreuz,
+	// int minStrichLaengeSenkrechtProzent,
+	// int minStrichLaengeWaagerechtProzent,
+	// String titel)
+	// {
+	// LinienWeiss linienWeiss = new LinienWeiss(image, null);
+	// int minStrichLaengeSenkrecht = (minStrichLaengeSenkrechtProzent *
+	// image.getHeight()) / 100;
+	// int minStrichLaengeWaagerecht = (minStrichLaengeWaagerechtProzent *
+	// image.getWidth()) / 100;
+	//
+	// StricheKreuz returnStricheKreuz = gibStriche(linienWeiss, stricheKreuz,
+	// minStrichLaengeSenkrecht, minStrichLaengeWaagerecht, titel);
+	// return returnStricheKreuz;
+	// }
+
+	/**
+	 * @param linienWeiss
+	 *            Das Array mit der Weiss-Pixel-Anzahl: Wie oft tritt ein
+	 *            Weiss-Pixel auf Spalte[i] bzw. Zeile[i] auf?
+	 * @param linienLaenge
+	 *            L�nge von Spalte bzw. Zeile
+	 * @param linienName
+	 *            "Spalte" bzw. "Zeile"
+	 * @return Die Striche, die als Sudoku-Striche erkannt wurden.
+	 */
+	static private StrichListe[] gibSudokuStriche(int[] linienWeiss, int minStrichLaenge, String titel,
+			String linienName) {
+		List<Sprung> spruenge = gibSprunghoehen(linienWeiss, minStrichLaenge, linienName);
+		StrichListe striche = gibLinienStriche(spruenge, titel, linienName);
+
+		StrichListe sudokuStriche[] = SudokuFinder.gibSudokuStriche(striche, linienName);
+
+		return sudokuStriche;
+	}
+
+	private static void systemOut(String text) {
+		if (istSystemOut) {
+			System.out.println(text);
+		}
 	}
 
 	// ===============================================================

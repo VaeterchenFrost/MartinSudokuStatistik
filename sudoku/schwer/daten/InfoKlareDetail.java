@@ -17,11 +17,34 @@ import sudoku.schwer.daten.LogikAnzahlen.LogikAnzahlFormatierer;
  *         an anzahlGesetzteEintraege und durchLauf > 1.
  */
 public class InfoKlareDetail implements AnzeigeInfo {
+	private class AnzeigeTextFormatierer implements LogikAnzahlFormatierer {
+		@Override
+		public String gibString(Logik_ID logikID, int anzahl) {
+			String sAnzahl = gibZahlTextPerUnterstrich(anzahl, 2);
+			String sLogik = SudokuLogik.gibNameKurz(logikID);
+			String s = String.format("%sx%s", sAnzahl, sLogik);
+			return s;
+		}
+	}
+
+	// ---------------------------------------------------------------------------------------
+	/**
+	 * @return Beschreibung des Aufbaus des Anzeigetextes
+	 */
+	public static String[] gibAnzeigeTextBeschreibung() {
+		String[] texte = { "Anzeige der Logik-Details:", "[fF]   X: nxO1", "fF   ---> Anzahl freier Felder",
+				"X    ---> Anzahl gesetze Zahlen (Eintr�ge)", "n   ---> Anzahl der Nutzung der Logik",
+				"O1 ---> Eine der Logiken (siehe rechts oben)" };
+		return texte;
+	}
+
 	private int durchLauf;
 	private ArrayList<BE_Logik> logikEintraege;
 	private int nFreieFelder;
 	private int nFreieZeilen;
+
 	private int nFreieSpalten;
+
 	private int nFreieKaesten;
 
 	public InfoKlareDetail(int durchLauf, ArrayList<BE_Logik> logikEintraege, int nFreieFelder, int nFreieZeilen,
@@ -38,6 +61,45 @@ public class InfoKlareDetail implements AnzeigeInfo {
 		this.logikEintraege.addAll(info.logikEintraege);
 	}
 
+	/**
+	 * @return Anzahl freier Felder
+	 */
+	public int gibAnzahlFreieFelder() {
+		return nFreieFelder;
+	}
+
+	/**
+	 * @return Anzahl freier K�sten
+	 */
+	public int gibAnzahlFreieGruppen() {
+		return nFreieKaesten + nFreieZeilen + nFreieSpalten;
+	}
+
+	// public LogikAnzahlen gibGenutzteLogiken() {
+	// return genutzteLogiken;
+	// }
+
+	/**
+	 * @return Anzahl freier K�sten
+	 */
+	public int gibAnzahlFreieKaesten() {
+		return nFreieKaesten;
+	}
+
+	/**
+	 * @return Anzahl freier Spalten
+	 */
+	public int gibAnzahlFreieSpalten() {
+		return nFreieSpalten;
+	}
+
+	/**
+	 * @return Anzahl freier Zeilen
+	 */
+	public int gibAnzahlFreieZeilen() {
+		return nFreieZeilen;
+	}
+
 	public int gibAnzahlGesetzteEintraege() {
 		int anzahlEintraege = 0;
 		for (BE_Logik logikEintrag : logikEintraege) {
@@ -47,6 +109,27 @@ public class InfoKlareDetail implements AnzeigeInfo {
 		}
 
 		return anzahlEintraege;
+	}
+
+	@Override
+	public String gibAnzeigeText() {
+		// double zeit = AnalysatorKlareZeit.gibDetailZeit(this);
+		int anzahlGesetzteEintraege = gibAnzahlGesetzteEintraege();
+		LogikAnzahlen logikAnzahlen = gibErfolgreicheLogiken();
+		String sLogikAnzahlen = logikAnzahlen.gibString(new AnzeigeTextFormatierer());
+
+		// String gruppenTypZeichen = "";
+		// if (anzahlGesetzteEintraege == 1){
+		// gruppenTypZeichen = gibOrtFest1GruppenTypZeichen();
+		// }
+
+		String s = String.format("[%s]    %s: %s", gibZahlTextPerUnterstrich(nFreieFelder, 2),
+				gibZahlTextPerUnterstrich(anzahlGesetzteEintraege, 2), sLogikAnzahlen);
+		return s;
+	}
+
+	public int gibDurchLauf() {
+		return durchLauf;
 	}
 
 	/**
@@ -80,67 +163,6 @@ public class InfoKlareDetail implements AnzeigeInfo {
 		return logikAnzahlen;
 	}
 
-	public int gibDurchLauf() {
-		return durchLauf;
-	}
-
-	// public LogikAnzahlen gibGenutzteLogiken() {
-	// return genutzteLogiken;
-	// }
-
-	/**
-	 * @return true wenn nur die Logik OrtFest1 vertreten ist
-	 */
-	public boolean istNurLogikOrtFest1() {
-		for (BE_Logik logikEintrag : logikEintraege) {
-			if (logikEintrag.logik != Logik_ID.ORTFEST1) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * @return Anzahl freier Felder
-	 */
-	public int gibAnzahlFreieFelder() {
-		return nFreieFelder;
-	}
-
-	/**
-	 * @return Anzahl freier Zeilen
-	 */
-	public int gibAnzahlFreieZeilen() {
-		return nFreieZeilen;
-	}
-
-	/**
-	 * @return Anzahl freier Spalten
-	 */
-	public int gibAnzahlFreieSpalten() {
-		return nFreieSpalten;
-	}
-
-	/**
-	 * @return Anzahl freier K�sten
-	 */
-	public int gibAnzahlFreieKaesten() {
-		return nFreieKaesten;
-	}
-
-	/**
-	 * @return Anzahl freier K�sten
-	 */
-	public int gibAnzahlFreieGruppen() {
-		return nFreieKaesten + nFreieZeilen + nFreieSpalten;
-	}
-
-	public double gibZeit() {
-		ArrayList<InfoKlareDetail> list = new ArrayList<>();
-		list.add(this);
-		return AnalysatorKlare.gibZeit(list);
-	}
-
 	private Gruppe.Typ gibOrtFest1GruppenTyp() {
 		Gruppe.Typ gruppenTyp = null;
 
@@ -160,53 +182,6 @@ public class InfoKlareDetail implements AnzeigeInfo {
 		return soloTyp;
 	}
 
-	String gibZahlTextPerUnterstrich(int zahl, int stringLaenge) {
-		String s = zahl == 0 ? "" : String.valueOf(zahl);
-
-		while (s.length() < stringLaenge) {
-			s = '_' + s;
-		}
-		return s;
-	}
-
-	private class AnzeigeTextFormatierer implements LogikAnzahlFormatierer {
-		@Override
-		public String gibString(Logik_ID logikID, int anzahl) {
-			String sAnzahl = gibZahlTextPerUnterstrich(anzahl, 2);
-			String sLogik = SudokuLogik.gibNameKurz(logikID);
-			String s = String.format("%sx%s", sAnzahl, sLogik);
-			return s;
-		}
-	}
-
-	@Override
-	public String gibAnzeigeText() {
-		// double zeit = AnalysatorKlareZeit.gibDetailZeit(this);
-		int anzahlGesetzteEintraege = gibAnzahlGesetzteEintraege();
-		LogikAnzahlen logikAnzahlen = gibErfolgreicheLogiken();
-		String sLogikAnzahlen = logikAnzahlen.gibString(new AnzeigeTextFormatierer());
-
-		// String gruppenTypZeichen = "";
-		// if (anzahlGesetzteEintraege == 1){
-		// gruppenTypZeichen = gibOrtFest1GruppenTypZeichen();
-		// }
-
-		String s = String.format("[%s]    %s: %s", gibZahlTextPerUnterstrich(nFreieFelder, 2),
-				gibZahlTextPerUnterstrich(anzahlGesetzteEintraege, 2), sLogikAnzahlen);
-		return s;
-	}
-
-	// ---------------------------------------------------------------------------------------
-	/**
-	 * @return Beschreibung des Aufbaus des Anzeigetextes
-	 */
-	public static String[] gibAnzeigeTextBeschreibung() {
-		String[] texte = { "Anzeige der Logik-Details:", "[fF]   X: nxO1", "fF   ---> Anzahl freier Felder",
-				"X    ---> Anzahl gesetze Zahlen (Eintr�ge)", "n   ---> Anzahl der Nutzung der Logik",
-				"O1 ---> Eine der Logiken (siehe rechts oben)" };
-		return texte;
-	}
-
 	// ---------------------------------------------------------------------------------------
 	@Override
 	public String gibToolTip() {
@@ -217,12 +192,31 @@ public class InfoKlareDetail implements AnzeigeInfo {
 		return s;
 	}
 
-	@Override
-	public String toString() {
-		return "InfoKlareDetail [anzahlGesetzteEintraege=" + gibAnzahlGesetzteEintraege() + ", durchLauf=" + durchLauf
-				+ ", erfolgreicheLogiken=" + gibErfolgreicheLogiken() + ", gruppenTypen="
-				+ gibOrtFest1GruppenTypZeichen() + ", nFreieFelder=" + nFreieFelder + ", nFreieZeilen=" + nFreieZeilen
-				+ ", nFreieSpalten=" + nFreieSpalten + ", nFreieKaesten=" + nFreieKaesten + "]";
+	String gibZahlTextPerUnterstrich(int zahl, int stringLaenge) {
+		String s = zahl == 0 ? "" : String.valueOf(zahl);
+
+		while (s.length() < stringLaenge) {
+			s = '_' + s;
+		}
+		return s;
+	}
+
+	public double gibZeit() {
+		ArrayList<InfoKlareDetail> list = new ArrayList<>();
+		list.add(this);
+		return AnalysatorKlare.gibZeit(list);
+	}
+
+	/**
+	 * @return true wenn nur die Logik OrtFest1 vertreten ist
+	 */
+	public boolean istNurLogikOrtFest1() {
+		for (BE_Logik logikEintrag : logikEintraege) {
+			if (logikEintrag.logik != Logik_ID.ORTFEST1) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public void systemOut(int index) {
@@ -232,5 +226,13 @@ public class InfoKlareDetail implements AnzeigeInfo {
 			BE_Logik logikEintrag = logikEintraege.get(iLogikEintrag);
 			System.out.println(logikEintrag.gibKurzText());
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "InfoKlareDetail [anzahlGesetzteEintraege=" + gibAnzahlGesetzteEintraege() + ", durchLauf=" + durchLauf
+				+ ", erfolgreicheLogiken=" + gibErfolgreicheLogiken() + ", gruppenTypen="
+				+ gibOrtFest1GruppenTypZeichen() + ", nFreieFelder=" + nFreieFelder + ", nFreieZeilen=" + nFreieZeilen
+				+ ", nFreieSpalten=" + nFreieSpalten + ", nFreieKaesten=" + nFreieKaesten + "]";
 	}
 }

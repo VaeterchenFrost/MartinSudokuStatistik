@@ -42,24 +42,6 @@ class Abstand {
 	}
 
 	/**
-	 * @param abstaende
-	 * @return In der Reihenfolge der Abst�nde die auftretenden Striche
-	 */
-	static public StrichListe gibStrichListe(List<Abstand> abstaende) {
-		StrichListe strichListe = new StrichListe();
-
-		for (int i = 0; i < abstaende.size(); i++) {
-			Abstand abstand = abstaende.get(i);
-			if (i == 0) {
-				// Auch den strich1 eintragen
-				strichListe.add(abstand.strich1);
-			}
-			strichListe.add(abstand.strich2);
-		}
-		return strichListe;
-	}
-
-	/**
 	 * @param abstand
 	 *            Abstand mit dem doppelten des Soll-Abstandes
 	 * @return Die beiden Abst�nde jeweils mit dem Soll-Abstand, die den abstand
@@ -96,6 +78,24 @@ class Abstand {
 	static public Abstand gibErsatzAbstand(Abstand abstand1, Abstand abstand2) {
 		Abstand abstand = new Abstand(abstand1.strich2, abstand2.strich1);
 		return abstand;
+	}
+
+	/**
+	 * @param abstaende
+	 * @return In der Reihenfolge der Abst�nde die auftretenden Striche
+	 */
+	static public StrichListe gibStrichListe(List<Abstand> abstaende) {
+		StrichListe strichListe = new StrichListe();
+
+		for (int i = 0; i < abstaende.size(); i++) {
+			Abstand abstand = abstaende.get(i);
+			if (i == 0) {
+				// Auch den strich1 eintragen
+				strichListe.add(abstand.strich1);
+			}
+			strichListe.add(abstand.strich2);
+		}
+		return strichListe;
 	}
 
 	// ===========================================================

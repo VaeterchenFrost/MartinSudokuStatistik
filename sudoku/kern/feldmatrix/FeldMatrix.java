@@ -54,124 +54,6 @@ public class FeldMatrix {
 		}
 	}
 
-	public void setzeProtokoll(Protokoll protokoll) {
-		// Den Feldern den ProtokollSchreiber setzen
-		for (int i = 0; i < felder.size(); i++) {
-			felder.get(i).setzeProtokollSchreiber(protokoll);
-		}
-
-		// in Protokoll muss vor der Arbeit der ProtokollEintragSetzer gesetzt
-		// sein:
-		ProtokollEintragSetzer protokollEintragSetzer = new ProtokollEintragSetzer(this);
-		protokoll.setzeEintragSetzer(protokollEintragSetzer);
-	}
-
-	/**
-	 * Ist die minimale Vorbereitung f�r Mehrfachsudoku: Offset wird schon bei
-	 * Anzeigen ber�cksichtigt.
-	 */
-	protected FeldNummer gibOffset() {
-		return null;
-	}
-
-	// gibt true zur�ck wenn es keine freien Felder mehr gibt
-	/**
-	 * @return true wenn es noch freie Felder gibt
-	 */
-	public boolean istUnFertig() {
-		return felder.existiertFreiesFeld();
-	}
-
-	// Zeile 1 bis 9, Spalte 1 bis 9
-	protected Feld gibFeld(FeldNummer feldNummer) throws Exc {
-		FeldMatrix.kontrolliereFeldNummer(feldNummer);
-		Feld feld = feldNummern.get(feldNummer);
-
-		return feld;
-	}
-
-	// Zeile 1 bis 9, Spalte 1 bis 9
-	public FeldInfo gibFeldInfo(FeldNummer feldNummer) throws Exc {
-		FeldMatrix.kontrolliereFeldNummer(feldNummer);
-		Feld feld = feldNummern.get(feldNummer);
-		FeldInfo feldInfo = new FeldInfo(feld);
-		feld.setzeMarkierung(null);
-		return feldInfo;
-	}
-
-	public FeldNummerListe gibFreieFelder() {
-		FeldListe feldListe = this.felder.gibFreieFelder();
-		FeldNummerListe liste = new FeldNummerListe(feldListe);
-		return liste;
-	}
-
-	public FeldNummerListe gibAlleFeldNummern() {
-		FeldNummerListe liste = new FeldNummerListe(felder);
-		return liste;
-	}
-
-	/**
-	 * @return Alle Felder, die die gro�e Anzahl M�glicher besitzen
-	 */
-	public FeldInfoListe gibFelderMitDenMeistenMoeglichen() {
-		int nMaxMoegliche = felder.gibMoeglicheAnzahlMax();
-		FeldListe returnFelder = felder.gibMoeglicheN(nMaxMoegliche);
-		return new FeldInfoListe(returnFelder);
-	}
-
-	public FeldNummerListe gibFelderVersuchStart() {
-		return felder.gibFelderVersuchStart();
-	}
-
-	/**
-	 * @return F�r alle Felder die Vorgabe: Felder ohne Vorgabe kommen mit "0"
-	 *         zur�ck.
-	 */
-	public InfoSudoku gibVorgaben() {
-		FeldInfoListe infos = new FeldInfoListe();
-		for (Feld feld : felder) {
-			int vorgabe = feld.gibVorgabe();
-			FeldInfo feldInfo = FeldInfo.gibVorgabeInstanz(feld.gibFeldNummer(), vorgabe);
-			infos.add(feldInfo);
-		}
-		InfoSudoku infoSudoku = new InfoSudoku(infos);
-		return infoSudoku;
-	}
-
-	/**
-	 * Alle Felder als FeldInfos
-	 */
-	public InfoSudoku gibFeldInfos() {
-		InfoSudoku f = new InfoSudoku(felder);
-		return f;
-	}
-
-	/**
-	 * L�scht alle Vorgaben und Eintr�ge
-	 */
-	public void reset() {
-		for (int i = 0; i < felder.size(); i++) {
-			felder.get(i).reset();
-		}
-		ebenen.reset();
-	}
-
-	/**
-	 * L�scht das sudoku und stellt die Vorgaben aus dem InfoSudoku
-	 * 
-	 * @param vorgaben
-	 *            InfoSudoku: Es werden nur seine Vorgaben �bernommen
-	 * @throws Exc
-	 *             falls der Text nicht gelesen werden kann
-	 */
-	public void reset(InfoSudoku vorgaben) throws Exc {
-		reset();
-		for (Map.Entry<FeldNummer, FeldInfo> vorgabe : vorgaben.entrySet()) {
-			Feld feld = this.gibFeld(vorgabe.getKey());
-			feld.setzeVorgabeReset(vorgabe.getValue().gibVorgabe());
-		}
-	}
-
 	/**
 	 * Ver�ndert das Sudoku durch (unkritisches) Bewegen der Vorgaben, z.B.
 	 * Drehen des Sudoku. Diese einfache Implementation ist nur m�glich ohne
@@ -198,11 +80,6 @@ public class FeldMatrix {
 		}
 	}
 
-	// Gibt die Anzahl der Vorgaben zur�ck
-	public int gibAnzahlVorgaben() {
-		return felder.gibAnzahlVorgaben();
-	}
-
 	public int ebeneGibNummer() {
 		return ebenen.gibNummer();
 	}
@@ -211,52 +88,115 @@ public class FeldMatrix {
 		return ebenen.laeuftEine();
 	}
 
-	/**
-	 * @param zahlen
-	 *            Setzt diese unbeingt als M�gliche
-	 */
-	public void setzeMoeglicheUnbedingt(ZahlenListe zahlen) {
-		if (zahlen == null) {
-			return;
-		}
-		for (FeldNummerMitZahl zahl : zahlen) {
-			Feld feld = feldNummern.get(zahl.gibFeldNummer());
-			feld.setzeMoeglicheUnbedingt(zahl.gibZahl());
-		}
+	public FeldNummerListe gibAlleFeldNummern() {
+		FeldNummerListe liste = new FeldNummerListe(felder);
+		return liste;
 	}
 
-	public void wandleEintraegeZuVorgaben() {
-		this.ebenen.reset();
-		for (int i = 0; i < felder.size(); i++) {
-			felder.get(i).wandleEintragZuVorgabe();
-		}
+	// Gibt die Anzahl der Vorgaben zur�ck
+	public int gibAnzahlVorgaben() {
+		return felder.gibAnzahlVorgaben();
+	}
+
+	// Zeile 1 bis 9, Spalte 1 bis 9
+	protected Feld gibFeld(FeldNummer feldNummer) throws Exc {
+		FeldMatrix.kontrolliereFeldNummer(feldNummer);
+		Feld feld = feldNummern.get(feldNummer);
+
+		return feld;
 	}
 
 	/**
-	 * @return Felder suchen ein Problem
-	 * @see Feld.sucheProblem()
+	 * @return Alle Felder, die die gro�e Anzahl M�glicher besitzen
 	 */
-	protected Problem sucheFeldProblem() {
-		for (int i = 0; i < felder.size(); i++) {
-			Problem problem = felder.get(i).sucheProblem();
-			if (problem != null) {
-				return problem;
-			}
-		}
+	public FeldInfoListe gibFelderMitDenMeistenMoeglichen() {
+		int nMaxMoegliche = felder.gibMoeglicheAnzahlMax();
+		FeldListe returnFelder = felder.gibMoeglicheN(nMaxMoegliche);
+		return new FeldInfoListe(returnFelder);
+	}
+
+	public FeldNummerListe gibFelderVersuchStart() {
+		return felder.gibFelderVersuchStart();
+	}
+
+	// Zeile 1 bis 9, Spalte 1 bis 9
+	public FeldInfo gibFeldInfo(FeldNummer feldNummer) throws Exc {
+		FeldMatrix.kontrolliereFeldNummer(feldNummer);
+		Feld feld = feldNummern.get(feldNummer);
+		FeldInfo feldInfo = new FeldInfo(feld);
+		feld.setzeMarkierung(null);
+		return feldInfo;
+	}
+
+	/**
+	 * Alle Felder als FeldInfos
+	 */
+	public InfoSudoku gibFeldInfos() {
+		InfoSudoku f = new InfoSudoku(felder);
+		return f;
+	}
+
+	public FeldNummerListe gibFreieFelder() {
+		FeldListe feldListe = this.felder.gibFreieFelder();
+		FeldNummerListe liste = new FeldNummerListe(feldListe);
+		return liste;
+	}
+
+	/**
+	 * Ist die minimale Vorbereitung f�r Mehrfachsudoku: Offset wird schon bei
+	 * Anzeigen ber�cksichtigt.
+	 */
+	protected FeldNummer gibOffset() {
 		return null;
 	}
 
 	/**
-	 * @param feldNummer
-	 *            Zeile 1 bis 9, Spalte 1 bis 9
-	 * @param vorgabe
-	 * @throws Exc
+	 * @return F�r alle Felder die Vorgabe: Felder ohne Vorgabe kommen mit "0"
+	 *         zur�ck.
 	 */
-	public void setzeVorgabe(FeldNummer feldNummer, int vorgabe) throws Exc {
-		FeldMatrix.kontrolliereFeldNummer(feldNummer);
-		Feld feld = gibFeld(feldNummer);
+	public InfoSudoku gibVorgaben() {
+		FeldInfoListe infos = new FeldInfoListe();
+		for (Feld feld : felder) {
+			int vorgabe = feld.gibVorgabe();
+			FeldInfo feldInfo = FeldInfo.gibVorgabeInstanz(feld.gibFeldNummer(), vorgabe);
+			infos.add(feldInfo);
+		}
+		InfoSudoku infoSudoku = new InfoSudoku(infos);
+		return infoSudoku;
+	}
 
-		feld.setzeVorgabe(vorgabe);
+	// gibt true zur�ck wenn es keine freien Felder mehr gibt
+	/**
+	 * @return true wenn es noch freie Felder gibt
+	 */
+	public boolean istUnFertig() {
+		return felder.existiertFreiesFeld();
+	}
+
+	/**
+	 * L�scht alle Vorgaben und Eintr�ge
+	 */
+	public void reset() {
+		for (int i = 0; i < felder.size(); i++) {
+			felder.get(i).reset();
+		}
+		ebenen.reset();
+	}
+
+	/**
+	 * L�scht das sudoku und stellt die Vorgaben aus dem InfoSudoku
+	 * 
+	 * @param vorgaben
+	 *            InfoSudoku: Es werden nur seine Vorgaben �bernommen
+	 * @throws Exc
+	 *             falls der Text nicht gelesen werden kann
+	 */
+	public void reset(InfoSudoku vorgaben) throws Exc {
+		reset();
+		for (Map.Entry<FeldNummer, FeldInfo> vorgabe : vorgaben.entrySet()) {
+			Feld feld = this.gibFeld(vorgabe.getKey());
+			feld.setzeVorgabeReset(vorgabe.getValue().gibVorgabe());
+		}
 	}
 
 	/**
@@ -316,6 +256,20 @@ public class FeldMatrix {
 	}
 
 	/**
+	 * @param zahlen
+	 *            Setzt diese unbeingt als M�gliche
+	 */
+	public void setzeMoeglicheUnbedingt(ZahlenListe zahlen) {
+		if (zahlen == null) {
+			return;
+		}
+		for (FeldNummerMitZahl zahl : zahlen) {
+			Feld feld = feldNummern.get(zahl.gibFeldNummer());
+			feld.setzeMoeglicheUnbedingt(zahl.gibZahl());
+		}
+	}
+
+	/**
 	 * In allen meinen Feldern, die in vorlage frei sind, setze ich die Vorgabe
 	 * auf 0
 	 * 
@@ -330,6 +284,45 @@ public class FeldMatrix {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void setzeProtokoll(Protokoll protokoll) {
+		// Den Feldern den ProtokollSchreiber setzen
+		for (int i = 0; i < felder.size(); i++) {
+			felder.get(i).setzeProtokollSchreiber(protokoll);
+		}
+
+		// in Protokoll muss vor der Arbeit der ProtokollEintragSetzer gesetzt
+		// sein:
+		ProtokollEintragSetzer protokollEintragSetzer = new ProtokollEintragSetzer(this);
+		protokoll.setzeEintragSetzer(protokollEintragSetzer);
+	}
+
+	/**
+	 * @param feldNummer
+	 *            Zeile 1 bis 9, Spalte 1 bis 9
+	 * @param vorgabe
+	 * @throws Exc
+	 */
+	public void setzeVorgabe(FeldNummer feldNummer, int vorgabe) throws Exc {
+		FeldMatrix.kontrolliereFeldNummer(feldNummer);
+		Feld feld = gibFeld(feldNummer);
+
+		feld.setzeVorgabe(vorgabe);
+	}
+
+	/**
+	 * @return Felder suchen ein Problem
+	 * @see Feld.sucheProblem()
+	 */
+	protected Problem sucheFeldProblem() {
+		for (int i = 0; i < felder.size(); i++) {
+			Problem problem = felder.get(i).sucheProblem();
+			if (problem != null) {
+				return problem;
+			}
+		}
+		return null;
 	}
 
 	public void systemOut(String wo) {
@@ -388,6 +381,13 @@ public class FeldMatrix {
 
 				System.out.println(sEbene);
 			} // if (! ebenenFelder.isEmpty()
+		}
+	}
+
+	public void wandleEintraegeZuVorgaben() {
+		this.ebenen.reset();
+		for (int i = 0; i < felder.size(); i++) {
+			felder.get(i).wandleEintragZuVorgabe();
 		}
 	}
 

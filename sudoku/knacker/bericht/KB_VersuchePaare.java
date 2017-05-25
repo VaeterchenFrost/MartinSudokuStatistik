@@ -23,17 +23,17 @@ public class KB_VersuchePaare extends KB_Eintrag1Zeile {
 		this.istKontrollVersuchErlaubt = istKontrollVersuchErlaubt;
 	}
 
-	@Override
-	public String toString() {
-		return "VersuchePaare [anzahlPaare=" + anzahlPaare + ", felderMit2Moeglichen=" + istFelderMit2Moeglichen
-				+ ", istKontrollVersuchErlaubt=" + istKontrollVersuchErlaubt + "]";
-	}
-
 	public boolean benutzteFeldPaare() {
 		return !istFelderMit2Moeglichen;
 	}
 
 	public boolean benutzteKontrollVersuch() {
 		return istKontrollVersuchErlaubt;
+	}
+
+	@Override
+	public String toString() {
+		return "VersuchePaare [anzahlPaare=" + anzahlPaare + ", felderMit2Moeglichen=" + istFelderMit2Moeglichen
+				+ ", istKontrollVersuchErlaubt=" + istKontrollVersuchErlaubt + "]";
 	}
 }

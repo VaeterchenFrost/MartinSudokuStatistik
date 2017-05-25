@@ -39,7 +39,7 @@ abstract class IteratorRand implements Iterator<Integer> {
 		init(r, istRichtungIndex0, testRand);
 	}
 
-	abstract void init(Rectangle r, boolean istRichtungIndex0, int testRand);
+	abstract Rectangle gibLinienRechteck();
 
 	int gibVorigenIndex() {
 		if (istRichtungIndex0) {
@@ -58,7 +58,7 @@ abstract class IteratorRand implements Iterator<Integer> {
 		}
 	}
 
-	abstract Rectangle gibLinienRechteck();
+	abstract void init(Rectangle r, boolean istRichtungIndex0, int testRand);
 
 	@Override
 	public Integer next() {

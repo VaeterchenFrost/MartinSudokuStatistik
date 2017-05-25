@@ -40,8 +40,22 @@ class BildFeldGruppe extends ArrayList<BildFeld> {
 		}
 	}
 
-	BufferedImage gibImage() {
-		return image;
+	/**
+	 * Dreht die Bildfelder um 180 Grad
+	 * 
+	 * @param bildDimension
+	 */
+	private void dreheUm180Grad(Dimension bildDimension) {
+		for (int i = 0; i < this.size(); i++) {
+			BildFeld bildFeld = this.get(i);
+			bildFeld.drehe90GradRechts(bildDimension);
+		}
+
+		Dimension bildDimension2 = new Dimension(bildDimension.height, bildDimension.width);
+		for (int i = 0; i < this.size(); i++) {
+			BildFeld bildFeld = this.get(i);
+			bildFeld.drehe90GradRechts(bildDimension2);
+		}
 	}
 
 	/**
@@ -97,6 +111,141 @@ class BildFeldGruppe extends ArrayList<BildFeld> {
 		// entry.getValue().gibFeldRechteck()));
 		// }
 		// }
+	}
+
+	BufferedImage gibImage() {
+		return image;
+	}
+
+	/**
+	 * @return null falls nicht ausreichend Vorgaben gelesen wurden oder das
+	 *         Sudoku
+	 */
+	private InfoSudoku gibSudoku() {
+		FeldInfoListe feldInfoListe = new FeldInfoListe();
+		for (int i = 0; i < this.size(); i++) {
+			BildFeld bildFeld = this.get(i);
+			Integer zahl = bildFeld.gibZahl();
+			if (zahl != null) {
+				FeldInfo feldInfo = FeldInfo.gibVorgabeInstanz(bildFeld.gibFeldNummer(), zahl);
+				feldInfoListe.add(feldInfo);
+			}
+		}
+
+		InfoSudoku sudoku = null;
+		if (feldInfoListe.size() >= SudokuLogik.gibAnzahlVorgabenMin()) {
+			sudoku = new InfoSudoku(feldInfoListe);
+		}
+		return sudoku;
+	}
+
+	InfoSudoku gibSudoku(BufferedImage image) {
+		this.image = image;
+		return gibSudokuIntern();
+	}
+
+	private InfoSudoku gibSudokuIntern() {
+		// Alle leeren Felder von der weiteren Betrachtung ausschlie�en
+		entferneLeereFelder(image);
+
+		// Die Zahlen-Rechtecke (und ZahlBild-Info) je BildFeld erstellen.
+		// Das ist separat n�tig f�r die Ermittlung des Seitenformates der
+		// Zahlen-Rechtecke
+		// Hier als leer erkannte Felder werden von der weiteren Betrachtung
+		// ausgeschlossen
+		setzeZahlenRechtecke(image);
+
+		// Nach dem Drehen des Bildes sitzen die Zahlenrechtecke nicht mehr
+		// 100%ig.
+		boolean istBildGedreht = false;
+
+		// Hochformat erzwingen
+		Dimension bildDimension = new Dimension(image.getWidth(), image.getHeight());
+		boolean warQuerFormat = setzeZahlenRechteckeInHochformat(bildDimension);
+		if (warQuerFormat) {
+			istBildGedreht = true;
+			image = Bild.rotiere90Grad(image);
+		}
+
+		// Zahlen setzen anhand der BildInfo
+		final int anzahlZahlenMin = 3;
+		int anzahlZahlen = setzeZahlen();
+		if (anzahlZahlen < anzahlZahlenMin) {
+			// 180 Drehen
+			istBildGedreht = true;
+			Dimension bildDimension2 = new Dimension(image.getWidth(), image.getHeight());
+			dreheUm180Grad(bildDimension2);
+			BufferedImage neuesBild90 = Bild.rotiere90Grad(image);
+			image = Bild.rotiere90Grad(neuesBild90);
+		}
+
+		if (istBildGedreht) {
+			// Zahlrechteck erneut erstellen
+			setzeZahlenRechtecke(image);
+			// Zahlen setzen anhand der BildInfo
+			anzahlZahlen = setzeZahlen();
+		}
+
+		if (anzahlZahlen >= anzahlZahlenMin) {
+			// Zahlen setzen anhand der Ausg�nge der Zahlbilder
+			setzeZahlen(image);
+		}
+
+		systemOutErgebnis(image);
+		InfoSudoku sudoku = gibSudoku();
+		return sudoku;
+	}
+
+	/**
+	 * Setzt die Zahlen anhand der BildInfo
+	 * 
+	 * @return Anzahl der gesetzten Zahlen
+	 */
+	private int setzeZahlen() {
+		int anzahl = 0;
+		// Jedes Feld seine Zahl erstellen lassen
+		for (int i = 0; i < this.size(); i++) {
+			BildFeld bildFeld = this.get(i);
+			Integer zahl = bildFeld.setzeZahl();
+			if (zahl != null) {
+				anzahl++;
+			}
+		}
+
+		if (ZahlLeser.istSystemOut()) {
+			System.out.println(
+					String.format("%s.setzeZahlen() in: ----------------------------------", getClass().getName()));
+			for (int i = 0; i < this.size(); i++) {
+				BildFeld bildFeld = this.get(i);
+				Integer zahl = bildFeld.gibZahl();
+				if (zahl != null) {
+					System.out.println(String.format("%d in %s", zahl, bildFeld.gibFeldNummer()));
+				}
+			}
+		}
+		return anzahl;
+	}
+
+	/**
+	 * Setzt die Zahl anhand der Ausg�nge in den Zahlenbildern
+	 * 
+	 * @param image
+	 */
+	private void setzeZahlen(BufferedImage image) {
+		// Jedes Feld seine Zahl erstellen lassen
+		for (int i = 0; i < this.size(); i++) {
+			BildFeld bildFeld = this.get(i);
+			bildFeld.setzeZahl(image);
+		}
+
+		if (ZahlLeser.istSystemOut()) {
+			System.out.println(
+					String.format("%s.setzeZahl() in: ----------------------------------", getClass().getName()));
+			for (int i = 0; i < this.size(); i++) {
+				BildFeld bildFeld = this.get(i);
+				System.out.println(String.format("%s in %s", bildFeld.gibZahl(), bildFeld.gibFeldNummer()));
+			}
+		}
 	}
 
 	/**
@@ -190,76 +339,6 @@ class BildFeldGruppe extends ArrayList<BildFeld> {
 		return !istHochFormat;
 	}
 
-	/**
-	 * Dreht die Bildfelder um 180 Grad
-	 * 
-	 * @param bildDimension
-	 */
-	private void dreheUm180Grad(Dimension bildDimension) {
-		for (int i = 0; i < this.size(); i++) {
-			BildFeld bildFeld = this.get(i);
-			bildFeld.drehe90GradRechts(bildDimension);
-		}
-
-		Dimension bildDimension2 = new Dimension(bildDimension.height, bildDimension.width);
-		for (int i = 0; i < this.size(); i++) {
-			BildFeld bildFeld = this.get(i);
-			bildFeld.drehe90GradRechts(bildDimension2);
-		}
-	}
-
-	/**
-	 * Setzt die Zahlen anhand der BildInfo
-	 * 
-	 * @return Anzahl der gesetzten Zahlen
-	 */
-	private int setzeZahlen() {
-		int anzahl = 0;
-		// Jedes Feld seine Zahl erstellen lassen
-		for (int i = 0; i < this.size(); i++) {
-			BildFeld bildFeld = this.get(i);
-			Integer zahl = bildFeld.setzeZahl();
-			if (zahl != null) {
-				anzahl++;
-			}
-		}
-
-		if (ZahlLeser.istSystemOut()) {
-			System.out.println(
-					String.format("%s.setzeZahlen() in: ----------------------------------", getClass().getName()));
-			for (int i = 0; i < this.size(); i++) {
-				BildFeld bildFeld = this.get(i);
-				Integer zahl = bildFeld.gibZahl();
-				if (zahl != null) {
-					System.out.println(String.format("%d in %s", zahl, bildFeld.gibFeldNummer()));
-				}
-			}
-		}
-		return anzahl;
-	}
-
-	/**
-	 * Setzt die Zahl anhand der Ausg�nge in den Zahlenbildern
-	 * 
-	 * @param image
-	 */
-	private void setzeZahlen(BufferedImage image) {
-		// Jedes Feld seine Zahl erstellen lassen
-		for (int i = 0; i < this.size(); i++) {
-			BildFeld bildFeld = this.get(i);
-			bildFeld.setzeZahl(image);
-		}
-
-		if (ZahlLeser.istSystemOut()) {
-			System.out.println(
-					String.format("%s.setzeZahl() in: ----------------------------------", getClass().getName()));
-			for (int i = 0; i < this.size(); i++) {
-				BildFeld bildFeld = this.get(i);
-				System.out.println(String.format("%s in %s", bildFeld.gibZahl(), bildFeld.gibFeldNummer()));
-			}
-		}
-	}
-
 	private void systemOutErgebnis(BufferedImage image) {
 		if (ZahlLeser.istSystemOut()) {
 			System.out.println(String.format("%s Ergebnisse: ---------------------------------", getClass().getName()));
@@ -268,84 +347,5 @@ class BildFeldGruppe extends ArrayList<BildFeld> {
 				bildFeld.systemOutErgebnis(image);
 			}
 		}
-	}
-
-	/**
-	 * @return null falls nicht ausreichend Vorgaben gelesen wurden oder das
-	 *         Sudoku
-	 */
-	private InfoSudoku gibSudoku() {
-		FeldInfoListe feldInfoListe = new FeldInfoListe();
-		for (int i = 0; i < this.size(); i++) {
-			BildFeld bildFeld = this.get(i);
-			Integer zahl = bildFeld.gibZahl();
-			if (zahl != null) {
-				FeldInfo feldInfo = FeldInfo.gibVorgabeInstanz(bildFeld.gibFeldNummer(), zahl);
-				feldInfoListe.add(feldInfo);
-			}
-		}
-
-		InfoSudoku sudoku = null;
-		if (feldInfoListe.size() >= SudokuLogik.gibAnzahlVorgabenMin()) {
-			sudoku = new InfoSudoku(feldInfoListe);
-		}
-		return sudoku;
-	}
-
-	private InfoSudoku gibSudokuIntern() {
-		// Alle leeren Felder von der weiteren Betrachtung ausschlie�en
-		entferneLeereFelder(image);
-
-		// Die Zahlen-Rechtecke (und ZahlBild-Info) je BildFeld erstellen.
-		// Das ist separat n�tig f�r die Ermittlung des Seitenformates der
-		// Zahlen-Rechtecke
-		// Hier als leer erkannte Felder werden von der weiteren Betrachtung
-		// ausgeschlossen
-		setzeZahlenRechtecke(image);
-
-		// Nach dem Drehen des Bildes sitzen die Zahlenrechtecke nicht mehr
-		// 100%ig.
-		boolean istBildGedreht = false;
-
-		// Hochformat erzwingen
-		Dimension bildDimension = new Dimension(image.getWidth(), image.getHeight());
-		boolean warQuerFormat = setzeZahlenRechteckeInHochformat(bildDimension);
-		if (warQuerFormat) {
-			istBildGedreht = true;
-			image = Bild.rotiere90Grad(image);
-		}
-
-		// Zahlen setzen anhand der BildInfo
-		final int anzahlZahlenMin = 3;
-		int anzahlZahlen = setzeZahlen();
-		if (anzahlZahlen < anzahlZahlenMin) {
-			// 180 Drehen
-			istBildGedreht = true;
-			Dimension bildDimension2 = new Dimension(image.getWidth(), image.getHeight());
-			dreheUm180Grad(bildDimension2);
-			BufferedImage neuesBild90 = Bild.rotiere90Grad(image);
-			image = Bild.rotiere90Grad(neuesBild90);
-		}
-
-		if (istBildGedreht) {
-			// Zahlrechteck erneut erstellen
-			setzeZahlenRechtecke(image);
-			// Zahlen setzen anhand der BildInfo
-			anzahlZahlen = setzeZahlen();
-		}
-
-		if (anzahlZahlen >= anzahlZahlenMin) {
-			// Zahlen setzen anhand der Ausg�nge der Zahlbilder
-			setzeZahlen(image);
-		}
-
-		systemOutErgebnis(image);
-		InfoSudoku sudoku = gibSudoku();
-		return sudoku;
-	}
-
-	InfoSudoku gibSudoku(BufferedImage image) {
-		this.image = image;
-		return gibSudokuIntern();
 	}
 }

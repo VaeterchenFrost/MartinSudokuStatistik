@@ -44,10 +44,6 @@ public class Loesung {
 		return this.infoSudoku;
 	}
 
-	public VersuchStarts gibVersuchStarts() {
-		return this.versuchStarts;
-	}
-
 	public String gibText() {
 		String s = String.format("%s %s", gibTextEintraege(), versuchStarts.gibText());
 		return s;
@@ -89,5 +85,9 @@ public class Loesung {
 		txt += "|";
 
 		return txt;
+	}
+
+	public VersuchStarts gibVersuchStarts() {
+		return this.versuchStarts;
 	}
 }

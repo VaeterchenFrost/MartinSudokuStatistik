@@ -20,103 +20,82 @@ public class SudokuFinder {
 	// erg�nzbar sind.
 	static final private int anzahlAbstaendeMin = anzahlSudokuLinien - 2;
 
-	static private void systemOut(List<Abstand> abstaende, String titel) {
-		if (istSystemOut) {
-			System.out.print(titel + " " + abstaende.size() + " Abst�nde:");
-			for (Abstand abstand : abstaende) {
-				System.out.print(" " + abstand.gibAbstand());
-			}
-			System.out.println("");
-		}
-	}
-
-	static private void systemOut(String text) {
-		if (istSystemOut) {
-			System.out.println(text);
-		}
-	}
-
 	/**
 	 * @param striche
-	 *            Es wird versucht, aus der Gesamtheit dieser Striche echte
-	 *            Sudoku-Striche zu erkennen. Es wird vorausgesetzt, dass die
-	 *            Striche nach aufsteigendem Index aufgelistet sind.
-	 * @param linienName
-	 * @return Die Striche, die als Sudoku-Striche erkannt wurden. F�r jedes
-	 *         Sudoku extra. null: bei zuwenigen Strichen Leeres Array falls
-	 *         keine Sudoku-Striche erkannt werden konnten ansonsten stets eine
-	 *         Gruppe von den 10 erkannten Sudoku-Strichen.
+	 *            Die erkannten Striche
+	 * @return Die 10 Striche eines Sudoku (vom Ende der Strichliste an gesucht)
+	 *         oder null wenn keine Sudoku-Striche erkannt wurden
 	 */
-	static public StrichListe[] gibSudokuStriche(StrichListe striche, String linienName) {
-		systemOut(String.format("%s.%s %s)", SudokuFinder.class.getName(), " gibSudokuStriche()", linienName));
-		systemOut(" ----------------------------------------------------------------------");
+	static private StrichListe gib1StrichGruppe(StrichListe striche, String linienName) {
+		// Abst�nde zwischen je zwei benachbarten Strichen ermitteln
+		List<Abstand> abstaende = Abstand.gibAbstaende(striche);
 
-		if (striche.isEmpty()) {
-			systemOut(String.format("Kein Ergebnis. Grund: Habe keine Striche bekommen"));
+		if (abstaende == null) {
+			systemOut(String.format(
+					"gib1StrichGruppe() %s: ------------------------------------ Keine Abst�nde: %d Striche sind zuwenig (%d sind n�tig)",
+					linienName, striche.size(), anzahlAbstaendeMin));
 			return null;
 		}
 
-		int minStrichAnzahl = anzahlAbstaendeMin + 1;
-		if (striche.size() < minStrichAnzahl) {
-			systemOut(String.format("Kein Ergebnis. Grund: Striche-Anzahl=%d ist zu klein (%d sind gefordert)",
-					striche.size(), minStrichAnzahl));
+		// Solange ausreichend unbewertete Abst�nde verf�gbar sind
+		if (abstaende.size() < anzahlAbstaendeMin) {
+			systemOut(String.format(
+					"gib1StrichGruppe() %s: ------------------------------------ %d Striche sind zuwenig (%d sind n�tig)",
+					linienName, striche.size(), anzahlAbstaendeMin));
 			return null;
 		}
+		// Toleranz der Abst�nde in Prozent des Durchschnitts der guten
+		// Abst�nde.
+		int startToleranzProzent = 5;
 
-		ArrayList<StrichListe> strichGruppen = new ArrayList<>();
+		for (int nToleranzLauf = 1; nToleranzLauf < 5; nToleranzLauf++) {
+			// Toleranz von Lauf zu Lauf aufweichen bis 20 %
+			int toleranzProzent = startToleranzProzent * nToleranzLauf;
+			systemOut(String.format("gib1StrichGruppe() %s: ------------------------------------ Starte Lauf %d",
+					linienName, nToleranzLauf));
 
-		// Erkenne maximal 3 Sudokus neben- bzw. untereinander
-		for (int nLauf = 1; nLauf <= 3; nLauf++) {
-			systemOut(String.format("gibSudokuStriche() Lauf %d", nLauf));
-			StrichListe eineStrichGruppe = gib1StrichGruppe(striche, linienName);
+			// Den am h�ufigsten auftretenden Abstand ermitteln
+			int[] abstandsWerte = Abstand.gibAbstaende(abstaende);
+			WerteGruppe haeufigsterAbstand = WerteGruppe.gibHaeufigstenWert(abstandsWerte, toleranzProzent);
 
-			if (eineStrichGruppe == null) {
-				// Es werden keine Sudoku-Striche mehr erkannt!
-				systemOut(String.format("gibSudokuStriche() Lauf %d ohne Erfolg", nLauf));
+			// Erlaubten Absolut-Bereich des Abstandes der Sudoku-Striche
+			// ermitteln
+			int abstandMin = haeufigsterAbstand.gibMinErlaubt();
+			int abstandMax = haeufigsterAbstand.gibMaxErlaubt();
+			systemOut(String.format("gib1StrichGruppe() %s mit %d%% Toleranz (von %d bis %d) aus %d Abst�nden",
+					linienName, toleranzProzent, abstandMin, abstandMax, abstaende.size()));
+			systemOut(abstaende, "");
+			systemOut("----------------------------------------------------------------------------");
 
-				break;
+			// Gute Abst�nde suchen
+			int nGuteMin = 2; // *toleranzProzent;
+			List<Abstand> guteAbstaende = gibGuteAbstaende(abstaende, nGuteMin, abstandMin, abstandMax);
+
+			// Die guten Abst�nde bewerten
+			int nGuteAbstaende = guteAbstaende.size();
+			systemOut(guteAbstaende, "Gute Abst�nde");
+			StrichListe sudokuStrichListe = null;
+			if (nGuteAbstaende == anzahlSudokuLinien) {
+				// gefundene Sudoku-Striche-Gruppe vermerken
+				sudokuStrichListe = Abstand.gibStrichListe(guteAbstaende);
+				systemOut(guteAbstaende, "Sudoku-StrichListe direkt aus Guten Abst�nden erstellt:");
 			} else {
-				strichGruppen.add(0, eineStrichGruppe);
-				systemOut(String.format("gibSudokuStriche() Lauf %d brachte ein Sudoku", nLauf));
-
-				// Die ausgewerteten Striche von der weiteren Sucherei
-				// ausschliessen
-				int linkerStrichIndex = striche.indexOf(eineStrichGruppe.get(0));
-				striche.loescheAlleAb(linkerStrichIndex);
+				if (nGuteAbstaende >= nGuteMin) {
+					// In jede Richtung weiterw�hlen bis zum Erfolg:
+					// Mit den n�chsten Abst�nden und doppelter Toleranz:
+					systemOut(guteAbstaende, "Lasse aus den wenigen Guten Abst�nden weiterw�hlen:");
+					sudokuStrichListe = gibAusWenigenAbstaenden(guteAbstaende, abstaende, toleranzProzent);
+				}
 			}
-		}
 
-		StrichListe[] arrayDerSudokuStriche = null;
-		if (!strichGruppen.isEmpty()) {
-			arrayDerSudokuStriche = new StrichListe[strichGruppen.size()];
-			strichGruppen.toArray(arrayDerSudokuStriche);
-			systemOut(String.format("gibSudokuStriche() %s: Es wurden %d Sudoku-Striche-Gruppen gefunden:", linienName,
-					arrayDerSudokuStriche.length));
-			for (int i = 0; i < arrayDerSudokuStriche.length; i++) {
-				StrichListe strichListe = arrayDerSudokuStriche[i];
-				strichListe.systemOut(istSystemOut, String.format("gib1StrichGruppe() Sudoku[%d] ", i), linienName);
+			if (sudokuStrichListe != null) {
+				systemOut("gib1StrichGruppe(): Erfolg!!!");
+				return sudokuStrichListe;
 			}
-		} else {
-			systemOut(String.format("gibSudokuStriche() %s: Es wurden Keine Sudoku-Striche-Gruppen gefunden",
-					linienName));
-		}
+		} // for (int nToleranzLauf
 
-		if ((arrayDerSudokuStriche == null)) {
-			systemOut(String.format("%s %s: Tut uns leid. Hatte nur %d Striche zur Verf�gung", "findeSudokuStriche() ",
-					linienName, striche.size()));
-		}
-
-		return arrayDerSudokuStriche;
-	}
-
-	static private boolean istImBereich(int wert, int min, int max) {
-		if (wert < min) {
-			return false;
-		}
-		if (wert > max) {
-			return false;
-		}
-		return true;
+		systemOut("gib1StrichGruppe(): Nichts gefunden b��hhh!!!");
+		return null;
 	}
 
 	/**
@@ -263,80 +242,101 @@ public class SudokuFinder {
 
 	/**
 	 * @param striche
-	 *            Die erkannten Striche
-	 * @return Die 10 Striche eines Sudoku (vom Ende der Strichliste an gesucht)
-	 *         oder null wenn keine Sudoku-Striche erkannt wurden
+	 *            Es wird versucht, aus der Gesamtheit dieser Striche echte
+	 *            Sudoku-Striche zu erkennen. Es wird vorausgesetzt, dass die
+	 *            Striche nach aufsteigendem Index aufgelistet sind.
+	 * @param linienName
+	 * @return Die Striche, die als Sudoku-Striche erkannt wurden. F�r jedes
+	 *         Sudoku extra. null: bei zuwenigen Strichen Leeres Array falls
+	 *         keine Sudoku-Striche erkannt werden konnten ansonsten stets eine
+	 *         Gruppe von den 10 erkannten Sudoku-Strichen.
 	 */
-	static private StrichListe gib1StrichGruppe(StrichListe striche, String linienName) {
-		// Abst�nde zwischen je zwei benachbarten Strichen ermitteln
-		List<Abstand> abstaende = Abstand.gibAbstaende(striche);
+	static public StrichListe[] gibSudokuStriche(StrichListe striche, String linienName) {
+		systemOut(String.format("%s.%s %s)", SudokuFinder.class.getName(), " gibSudokuStriche()", linienName));
+		systemOut(" ----------------------------------------------------------------------");
 
-		if (abstaende == null) {
-			systemOut(String.format(
-					"gib1StrichGruppe() %s: ------------------------------------ Keine Abst�nde: %d Striche sind zuwenig (%d sind n�tig)",
-					linienName, striche.size(), anzahlAbstaendeMin));
+		if (striche.isEmpty()) {
+			systemOut(String.format("Kein Ergebnis. Grund: Habe keine Striche bekommen"));
 			return null;
 		}
 
-		// Solange ausreichend unbewertete Abst�nde verf�gbar sind
-		if (abstaende.size() < anzahlAbstaendeMin) {
-			systemOut(String.format(
-					"gib1StrichGruppe() %s: ------------------------------------ %d Striche sind zuwenig (%d sind n�tig)",
-					linienName, striche.size(), anzahlAbstaendeMin));
+		int minStrichAnzahl = anzahlAbstaendeMin + 1;
+		if (striche.size() < minStrichAnzahl) {
+			systemOut(String.format("Kein Ergebnis. Grund: Striche-Anzahl=%d ist zu klein (%d sind gefordert)",
+					striche.size(), minStrichAnzahl));
 			return null;
 		}
-		// Toleranz der Abst�nde in Prozent des Durchschnitts der guten
-		// Abst�nde.
-		int startToleranzProzent = 5;
 
-		for (int nToleranzLauf = 1; nToleranzLauf < 5; nToleranzLauf++) {
-			// Toleranz von Lauf zu Lauf aufweichen bis 20 %
-			int toleranzProzent = startToleranzProzent * nToleranzLauf;
-			systemOut(String.format("gib1StrichGruppe() %s: ------------------------------------ Starte Lauf %d",
-					linienName, nToleranzLauf));
+		ArrayList<StrichListe> strichGruppen = new ArrayList<>();
 
-			// Den am h�ufigsten auftretenden Abstand ermitteln
-			int[] abstandsWerte = Abstand.gibAbstaende(abstaende);
-			WerteGruppe haeufigsterAbstand = WerteGruppe.gibHaeufigstenWert(abstandsWerte, toleranzProzent);
+		// Erkenne maximal 3 Sudokus neben- bzw. untereinander
+		for (int nLauf = 1; nLauf <= 3; nLauf++) {
+			systemOut(String.format("gibSudokuStriche() Lauf %d", nLauf));
+			StrichListe eineStrichGruppe = gib1StrichGruppe(striche, linienName);
 
-			// Erlaubten Absolut-Bereich des Abstandes der Sudoku-Striche
-			// ermitteln
-			int abstandMin = haeufigsterAbstand.gibMinErlaubt();
-			int abstandMax = haeufigsterAbstand.gibMaxErlaubt();
-			systemOut(String.format("gib1StrichGruppe() %s mit %d%% Toleranz (von %d bis %d) aus %d Abst�nden",
-					linienName, toleranzProzent, abstandMin, abstandMax, abstaende.size()));
-			systemOut(abstaende, "");
-			systemOut("----------------------------------------------------------------------------");
+			if (eineStrichGruppe == null) {
+				// Es werden keine Sudoku-Striche mehr erkannt!
+				systemOut(String.format("gibSudokuStriche() Lauf %d ohne Erfolg", nLauf));
 
-			// Gute Abst�nde suchen
-			int nGuteMin = 2; // *toleranzProzent;
-			List<Abstand> guteAbstaende = gibGuteAbstaende(abstaende, nGuteMin, abstandMin, abstandMax);
-
-			// Die guten Abst�nde bewerten
-			int nGuteAbstaende = guteAbstaende.size();
-			systemOut(guteAbstaende, "Gute Abst�nde");
-			StrichListe sudokuStrichListe = null;
-			if (nGuteAbstaende == anzahlSudokuLinien) {
-				// gefundene Sudoku-Striche-Gruppe vermerken
-				sudokuStrichListe = Abstand.gibStrichListe(guteAbstaende);
-				systemOut(guteAbstaende, "Sudoku-StrichListe direkt aus Guten Abst�nden erstellt:");
+				break;
 			} else {
-				if (nGuteAbstaende >= nGuteMin) {
-					// In jede Richtung weiterw�hlen bis zum Erfolg:
-					// Mit den n�chsten Abst�nden und doppelter Toleranz:
-					systemOut(guteAbstaende, "Lasse aus den wenigen Guten Abst�nden weiterw�hlen:");
-					sudokuStrichListe = gibAusWenigenAbstaenden(guteAbstaende, abstaende, toleranzProzent);
-				}
-			}
+				strichGruppen.add(0, eineStrichGruppe);
+				systemOut(String.format("gibSudokuStriche() Lauf %d brachte ein Sudoku", nLauf));
 
-			if (sudokuStrichListe != null) {
-				systemOut("gib1StrichGruppe(): Erfolg!!!");
-				return sudokuStrichListe;
+				// Die ausgewerteten Striche von der weiteren Sucherei
+				// ausschliessen
+				int linkerStrichIndex = striche.indexOf(eineStrichGruppe.get(0));
+				striche.loescheAlleAb(linkerStrichIndex);
 			}
-		} // for (int nToleranzLauf
+		}
 
-		systemOut("gib1StrichGruppe(): Nichts gefunden b��hhh!!!");
-		return null;
+		StrichListe[] arrayDerSudokuStriche = null;
+		if (!strichGruppen.isEmpty()) {
+			arrayDerSudokuStriche = new StrichListe[strichGruppen.size()];
+			strichGruppen.toArray(arrayDerSudokuStriche);
+			systemOut(String.format("gibSudokuStriche() %s: Es wurden %d Sudoku-Striche-Gruppen gefunden:", linienName,
+					arrayDerSudokuStriche.length));
+			for (int i = 0; i < arrayDerSudokuStriche.length; i++) {
+				StrichListe strichListe = arrayDerSudokuStriche[i];
+				strichListe.systemOut(istSystemOut, String.format("gib1StrichGruppe() Sudoku[%d] ", i), linienName);
+			}
+		} else {
+			systemOut(String.format("gibSudokuStriche() %s: Es wurden Keine Sudoku-Striche-Gruppen gefunden",
+					linienName));
+		}
+
+		if ((arrayDerSudokuStriche == null)) {
+			systemOut(String.format("%s %s: Tut uns leid. Hatte nur %d Striche zur Verf�gung", "findeSudokuStriche() ",
+					linienName, striche.size()));
+		}
+
+		return arrayDerSudokuStriche;
+	}
+
+	static private boolean istImBereich(int wert, int min, int max) {
+		if (wert < min) {
+			return false;
+		}
+		if (wert > max) {
+			return false;
+		}
+		return true;
+	}
+
+	static private void systemOut(List<Abstand> abstaende, String titel) {
+		if (istSystemOut) {
+			System.out.print(titel + " " + abstaende.size() + " Abst�nde:");
+			for (Abstand abstand : abstaende) {
+				System.out.print(" " + abstand.gibAbstand());
+			}
+			System.out.println("");
+		}
+	}
+
+	static private void systemOut(String text) {
+		if (istSystemOut) {
+			System.out.println(text);
+		}
 	}
 
 }

@@ -23,8 +23,8 @@ public class ProtokollEintrag {
 		this.eintragNeu = eintragNeu;
 	}
 
-	public FeldNummer gibFeldNummer() {
-		return feldNummer;
+	public void animiere(Animator animator) {
+		feldNummer = animator.gibFeldNummer(feldNummer, FeldMatrix.feldNummerMax);
 	}
 
 	/**
@@ -46,8 +46,8 @@ public class ProtokollEintrag {
 		return ebene;
 	}
 
-	public void animiere(Animator animator) {
-		feldNummer = animator.gibFeldNummer(feldNummer, FeldMatrix.feldNummerMax);
+	public FeldNummer gibFeldNummer() {
+		return feldNummer;
 	}
 
 }

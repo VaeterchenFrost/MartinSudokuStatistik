@@ -19,13 +19,6 @@ public class BE_Start {
 	}
 
 	/**
-	 * @return klugheit mit all den von ihr beherrschten Logiken
-	 */
-	public Klugheit gibKlugheit() {
-		return klugheit;
-	}
-
-	/**
 	 * @return Anzahl freier Felder
 	 */
 	public int gibAnzahlFreieFelder() {
@@ -33,10 +26,10 @@ public class BE_Start {
 	}
 
 	/**
-	 * @return Anzahl freier Zeilen
+	 * @return Anzahl freier K�sten
 	 */
-	public int gibAnzahlFreieZeilen() {
-		return nFreieZeilen;
+	public int gibAnzahlFreieKaesten() {
+		return nFreieKaesten;
 	}
 
 	/**
@@ -47,10 +40,17 @@ public class BE_Start {
 	}
 
 	/**
-	 * @return Anzahl freier K�sten
+	 * @return Anzahl freier Zeilen
 	 */
-	public int gibAnzahlFreieKaesten() {
-		return nFreieKaesten;
+	public int gibAnzahlFreieZeilen() {
+		return nFreieZeilen;
+	}
+
+	/**
+	 * @return klugheit mit all den von ihr beherrschten Logiken
+	 */
+	public Klugheit gibKlugheit() {
+		return klugheit;
 	}
 
 	/*

@@ -9,8 +9,8 @@ class Logik_SchwertFisch extends LogikFeldPaareRing {
 	}
 
 	@Override
-	public Logik_ID gibLogikID() {
-		return Logik_ID.SCHWERTFISCH;
+	public double gibKontrollZeit1() {
+		return 60;
 	}
 
 	@Override
@@ -19,13 +19,13 @@ class Logik_SchwertFisch extends LogikFeldPaareRing {
 	}
 
 	@Override
-	public String gibName() {
-		return "SchwertFisch";
+	public Logik_ID gibLogikID() {
+		return Logik_ID.SCHWERTFISCH;
 	}
 
 	@Override
-	public double gibKontrollZeit1() {
-		return 60;
+	public String gibName() {
+		return "SchwertFisch";
 	}
 
 }

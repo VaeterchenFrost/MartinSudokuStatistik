@@ -4,33 +4,17 @@ class KriteriumUnd implements KriteriumBildInfo {
 	private String name;
 	private KriteriumBildInfo[] kriterien;
 
-	KriteriumUnd(String name, KriteriumBildInfo[] kriterien) {
-		super();
-		this.name = name;
-		this.kriterien = kriterien;
-	}
-
 	KriteriumUnd(String name) {
 		super();
 		this.name = name;
 		this.kriterien = null;
 	}
 
-	void setzeKriterien(KriteriumBildInfo[] kriterien) {
+	KriteriumUnd(String name, KriteriumBildInfo[] kriterien) {
+		super();
+		this.name = name;
 		this.kriterien = kriterien;
 	}
-
-	// private void systemOut(float erfuellungsGrad, Set<Float>
-	// erfuellungsGradJeKriterium){
-	// if (ZahlLeser.istSystemOut()){
-	// System.out.println(String.format("%s Das Kriterium UND ist zu %1.1f%%
-	// erf�llt.", getClass().getName(), erfuellungsGrad));
-	//// for(KriteriumErgebnis kriteriumErgebnis: erfuellungsGradJeKriterium){
-	//// System.out.println(String.format("%1.1f%% %s",
-	// kriteriumErgebnis.erfuellungsGrad, kriteriumErgebnis.kriterium));
-	//// }
-	// }
-	// }
 
 	public float gibErfuellungsGrad(ZahlBildInfo zahlBildInfo, boolean istSystemOutZahl) {
 		float durchschnitt = 0;
@@ -49,8 +33,24 @@ class KriteriumUnd implements KriteriumBildInfo {
 		return durchschnitt;
 	}
 
+	// private void systemOut(float erfuellungsGrad, Set<Float>
+	// erfuellungsGradJeKriterium){
+	// if (ZahlLeser.istSystemOut()){
+	// System.out.println(String.format("%s Das Kriterium UND ist zu %1.1f%%
+	// erf�llt.", getClass().getName(), erfuellungsGrad));
+	//// for(KriteriumErgebnis kriteriumErgebnis: erfuellungsGradJeKriterium){
+	//// System.out.println(String.format("%1.1f%% %s",
+	// kriteriumErgebnis.erfuellungsGrad, kriteriumErgebnis.kriterium));
+	//// }
+	// }
+	// }
+
 	@Override
 	public String gibName() {
 		return name;
+	}
+
+	void setzeKriterien(KriteriumBildInfo[] kriterien) {
+		this.kriterien = kriterien;
 	}
 }

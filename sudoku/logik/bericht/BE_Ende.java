@@ -7,18 +7,18 @@ public class BE_Ende {
 	Problem problem;
 	FeldNummerMitZahl eintrag;
 
-	public Problem gibProblem() {
-		return problem;
+	public BE_Ende(Problem problem, FeldNummerMitZahl eintrag) {
+		super();
+		this.problem = problem;
+		this.eintrag = eintrag;
 	}
 
 	public FeldNummerMitZahl gibEintrag() {
 		return eintrag;
 	}
 
-	public BE_Ende(Problem problem, FeldNummerMitZahl eintrag) {
-		super();
-		this.problem = problem;
-		this.eintrag = eintrag;
+	public Problem gibProblem() {
+		return problem;
 	}
 
 	/*

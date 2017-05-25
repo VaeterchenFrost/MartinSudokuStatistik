@@ -6,16 +6,16 @@ import sudoku.logik.KastenIndex;
 
 @SuppressWarnings("serial")
 public class UnabhaengigeKasten extends ArrayList<ArrayList<KastenIndex>> {
-	private static KastenIndex gibNeuenKastenIndex(int iSpalte, int iZeile) {
-		return new KastenIndex(iSpalte, iZeile);
-	}
-
 	private static ArrayList<KastenIndex> gib3(KastenIndex k0, KastenIndex k1, KastenIndex k2) {
 		ArrayList<KastenIndex> fList = new ArrayList<KastenIndex>();
 		fList.add(k0);
 		fList.add(k1);
 		fList.add(k2);
 		return fList;
+	}
+
+	private static KastenIndex gibNeuenKastenIndex(int iSpalte, int iZeile) {
+		return new KastenIndex(iSpalte, iZeile);
 	}
 
 	public UnabhaengigeKasten() {

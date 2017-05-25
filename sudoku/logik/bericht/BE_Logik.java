@@ -22,19 +22,19 @@ public class BE_Logik {
 		this.loeschZahlen = loeschZahlen;
 	}
 
-	@Override
-	public String toString() {
-		String sEintrag = eintrag == null ? "" : " Eintrag=" + eintrag;
-		String sLoeschZahlen = loeschZahlen == null ? "" : " L�schzahlen=" + loeschZahlen;
-		return "BE_Logik [logik=" + logik + " " + gruppenlaeufeListe + sEintrag + sLoeschZahlen + "]";
-	}
-
 	public String gibKurzText() {
 		String sLogikKurz = SudokuLogik.gibNameKurz(logik);
 		String sEintrag = eintrag == null ? "" : " Eintrag=" + eintrag;
 		String sLoeschZahlen = loeschZahlen == null ? "" : " L�schzahlen=" + loeschZahlen;
 		return "BE_Logik [" + sLogikKurz + " " + gruppenlaeufeListe.gibKurzText() + " " + sEintrag + " " + sLoeschZahlen
 				+ "]";
+	}
+
+	@Override
+	public String toString() {
+		String sEintrag = eintrag == null ? "" : " Eintrag=" + eintrag;
+		String sLoeschZahlen = loeschZahlen == null ? "" : " L�schzahlen=" + loeschZahlen;
+		return "BE_Logik [logik=" + logik + " " + gruppenlaeufeListe + sEintrag + sLoeschZahlen + "]";
 	}
 
 }

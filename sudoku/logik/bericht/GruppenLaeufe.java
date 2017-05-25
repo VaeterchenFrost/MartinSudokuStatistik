@@ -24,16 +24,16 @@ public class GruppenLaeufe {
 		this.anzahlLaeufe = anzahlLaeufe;
 	}
 
-	public void plus1() {
-		anzahlLaeufe++;
-	}
-
 	public int gibAnzahlLaeufe() {
 		return anzahlLaeufe;
 	}
 
 	public String gibTextKurz() {
 		return Gruppe.gibTypZeichen(gruppenTyp) + "=" + anzahlLaeufe;
+	}
+
+	public void plus1() {
+		anzahlLaeufe++;
 	}
 
 	@Override

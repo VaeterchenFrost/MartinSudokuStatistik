@@ -16,43 +16,6 @@ public class KastenIndex {
 	// return ( (index >= 1) && (index <= 9) );
 	// }
 
-	public int gibSpaltenIndex() {
-		return iSpalte;
-	}
-
-	public int gibZeilenIndex() {
-		return iZeile;
-	}
-
-	// public void kontrolliere() throws Exc{
-	// if (! istIndexOK(this.spalte)){
-	// throw Exc.unerlaubteZeile(this.spalte);
-	// }
-	// if (! istIndexOK(this.zeile)){
-	// throw Exc.unerlaubteZeile(this.zeile);
-	// }
-	// }
-
-	@Override
-	public String toString() {
-		return "[Z" + iZeile + ",S" + iSpalte + "]";
-	}
-
-	// public String gibBeschreibung() {
-	// String s = String.format("[Zeile%d,Spalte%d]", zeile, spalte);
-	// return s;
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		return 10 * (iZeile) + iSpalte;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -79,6 +42,38 @@ public class KastenIndex {
 		return true;
 	}
 
+	public int gibSpaltenIndex() {
+		return iSpalte;
+	}
+
+	// public void kontrolliere() throws Exc{
+	// if (! istIndexOK(this.spalte)){
+	// throw Exc.unerlaubteZeile(this.spalte);
+	// }
+	// if (! istIndexOK(this.zeile)){
+	// throw Exc.unerlaubteZeile(this.zeile);
+	// }
+	// }
+
+	public int gibZeilenIndex() {
+		return iZeile;
+	}
+
+	// public String gibBeschreibung() {
+	// String s = String.format("[Zeile%d,Spalte%d]", zeile, spalte);
+	// return s;
+	// }
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return 10 * (iZeile) + iSpalte;
+	}
+
 	public boolean istOK() {
 		if ((iSpalte < 0) | (iSpalte > 2)) {
 			return false;
@@ -88,5 +83,10 @@ public class KastenIndex {
 		}
 		return true;
 
+	}
+
+	@Override
+	public String toString() {
+		return "[Z" + iZeile + ",S" + iSpalte + "]";
 	}
 }

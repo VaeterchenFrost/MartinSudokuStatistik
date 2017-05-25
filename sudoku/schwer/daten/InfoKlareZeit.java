@@ -25,18 +25,18 @@ public class InfoKlareZeit implements AnzeigeInfo {
 		return s;
 	}
 
-	@Override
-	public String gibToolTip() {
-		String s1 = "Schwierigkeit (Maustaste auf Details erkl�rt)";
-		String s2 = ""; // super.gibToolTipAnzeigeTextBeschreibung();
-		return String.format("<html>%s%s</html>", s1, s2);
-	}
-
 	/**
 	 * @return Zeit in Minuten gerastert (auf 5 Minuten)
 	 */
 	public int gibAnzeigeZeit() {
 		return AnalysatorKlare.gibAnzeigeZeit(zeit, true);
+	}
+
+	@Override
+	public String gibToolTip() {
+		String s1 = "Schwierigkeit (Maustaste auf Details erkl�rt)";
+		String s2 = ""; // super.gibToolTipAnzeigeTextBeschreibung();
+		return String.format("<html>%s%s</html>", s1, s2);
 	}
 
 	/**

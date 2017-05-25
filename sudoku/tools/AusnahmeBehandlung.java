@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 import sudoku.kern.exception.EndeDurchAusnahme;
-import sudoku.tools.TextDatei;
 
 public class AusnahmeBehandlung implements UncaughtExceptionHandler {
 	protected static String sCR = String.format("%n"); // "\n";
@@ -80,24 +79,6 @@ public class AusnahmeBehandlung implements UncaughtExceptionHandler {
 		Thread.setDefaultUncaughtExceptionHandler(this);
 	}
 
-	@Override
-	public void uncaughtException(Thread thread, Throwable throwable) {
-		if (this.uncaughtExceptionHandler != null) {
-			this.uncaughtExceptionHandler.uncaughtException(thread, throwable);
-		}
-		handle(throwable);
-	}
-
-	/**
-	 * Die Ableitung kann die Infos zur Ausnahme anzeigen:
-	 * 
-	 * @param throwable
-	 * @param textAusnahme
-	 * @param logDateiName
-	 */
-	protected void zeigeAusnahme(Throwable throwable, String textAusnahme, String logDateiName) {
-	}
-
 	protected void handle(Throwable throwable) {
 		if (throwable.getClass().equals(EndeDurchAusnahme.class)) {
 			// EndeDurchAusnahme ist nur Transporteur der aufgetretenen Ausnahme
@@ -121,6 +102,24 @@ public class AusnahmeBehandlung implements UncaughtExceptionHandler {
 		zeigeAusnahme(throwable, textAusnahme, logDateiName);
 
 		System.exit(1);
+	}
+
+	@Override
+	public void uncaughtException(Thread thread, Throwable throwable) {
+		if (this.uncaughtExceptionHandler != null) {
+			this.uncaughtExceptionHandler.uncaughtException(thread, throwable);
+		}
+		handle(throwable);
+	}
+
+	/**
+	 * Die Ableitung kann die Infos zur Ausnahme anzeigen:
+	 * 
+	 * @param throwable
+	 * @param textAusnahme
+	 * @param logDateiName
+	 */
+	protected void zeigeAusnahme(Throwable throwable, String textAusnahme, String logDateiName) {
 	}
 
 }

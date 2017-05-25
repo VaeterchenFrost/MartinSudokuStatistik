@@ -18,18 +18,34 @@ import sudoku.kern.feldmatrix.ZahlenFeldNummern;
  * folgenden Feldern (FeldNummern) ein FeldPaar.
  */
 public class FeldPartnerTexte {
-	static private String gibSpaltenBezug(int basisSpalte, int partnerSpalte) {
-		if (basisSpalte < partnerSpalte) {
-			return "rechts";
+	/**
+	 * @param basisFeldNummer
+	 * @return Die Liste der Strings, einer f�r jeden Partner
+	 */
+	static public String[] gibPaareTexte(FeldNummer basisFeldNummer, ZahlenFeldNummern partner) {
+		ArrayList<String> texte = new ArrayList<String>();
+		int[] zahlen = partner.gibZahlen();
+		if (zahlen != null) {
+			for (int iZahl = 0; iZahl < zahlen.length; iZahl++) {
+				int zahl = zahlen[iZahl];
+				FeldNummerListe andereFelder = partner.gibFeldNummern(zahl);
+				if (andereFelder != null) {
+					String sZahlList = String.format("Mit Zahl %d bin ich Feld-Paar ", zahl);
+					// sZahlList += "->";
+					for (int i = 0; i < andereFelder.size(); i++) {
+						FeldNummer andereFeldNummer = andereFelder.get(i);
+						String sFeldNummer = gibPartnerString(basisFeldNummer, andereFeldNummer);
+						if (i > 0) {
+							sZahlList += " und ";
+						}
+						sZahlList += sFeldNummer;
+					}
+					texte.add(sZahlList);
+				}
+			} // for
 		}
-		return "links";
-	}
-
-	static private String gibZeilenBezug(int basisZeile, int partnerZeile) {
-		if (basisZeile < partnerZeile) {
-			return "unten";
-		}
-		return "oben";
+		String[] texteArray = texte.toArray(new String[texte.size()]);
+		return texteArray;
 	}
 
 	/**
@@ -60,34 +76,18 @@ public class FeldPartnerTexte {
 		return s;
 	}
 
-	/**
-	 * @param basisFeldNummer
-	 * @return Die Liste der Strings, einer f�r jeden Partner
-	 */
-	static public String[] gibPaareTexte(FeldNummer basisFeldNummer, ZahlenFeldNummern partner) {
-		ArrayList<String> texte = new ArrayList<String>();
-		int[] zahlen = partner.gibZahlen();
-		if (zahlen != null) {
-			for (int iZahl = 0; iZahl < zahlen.length; iZahl++) {
-				int zahl = zahlen[iZahl];
-				FeldNummerListe andereFelder = partner.gibFeldNummern(zahl);
-				if (andereFelder != null) {
-					String sZahlList = String.format("Mit Zahl %d bin ich Feld-Paar ", zahl);
-					// sZahlList += "->";
-					for (int i = 0; i < andereFelder.size(); i++) {
-						FeldNummer andereFeldNummer = andereFelder.get(i);
-						String sFeldNummer = gibPartnerString(basisFeldNummer, andereFeldNummer);
-						if (i > 0) {
-							sZahlList += " und ";
-						}
-						sZahlList += sFeldNummer;
-					}
-					texte.add(sZahlList);
-				}
-			} // for
+	static private String gibSpaltenBezug(int basisSpalte, int partnerSpalte) {
+		if (basisSpalte < partnerSpalte) {
+			return "rechts";
 		}
-		String[] texteArray = texte.toArray(new String[texte.size()]);
-		return texteArray;
+		return "links";
+	}
+
+	static private String gibZeilenBezug(int basisZeile, int partnerZeile) {
+		if (basisZeile < partnerZeile) {
+			return "unten";
+		}
+		return "oben";
 	}
 
 }

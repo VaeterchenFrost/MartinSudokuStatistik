@@ -10,22 +10,6 @@ import sudoku.Paar;
 class StricheKreuz {
 
 	/**
-	 * Transformiert alle Indizees so, dass sie sich auf den neuen
-	 * Indize-Ursprung beziehen.
-	 * 
-	 * @param stricheArray
-	 * @param neuerUrsprung
-	 */
-	static private void transformiereIndizees(StrichListe[] stricheArray, int neuerUrsprung) {
-		if (stricheArray != null) {
-			for (int i = 0; i < stricheArray.length; i++) {
-				StrichListe strichListe = stricheArray[i];
-				strichListe.transformiereIndizees(neuerUrsprung);
-			}
-		}
-	}
-
-	/**
 	 * @param striche
 	 * @return Index-Bereich, den die Striche insgesamt benennen: Pair.Key den
 	 *         1. Index (linken bzw. oberen Index) Pair.Value den letzten Index
@@ -42,6 +26,22 @@ class StricheKreuz {
 		Paar<Integer, Integer> pair = new Paar<Integer, Integer>(ersterIndex, letzterIndex);
 
 		return pair;
+	}
+
+	/**
+	 * Transformiert alle Indizees so, dass sie sich auf den neuen
+	 * Indize-Ursprung beziehen.
+	 * 
+	 * @param stricheArray
+	 * @param neuerUrsprung
+	 */
+	static private void transformiereIndizees(StrichListe[] stricheArray, int neuerUrsprung) {
+		if (stricheArray != null) {
+			for (int i = 0; i < stricheArray.length; i++) {
+				StrichListe strichListe = stricheArray[i];
+				strichListe.transformiereIndizees(neuerUrsprung);
+			}
+		}
 	}
 
 	// =======================================================
@@ -64,6 +64,41 @@ class StricheKreuz {
 	public StricheKreuz(StrichListe[] spaltenStriche, StrichListe[] zeilenStriche) {
 		this.spaltenStriche = spaltenStriche;
 		this.zeilenStriche = zeilenStriche;
+	}
+
+	/**
+	 * @return Index-Bereich, den die Striche insgesamt benennen: Pair.Key den
+	 *         1. Index (linken bzw. oberen Index) Pair.Value den letzten Index
+	 *         (rechten bzw. unteren Index)
+	 */
+	public Paar<Integer, Integer> gibBereichSpalten() {
+		Paar<Integer, Integer> bereich = gibBereich(this.spaltenStriche);
+		return bereich;
+	}
+
+	/**
+	 * @return Index-Bereich, den die Striche insgesamt benennen: Pair.Key den
+	 *         1. Index (linken bzw. oberen Index) Pair.Value den letzten Index
+	 *         (rechten bzw. unteren Index)
+	 */
+	public Paar<Integer, Integer> gibBereichZeilen() {
+		Paar<Integer, Integer> bereich = gibBereich(this.zeilenStriche);
+		return bereich;
+	}
+
+	/**
+	 * @return true wenn f�r Spalte oder Zeile jeweils mindestens eine
+	 *         StrichListe existiert
+	 */
+	public boolean istEineRichtungBekannt() {
+		if (istSpaltenOk()) {
+			return true;
+		}
+
+		if (istZeilenOk()) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -109,41 +144,6 @@ class StricheKreuz {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * @return true wenn f�r Spalte oder Zeile jeweils mindestens eine
-	 *         StrichListe existiert
-	 */
-	public boolean istEineRichtungBekannt() {
-		if (istSpaltenOk()) {
-			return true;
-		}
-
-		if (istZeilenOk()) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * @return Index-Bereich, den die Striche insgesamt benennen: Pair.Key den
-	 *         1. Index (linken bzw. oberen Index) Pair.Value den letzten Index
-	 *         (rechten bzw. unteren Index)
-	 */
-	public Paar<Integer, Integer> gibBereichSpalten() {
-		Paar<Integer, Integer> bereich = gibBereich(this.spaltenStriche);
-		return bereich;
-	}
-
-	/**
-	 * @return Index-Bereich, den die Striche insgesamt benennen: Pair.Key den
-	 *         1. Index (linken bzw. oberen Index) Pair.Value den letzten Index
-	 *         (rechten bzw. unteren Index)
-	 */
-	public Paar<Integer, Integer> gibBereichZeilen() {
-		Paar<Integer, Integer> bereich = gibBereich(this.zeilenStriche);
-		return bereich;
 	}
 
 	/**

@@ -25,28 +25,6 @@ public class WerteGruppe {
 	 * @return Der am h�ufigsten auftretende Wert (dessen Durchschnitt) oder
 	 *         null bei leerem Array werte.
 	 */
-	static public WerteGruppe gibHaeufigstenWert(int[] werte, int toleranz) {
-		boolean istInvers = true;
-		WerteGruppeComparator comparator = new WerteGruppeComparator(VergleichsArt.WERTEANZAHL, istInvers);
-		List<WerteGruppe> werteGruppen = gibGruppen(werte, toleranz, comparator);
-
-		WerteGruppe besteGruppe = null;
-		if (!werteGruppen.isEmpty()) {
-			besteGruppe = werteGruppen.get(0);
-		}
-		return besteGruppe;
-	}
-
-	/**
-	 * @param werte
-	 *            Zu gruppierende Werte
-	 * @param toleranz
-	 *            in Prozent des Durchschnitts der Werte einer Gruppe. "Gleiche"
-	 *            (genau: �hnliche) Werte werden anhand dieser Toleranz
-	 *            gruppiert.
-	 * @return Der am h�ufigsten auftretende Wert (dessen Durchschnitt) oder
-	 *         null bei leerem Array werte.
-	 */
 	static public WerteGruppe gibGroesstenWert(int[] werte, int toleranz) {
 		boolean istInvers = true;
 		WerteGruppeComparator comparator = new WerteGruppeComparator(VergleichsArt.DURCHSCHNITT, istInvers);
@@ -94,6 +72,28 @@ public class WerteGruppe {
 		return werteGruppen;
 	}
 
+	/**
+	 * @param werte
+	 *            Zu gruppierende Werte
+	 * @param toleranz
+	 *            in Prozent des Durchschnitts der Werte einer Gruppe. "Gleiche"
+	 *            (genau: �hnliche) Werte werden anhand dieser Toleranz
+	 *            gruppiert.
+	 * @return Der am h�ufigsten auftretende Wert (dessen Durchschnitt) oder
+	 *         null bei leerem Array werte.
+	 */
+	static public WerteGruppe gibHaeufigstenWert(int[] werte, int toleranz) {
+		boolean istInvers = true;
+		WerteGruppeComparator comparator = new WerteGruppeComparator(VergleichsArt.WERTEANZAHL, istInvers);
+		List<WerteGruppe> werteGruppen = gibGruppen(werte, toleranz, comparator);
+
+		WerteGruppe besteGruppe = null;
+		if (!werteGruppen.isEmpty()) {
+			besteGruppe = werteGruppen.get(0);
+		}
+		return besteGruppe;
+	}
+
 	// ======================================================
 	private ArrayListInt werte;
 	private int toleranzProzent;
@@ -112,6 +112,18 @@ public class WerteGruppe {
 		this.toleranzProzent = toleranz;
 	}
 
+	/**
+	 * @param wert
+	 * @return true wenn der Wert in die Gruppe aufgenommen wurde.
+	 */
+	private boolean add(int wert) {
+		boolean aufnehmbar = istAufnehmbar(wert);
+		if (aufnehmbar) {
+			werte.add(new Integer(wert));
+		}
+		return aufnehmbar;
+	}
+
 	public int gibDurchschnitt() {
 		int durchschnitt = 0;
 		for (Integer wert : werte) {
@@ -121,17 +133,11 @@ public class WerteGruppe {
 		return durchschnitt;
 	}
 
-	/**
-	 * @return Der kleinste in dieser Gruppe vorkommende Wert
-	 */
-	public int gibMinimum() {
-		int min = werte.get(0);
-		for (Integer wert : werte) {
-			if (wert < min) {
-				min = wert;
-			}
-		}
-		return min;
+	public int gibMaxErlaubt() {
+		int durchschnitt = gibDurchschnitt();
+		int toleranz = (durchschnitt * toleranzProzent) / 100;
+		int wertMax = durchschnitt + toleranz;
+		return wertMax;
 	}
 
 	/**
@@ -157,11 +163,21 @@ public class WerteGruppe {
 		return wertMin;
 	}
 
-	public int gibMaxErlaubt() {
-		int durchschnitt = gibDurchschnitt();
-		int toleranz = (durchschnitt * toleranzProzent) / 100;
-		int wertMax = durchschnitt + toleranz;
-		return wertMax;
+	/**
+	 * @return Der kleinste in dieser Gruppe vorkommende Wert
+	 */
+	public int gibMinimum() {
+		int min = werte.get(0);
+		for (Integer wert : werte) {
+			if (wert < min) {
+				min = wert;
+			}
+		}
+		return min;
+	}
+
+	public int gibWerteAnzahl() {
+		return this.werte.size();
 	}
 
 	private boolean istAufnehmbar(int wert) {
@@ -174,22 +190,6 @@ public class WerteGruppe {
 			ok = wert <= wertMax;
 		}
 		return ok;
-	}
-
-	/**
-	 * @param wert
-	 * @return true wenn der Wert in die Gruppe aufgenommen wurde.
-	 */
-	private boolean add(int wert) {
-		boolean aufnehmbar = istAufnehmbar(wert);
-		if (aufnehmbar) {
-			werte.add(new Integer(wert));
-		}
-		return aufnehmbar;
-	}
-
-	public int gibWerteAnzahl() {
-		return this.werte.size();
 	}
 
 	@Override

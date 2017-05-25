@@ -36,65 +36,6 @@ public class Eintrag {
 		this.istTipZahl = istTip;
 	}
 
-	public void reset() {
-		zahl = 0;
-		ebene = EintragsEbenen.gibStandardEbene1() - 1;
-		istEbenenStart = false;
-		istTipZahl = false;
-	}
-
-	public boolean istTipZahl() {
-		return istTipZahl;
-	}
-
-	public void markiereAlsTip() {
-		istTipZahl = true;
-	}
-
-	public int gibZahl() {
-		return zahl;
-	}
-
-	public int gibEbene() {
-		return ebene;
-	}
-
-	public boolean istEbenenStart() {
-		return istEbenenStart;
-	}
-
-	public boolean istVersuchsStart() {
-		return istEbenenStart && (ebene > EintragsEbenen.gibStandardEbene1());
-	}
-
-	public boolean istEintrag() {
-		return (zahl != 0);
-	}
-
-	/**
-	 * Die Ebeneninfo bleibt bestehen
-	 */
-	public void loescheEintrag() {
-		zahl = 0;
-		istEbenenStart = false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ebene;
-		result = prime * result + (istEbenenStart ? 1231 : 1237);
-		result = prime * result + (istTipZahl ? 1231 : 1237);
-		result = prime * result + zahl;
-		return result;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -125,6 +66,65 @@ public class Eintrag {
 			return false;
 		}
 		return true;
+	}
+
+	public int gibEbene() {
+		return ebene;
+	}
+
+	public int gibZahl() {
+		return zahl;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ebene;
+		result = prime * result + (istEbenenStart ? 1231 : 1237);
+		result = prime * result + (istTipZahl ? 1231 : 1237);
+		result = prime * result + zahl;
+		return result;
+	}
+
+	public boolean istEbenenStart() {
+		return istEbenenStart;
+	}
+
+	public boolean istEintrag() {
+		return (zahl != 0);
+	}
+
+	public boolean istTipZahl() {
+		return istTipZahl;
+	}
+
+	public boolean istVersuchsStart() {
+		return istEbenenStart && (ebene > EintragsEbenen.gibStandardEbene1());
+	}
+
+	/**
+	 * Die Ebeneninfo bleibt bestehen
+	 */
+	public void loescheEintrag() {
+		zahl = 0;
+		istEbenenStart = false;
+	}
+
+	public void markiereAlsTip() {
+		istTipZahl = true;
+	}
+
+	public void reset() {
+		zahl = 0;
+		ebene = EintragsEbenen.gibStandardEbene1() - 1;
+		istEbenenStart = false;
+		istTipZahl = false;
 	}
 
 }

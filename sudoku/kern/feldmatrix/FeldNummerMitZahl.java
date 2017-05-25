@@ -18,32 +18,28 @@ public class FeldNummerMitZahl implements Comparable<FeldNummerMitZahl> {
 		zahl = aZahl.zahl;
 	}
 
-	public FeldNummer gibFeldNummer() {
-		return feldNummer;
-	}
-
-	public int gibZahl() {
-		return zahl;
-	}
-
 	@Override
-	public String toString() {
-		String s = String.format("%d in %s", this.zahl, this.feldNummer);
-		return s;
-	}
-
-	public String gibBeschreibung() {
-		String s = String.format("Zahl %d in Feld %s", this.zahl, this.feldNummer.gibBeschreibung());
-		return s;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((feldNummer == null) ? 0 : feldNummer.hashCode());
-		result = prime * result + zahl;
-		return result;
+	public int compareTo(FeldNummerMitZahl other) {
+		if (this == other) {
+			return 0;
+		}
+		if (other == null) {
+			return 1;
+		}
+		if (getClass() != other.getClass()) {
+			return 1;
+		}
+		int feldNummernErgebnis = this.feldNummer.compareTo(other.feldNummer);
+		if (feldNummernErgebnis != 0) {
+			return feldNummernErgebnis;
+		}
+		if (this.zahl < other.zahl) {
+			return -1;
+		}
+		if (this.zahl > other.zahl) {
+			return 1;
+		}
+		return 0;
 	}
 
 	@Override
@@ -71,28 +67,32 @@ public class FeldNummerMitZahl implements Comparable<FeldNummerMitZahl> {
 		return true;
 	}
 
+	public String gibBeschreibung() {
+		String s = String.format("Zahl %d in Feld %s", this.zahl, this.feldNummer.gibBeschreibung());
+		return s;
+	}
+
+	public FeldNummer gibFeldNummer() {
+		return feldNummer;
+	}
+
+	public int gibZahl() {
+		return zahl;
+	}
+
 	@Override
-	public int compareTo(FeldNummerMitZahl other) {
-		if (this == other) {
-			return 0;
-		}
-		if (other == null) {
-			return 1;
-		}
-		if (getClass() != other.getClass()) {
-			return 1;
-		}
-		int feldNummernErgebnis = this.feldNummer.compareTo(other.feldNummer);
-		if (feldNummernErgebnis != 0) {
-			return feldNummernErgebnis;
-		}
-		if (this.zahl < other.zahl) {
-			return -1;
-		}
-		if (this.zahl > other.zahl) {
-			return 1;
-		}
-		return 0;
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((feldNummer == null) ? 0 : feldNummer.hashCode());
+		result = prime * result + zahl;
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		String s = String.format("%d in %s", this.zahl, this.feldNummer);
+		return s;
 	}
 
 }

@@ -9,8 +9,8 @@ import sudoku.kern.feldmatrix.Eintrag;
 import sudoku.kern.feldmatrix.FeldNummer;
 import sudoku.kern.feldmatrix.FeldNummerMitZahl;
 import sudoku.kern.feldmatrix.ProtokollEintragSetzer;
-import sudoku.logik.SudokuLogik;
 import sudoku.kern.feldmatrix.ProtokollSchreiber;
+import sudoku.logik.SudokuLogik;
 
 /**
  * @author Hendrick - Das Protokoll schreibt alle Feld.setzeEintrag() mit. - In
@@ -20,30 +20,6 @@ import sudoku.kern.feldmatrix.ProtokollSchreiber;
  *         auf diesen Punkt zur�ckgehen zu lassen.
  */
 public class Protokoll implements ProtokollSchreiber, ProtokollMarkierer {
-	public enum Schrittweite {
-		EINTRAG, VERSUCH, ALLES
-	};
-
-	private ProtokollEintragSetzer eintragSetzer;
-
-	/**
-	 * eintraege leer => kursor = -1, sonst kursor = Index in eintraege
-	 */
-	private int kursor;
-	private boolean warVorwaerts;
-	private ArrayList<ProtokollEintrag> eintraege;
-	/**
-	 * Ist nicht n�tig zum restaurieren eines Eintrags (spezielle Methode
-	 * Feld.setzeEintragObjekt()). Aber f�r das restaurieren des Auffrischens!
-	 */
-	private boolean istGesperrt;
-
-	/**
-	 * Die id der letzten rausgegebenen Markierung
-	 */
-	private int letzteMarkierungsID;
-	private ArrayList<Markierung> markierungen;
-
 	public class Markierung {
 		private final int mKursor;
 		private final int mID;
@@ -53,7 +29,31 @@ public class Protokoll implements ProtokollSchreiber, ProtokollMarkierer {
 			letzteMarkierungsID++;
 			this.mID = letzteMarkierungsID;
 		}
+	};
+
+	public enum Schrittweite {
+		EINTRAG, VERSUCH, ALLES
 	}
+
+	private ProtokollEintragSetzer eintragSetzer;
+	/**
+	 * eintraege leer => kursor = -1, sonst kursor = Index in eintraege
+	 */
+	private int kursor;
+	private boolean warVorwaerts;
+	private ArrayList<ProtokollEintrag> eintraege;
+
+	/**
+	 * Ist nicht n�tig zum restaurieren eines Eintrags (spezielle Methode
+	 * Feld.setzeEintragObjekt()). Aber f�r das restaurieren des Auffrischens!
+	 */
+	private boolean istGesperrt;
+	/**
+	 * Die id der letzten rausgegebenen Markierung
+	 */
+	private int letzteMarkierungsID;
+
+	private ArrayList<Markierung> markierungen;
 
 	// -------------------------------------------------------------------
 	public Protokoll(SudokuLogik sudoku) {
@@ -61,42 +61,29 @@ public class Protokoll implements ProtokollSchreiber, ProtokollMarkierer {
 		sudoku.setzeProtokoll(this);
 	}
 
-	public void setzeEintragSetzer(ProtokollEintragSetzer eintragSetzer) {
-		this.eintragSetzer = eintragSetzer;
-	}
-
-	public void reset() {
-		kursor = -1;
-		eintraege = new ArrayList<ProtokollEintrag>();
-		istGesperrt = false;
-		warVorwaerts = false;
-		letzteMarkierungsID = 0;
-		markierungen = new ArrayList<Markierung>();
-	}
-
-	public void reset(Protokoll_IO protokoll_IO) throws Exc {
-		reset();
-		if (protokoll_IO != null) {
-			eintraege = protokoll_IO.gibEintraege();
-			int sollKursor = protokoll_IO.gibKursor();
-			while (kursor < sollKursor) {
-				geheEinenSchrittVorwaerts();
-			}
+	public void animiere(Animator animator) {
+		// Mit allen Eintr�gen
+		for (int iEintrag = 0; iEintrag < eintraege.size(); iEintrag++) {
+			ProtokollEintrag protokollEintrag = eintraege.get(iEintrag);
+			protokollEintrag.animiere(animator);
 		}
 	}
 
-	/**
-	 * @param index
-	 *            in eintraege
-	 * @return Im Eintrag muss genau eine FeldInfo einen eintrag besitzen. Von
-	 *         ihm wird die Ebene genommen.
-	 * @throws Exc
-	 */
-	private int gibEintragsEbene(int index) throws Exc {
-		ProtokollEintrag p = eintraege.get(index);
+	public void gehe(Schrittweite schrittweite, boolean vorwaerts) throws Exc {
+		// Die durch mich durchgef�hrten Schritte schreibe ich nicht mit
+		istGesperrt = true;
 
-		int ebene = p.gibEintragsEbene();
-		return ebene;
+		if (vorwaerts) {
+			if (istVorwaertsMoeglich()) {
+				geheVorwaerts(schrittweite);
+			}
+		} else {
+			if (istRueckwaertsMoeglich()) {
+				geheRueckwaerts(schrittweite);
+			}
+		}
+
+		istGesperrt = false;
 	}
 
 	/**
@@ -113,6 +100,14 @@ public class Protokoll implements ProtokollSchreiber, ProtokollMarkierer {
 		this.eintragSetzer.setzeEintrag(feldNummer, kopie);
 	}
 
+	private void geheEinenSchrittRueckwaerts() throws Exc {
+		ProtokollEintrag eintragSoll = eintraege.get(kursor);
+
+		geheEinenSchritt(eintragSoll.gibFeldNummer(), eintragSoll.eintragAlt);
+		kursor--;
+		warVorwaerts = false;
+	}
+
 	private void geheEinenSchrittVorwaerts() throws Exc {
 		kursor++;
 		warVorwaerts = true;
@@ -121,8 +116,31 @@ public class Protokoll implements ProtokollSchreiber, ProtokollMarkierer {
 		geheEinenSchritt(eintrag.gibFeldNummer(), eintrag.eintragNeu);
 	}
 
-	private boolean istVorwaertsMoeglich() {
-		return ((!eintraege.isEmpty()) && (kursor < (eintraege.size() - 1)));
+	private void geheRueckwaerts(Schrittweite schrittweite) throws Exc {
+		switch (schrittweite) {
+		case ALLES:
+			while (kursor > -1) {
+				geheEinenSchrittRueckwaerts();
+			}
+			break;
+		case VERSUCH:
+			int vergleichsEbene = gibEintragsEbene(kursor);
+			while (kursor >= 0) {
+				int ebeneAktuell = gibEintragsEbene(kursor);
+				if ((ebeneAktuell == vergleichsEbene)) {
+					geheEinenSchrittRueckwaerts();
+				} else {
+					break;
+				}
+			} // while
+			break;
+		case EINTRAG:
+			geheEinenSchrittRueckwaerts();
+			break;
+		default:
+			break;
+		}
+		// markierungenUeberKursorLoeschen();
 	}
 
 	private void geheVorwaerts(Schrittweite schrittweite) throws Exc {
@@ -156,170 +174,18 @@ public class Protokoll implements ProtokollSchreiber, ProtokollMarkierer {
 		}
 	}
 
-	private void geheEinenSchrittRueckwaerts() throws Exc {
-		ProtokollEintrag eintragSoll = eintraege.get(kursor);
-
-		geheEinenSchritt(eintragSoll.gibFeldNummer(), eintragSoll.eintragAlt);
-		kursor--;
-		warVorwaerts = false;
-	}
-
-	private boolean istRueckwaertsMoeglich() {
-		return ((!eintraege.isEmpty()) && (kursor >= 0));
-	}
-
-	private void geheRueckwaerts(Schrittweite schrittweite) throws Exc {
-		switch (schrittweite) {
-		case ALLES:
-			while (kursor > -1) {
-				geheEinenSchrittRueckwaerts();
-			}
-			break;
-		case VERSUCH:
-			int vergleichsEbene = gibEintragsEbene(kursor);
-			while (kursor >= 0) {
-				int ebeneAktuell = gibEintragsEbene(kursor);
-				if ((ebeneAktuell == vergleichsEbene)) {
-					geheEinenSchrittRueckwaerts();
-				} else {
-					break;
-				}
-			} // while
-			break;
-		case EINTRAG:
-			geheEinenSchrittRueckwaerts();
-			break;
-		default:
-			break;
-		}
-		// markierungenUeberKursorLoeschen();
-	}
-
-	public void gehe(Schrittweite schrittweite, boolean vorwaerts) throws Exc {
-		// Die durch mich durchgef�hrten Schritte schreibe ich nicht mit
-		istGesperrt = true;
-
-		if (vorwaerts) {
-			if (istVorwaertsMoeglich()) {
-				geheVorwaerts(schrittweite);
-			}
-		} else {
-			if (istRueckwaertsMoeglich()) {
-				geheRueckwaerts(schrittweite);
-			}
-		}
-
-		istGesperrt = false;
-	}
-
 	/**
-	 * @param id
-	 * @return Die Markierung oder null wenn es keine mit der id gibt.
-	 */
-	private Markierung markierungGib(int id) {
-		Markierung markierung = null;
-
-		for (int i = 0; i < markierungen.size(); i++) {
-			Markierung aMarkierung = markierungen.get(i);
-			if (id == aMarkierung.mID) {
-				markierung = aMarkierung;
-			}
-		}
-		return markierung;
-	}
-
-	/**
-	 * @param id
-	 *            Die id der Markierung die der Externe durch markierungSetzen
-	 *            bekommen hatte.
-	 * @return Vom Eintrag nach der markierung das was gesetzt wurde
-	 *         (feldInfo-Neu) oder null
+	 * @param index
+	 *            in eintraege
+	 * @return Im Eintrag muss genau eine FeldInfo einen eintrag besitzen. Von
+	 *         ihm wird die Ebene genommen.
 	 * @throws Exc
-	 * 
 	 */
-	public FeldNummerMitZahl markierungGibZahlTip(int id) throws Exc {
-		Markierung markierung = markierungGib(id);
-		if (markierung == null) {
-			throw Exc.protokollMarkierungExistiertNicht(id, markierungen);
-		}
+	private int gibEintragsEbene(int index) throws Exc {
+		ProtokollEintrag p = eintraege.get(index);
 
-		int tipIndex = markierung.mKursor + 1;
-
-		// if (! istVorwaertsMoeglich()){ ist direkt falsch: der Kursor steht
-		// jetzt am Ende!
-		if (tipIndex >= eintraege.size()) {
-			throw Exc.protokollMarkierungIstOhneNachfolger(markierung.mID, markierung.mKursor, eintraege.size());
-		}
-
-		ProtokollEintrag protokollEintrag = eintraege.get(tipIndex);
-		Eintrag eintrag = protokollEintrag.eintragNeu;
-		if (eintrag == null) {
-			throw Exc.protokollTipOhneEintrag(protokollEintrag.gibFeldNummer(), tipIndex);
-		}
-
-		FeldNummerMitZahl tip = new FeldNummerMitZahl(protokollEintrag.gibFeldNummer(), eintrag.gibZahl());
-		return tip;
-	}
-
-	public void markierungAnsteuern(int id) throws Exc {
-		Markierung markierung = markierungGib(id);
-
-		if (markierung == null) {
-			throw Exc.protokollMarkierungExistiertNicht(id, markierungen);
-		}
-
-		boolean istVorwaerts = kursor < markierung.mKursor;
-		if (istVorwaerts) {
-			if (istVorwaertsMoeglich()) {
-				while (kursor < markierung.mKursor) {
-					gehe(Schrittweite.EINTRAG, true);// vorwaerts);
-				}
-			}
-		} else {
-			if (istRueckwaertsMoeglich()) {
-				while (kursor > markierung.mKursor) {
-					gehe(Schrittweite.EINTRAG, false);// vorwaerts);
-				}
-			}
-		}
-		// System.out.println("Protokoll.geheZurueckZuMarkierung");
-		// printout();
-	}
-
-	/**
-	 * Ich protokolliere das Setzen eines Eintrags in einem Feld
-	 * 
-	 * @param eintragAlt
-	 * @param eintragNeu
-	 */
-	public void protokolliere(FeldNummer feldNummer, Eintrag eintragAlt, Eintrag eintragNeu) {
-		if (istGesperrt) {
-			return;
-		}
-
-		// Wenn das L�schen auf Feldern, die gar keinen Eintrag besitzen
-		// durchgef�hrt werden darf:
-		// Ben�tigen wir hier dies if.. ,
-		// denn ich ben�tige immer eine FeldInfo mit Eintrag zum Ermitteln der
-		// Ebene
-		if ((eintragAlt == null) && (eintragNeu == null)) {
-			return;
-		}
-
-		// Wenn der Kursor nicht am Ende steht, will jemand irgendwo mittendrin
-		// weitermachen.
-		// Also werden alle Eintr�ge �ber dem Kursor gel�scht.
-		if (istVorwaertsMoeglich()) {
-			while (kursor < (eintraege.size() - 1)) {
-				eintraege.remove(eintraege.size() - 1);
-			}
-			markierungenUeberKursorLoeschen();
-		}
-
-		ProtokollEintrag protokollEintrag = new ProtokollEintrag(feldNummer, eintragAlt, eintragNeu);
-		eintraege.add(protokollEintrag);
-		kursor++;
-		warVorwaerts = true;
+		int ebene = p.gibEintragsEbene();
+		return ebene;
 	}
 
 	/**
@@ -372,6 +238,120 @@ public class Protokoll implements ProtokollSchreiber, ProtokollMarkierer {
 		ProtokollKursorInfo protokollInfo = new ProtokollKursorInfo(eintrag, ebenen, kursorEintrag, kursorEbene,
 				vorwaertsMoeglich, rueckwaertsMoeglich);
 		return protokollInfo;
+	}
+
+	public Protokoll_IO gibSpeicherInfo() {
+		return new Protokoll_IO(kursor, eintraege);
+	}
+
+	private boolean istRueckwaertsMoeglich() {
+		return ((!eintraege.isEmpty()) && (kursor >= 0));
+	}
+
+	private boolean istVorwaertsMoeglich() {
+		return ((!eintraege.isEmpty()) && (kursor < (eintraege.size() - 1)));
+	}
+
+	public void markierungAnsteuern(int id) throws Exc {
+		Markierung markierung = markierungGib(id);
+
+		if (markierung == null) {
+			throw Exc.protokollMarkierungExistiertNicht(id, markierungen);
+		}
+
+		boolean istVorwaerts = kursor < markierung.mKursor;
+		if (istVorwaerts) {
+			if (istVorwaertsMoeglich()) {
+				while (kursor < markierung.mKursor) {
+					gehe(Schrittweite.EINTRAG, true);// vorwaerts);
+				}
+			}
+		} else {
+			if (istRueckwaertsMoeglich()) {
+				while (kursor > markierung.mKursor) {
+					gehe(Schrittweite.EINTRAG, false);// vorwaerts);
+				}
+			}
+		}
+		// System.out.println("Protokoll.geheZurueckZuMarkierung");
+		// printout();
+	}
+
+	/**
+	 * Markierungen, die auf Eintr�ge �ber dem Kursor zeigen werden gel�scht.
+	 */
+	private void markierungenUeberKursorLoeschen() {
+		ArrayList<Markierung> zuLoeschen = new ArrayList<Markierung>();
+
+		for (int i = 0; i < markierungen.size(); i++) {
+			Markierung markierung = markierungen.get(i);
+			if (markierung.mKursor > this.kursor) {
+				zuLoeschen.add(markierung);
+			}
+		}
+		markierungen.removeAll(zuLoeschen);
+	}
+
+	/**
+	 * @param id
+	 * @return Die Markierung oder null wenn es keine mit der id gibt.
+	 */
+	private Markierung markierungGib(int id) {
+		Markierung markierung = null;
+
+		for (int i = 0; i < markierungen.size(); i++) {
+			Markierung aMarkierung = markierungen.get(i);
+			if (id == aMarkierung.mID) {
+				markierung = aMarkierung;
+			}
+		}
+		return markierung;
+	}
+
+	/**
+	 * @param id
+	 *            Die id der Markierung die der Externe durch markierungSetzen
+	 *            bekommen hatte.
+	 * @return Vom Eintrag nach der markierung das was gesetzt wurde
+	 *         (feldInfo-Neu) oder null
+	 * @throws Exc
+	 * 
+	 */
+	public FeldNummerMitZahl markierungGibZahlTip(int id) throws Exc {
+		Markierung markierung = markierungGib(id);
+		if (markierung == null) {
+			throw Exc.protokollMarkierungExistiertNicht(id, markierungen);
+		}
+
+		int tipIndex = markierung.mKursor + 1;
+
+		// if (! istVorwaertsMoeglich()){ ist direkt falsch: der Kursor steht
+		// jetzt am Ende!
+		if (tipIndex >= eintraege.size()) {
+			throw Exc.protokollMarkierungIstOhneNachfolger(markierung.mID, markierung.mKursor, eintraege.size());
+		}
+
+		ProtokollEintrag protokollEintrag = eintraege.get(tipIndex);
+		Eintrag eintrag = protokollEintrag.eintragNeu;
+		if (eintrag == null) {
+			throw Exc.protokollTipOhneEintrag(protokollEintrag.gibFeldNummer(), tipIndex);
+		}
+
+		FeldNummerMitZahl tip = new FeldNummerMitZahl(protokollEintrag.gibFeldNummer(), eintrag.gibZahl());
+		return tip;
+	}
+
+	/**
+	 * Setzt eine Markierung auf die aktuelle Kursor-Position
+	 * 
+	 * @return Den Identifikator der Markierung
+	 */
+	public int markierungSetzen() {
+		Markierung markierung = new Markierung();
+		markierungen.add(markierung);
+		// System.out.println("Protokoll.setzeMarkierung");
+		// printout();
+		return markierung.mID;
 	}
 
 	public void printout() {
@@ -459,42 +439,62 @@ public class Protokoll implements ProtokollSchreiber, ProtokollMarkierer {
 	}
 
 	/**
-	 * Markierungen, die auf Eintr�ge �ber dem Kursor zeigen werden gel�scht.
+	 * Ich protokolliere das Setzen eines Eintrags in einem Feld
+	 * 
+	 * @param eintragAlt
+	 * @param eintragNeu
 	 */
-	private void markierungenUeberKursorLoeschen() {
-		ArrayList<Markierung> zuLoeschen = new ArrayList<Markierung>();
+	public void protokolliere(FeldNummer feldNummer, Eintrag eintragAlt, Eintrag eintragNeu) {
+		if (istGesperrt) {
+			return;
+		}
 
-		for (int i = 0; i < markierungen.size(); i++) {
-			Markierung markierung = markierungen.get(i);
-			if (markierung.mKursor > this.kursor) {
-				zuLoeschen.add(markierung);
+		// Wenn das L�schen auf Feldern, die gar keinen Eintrag besitzen
+		// durchgef�hrt werden darf:
+		// Ben�tigen wir hier dies if.. ,
+		// denn ich ben�tige immer eine FeldInfo mit Eintrag zum Ermitteln der
+		// Ebene
+		if ((eintragAlt == null) && (eintragNeu == null)) {
+			return;
+		}
+
+		// Wenn der Kursor nicht am Ende steht, will jemand irgendwo mittendrin
+		// weitermachen.
+		// Also werden alle Eintr�ge �ber dem Kursor gel�scht.
+		if (istVorwaertsMoeglich()) {
+			while (kursor < (eintraege.size() - 1)) {
+				eintraege.remove(eintraege.size() - 1);
+			}
+			markierungenUeberKursorLoeschen();
+		}
+
+		ProtokollEintrag protokollEintrag = new ProtokollEintrag(feldNummer, eintragAlt, eintragNeu);
+		eintraege.add(protokollEintrag);
+		kursor++;
+		warVorwaerts = true;
+	}
+
+	public void reset() {
+		kursor = -1;
+		eintraege = new ArrayList<ProtokollEintrag>();
+		istGesperrt = false;
+		warVorwaerts = false;
+		letzteMarkierungsID = 0;
+		markierungen = new ArrayList<Markierung>();
+	}
+
+	public void reset(Protokoll_IO protokoll_IO) throws Exc {
+		reset();
+		if (protokoll_IO != null) {
+			eintraege = protokoll_IO.gibEintraege();
+			int sollKursor = protokoll_IO.gibKursor();
+			while (kursor < sollKursor) {
+				geheEinenSchrittVorwaerts();
 			}
 		}
-		markierungen.removeAll(zuLoeschen);
 	}
 
-	/**
-	 * Setzt eine Markierung auf die aktuelle Kursor-Position
-	 * 
-	 * @return Den Identifikator der Markierung
-	 */
-	public int markierungSetzen() {
-		Markierung markierung = new Markierung();
-		markierungen.add(markierung);
-		// System.out.println("Protokoll.setzeMarkierung");
-		// printout();
-		return markierung.mID;
-	}
-
-	public Protokoll_IO gibSpeicherInfo() {
-		return new Protokoll_IO(kursor, eintraege);
-	}
-
-	public void animiere(Animator animator) {
-		// Mit allen Eintr�gen
-		for (int iEintrag = 0; iEintrag < eintraege.size(); iEintrag++) {
-			ProtokollEintrag protokollEintrag = eintraege.get(iEintrag);
-			protokollEintrag.animiere(animator);
-		}
+	public void setzeEintragSetzer(ProtokollEintragSetzer eintragSetzer) {
+		this.eintragSetzer = eintragSetzer;
 	}
 }

@@ -7,14 +7,14 @@ public class KB_KlareSetzeMoegliche implements KB_BerichtEintrag {
 		this.berichtMoegliche = berichtMoegliche;
 	}
 
+	public sudoku.logik.bericht.BerichtLogik gibBericht() {
+		return berichtMoegliche;
+	}
+
 	@Override
 	public void systemOut() {
 		System.out.println(this.getClass().getPackage().getName() + "." + this.getClass().getName());
 		berichtMoegliche.systemOut();
-	}
-
-	public sudoku.logik.bericht.BerichtLogik gibBericht() {
-		return berichtMoegliche;
 	}
 
 }

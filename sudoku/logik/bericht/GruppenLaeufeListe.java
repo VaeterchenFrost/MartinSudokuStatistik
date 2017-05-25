@@ -12,14 +12,6 @@ public class GruppenLaeufeListe {
 		gruppenLaeufeListe.add(new GruppenLaeufe(gruppenTyp, 0));
 	}
 
-	public int gibLaeufeAnzahlSumme() {
-		int summe = 0;
-		for (GruppenLaeufe gruppenLaeufe : gruppenLaeufeListe) {
-			summe += gruppenLaeufe.gibAnzahlLaeufe();
-		}
-		return summe;
-	}
-
 	/**
 	 * @param gruppenTyp
 	 *            Wenn der gruppenTyp dem letzten eingetragenen entspricht, wird
@@ -38,13 +30,6 @@ public class GruppenLaeufeListe {
 		}
 	}
 
-	public Gruppe.Typ gibLetztenTyp() {
-		if (gruppenLaeufeListe.isEmpty()) {
-			return null;
-		}
-		return gruppenLaeufeListe.get(gruppenLaeufeListe.size() - 1).gruppenTyp;
-	}
-
 	private String gibInhaltKurz() {
 		String s = "";
 		for (int iLaeufe = 0; iLaeufe < gruppenLaeufeListe.size(); iLaeufe++) {
@@ -58,6 +43,21 @@ public class GruppenLaeufeListe {
 	public String gibKurzText() {
 		String s = "L�ufe: " + gibInhaltKurz();
 		return s;
+	}
+
+	public int gibLaeufeAnzahlSumme() {
+		int summe = 0;
+		for (GruppenLaeufe gruppenLaeufe : gruppenLaeufeListe) {
+			summe += gruppenLaeufe.gibAnzahlLaeufe();
+		}
+		return summe;
+	}
+
+	public Gruppe.Typ gibLetztenTyp() {
+		if (gruppenLaeufeListe.isEmpty()) {
+			return null;
+		}
+		return gruppenLaeufeListe.get(gruppenLaeufeListe.size() - 1).gruppenTyp;
 	}
 
 	@Override

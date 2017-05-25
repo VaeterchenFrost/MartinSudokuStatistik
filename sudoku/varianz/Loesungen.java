@@ -83,6 +83,27 @@ public class Loesungen {
 	}
 
 	/**
+	 * @return F�r jede L�sung in loesungen das Basis-Sudoku Der Index im
+	 *         R�ckgabe-Array entspricht genau dem der loesungen.
+	 */
+	public InfoSudoku[] gibBasisSudokus() {
+		Integer[] indizees = gibBasisSudokuIndizees();
+
+		InfoSudoku[] basisSudokus = new InfoSudoku[loesungen.size()];
+		// MIt allen L�sungen
+		for (int iLoesung = 0; iLoesung < this.loesungen.size(); iLoesung++) {
+			Integer iBasis = indizees[iLoesung];
+
+			if (iBasis == null) {
+				basisSudokus[iLoesung] = null;
+			} else {
+				basisSudokus[iLoesung] = loesungen.get(iBasis).gibSudoku();
+			}
+		}
+		return basisSudokus;
+	}
+
+	/**
 	 * @return F�r jede L�sung in loesungen das Sudoku. Der Index im
 	 *         R�ckgabe-Array entspricht genau dem der loesungen. Die Titel der
 	 *         Sudokus verweisen auf ihr Basis-Sudoku
@@ -104,27 +125,6 @@ public class Loesungen {
 			sudokus[iLoesung] = sudoku;
 		}
 		return sudokus;
-	}
-
-	/**
-	 * @return F�r jede L�sung in loesungen das Basis-Sudoku Der Index im
-	 *         R�ckgabe-Array entspricht genau dem der loesungen.
-	 */
-	public InfoSudoku[] gibBasisSudokus() {
-		Integer[] indizees = gibBasisSudokuIndizees();
-
-		InfoSudoku[] basisSudokus = new InfoSudoku[loesungen.size()];
-		// MIt allen L�sungen
-		for (int iLoesung = 0; iLoesung < this.loesungen.size(); iLoesung++) {
-			Integer iBasis = indizees[iLoesung];
-
-			if (iBasis == null) {
-				basisSudokus[iLoesung] = null;
-			} else {
-				basisSudokus[iLoesung] = loesungen.get(iBasis).gibSudoku();
-			}
-		}
-		return basisSudokus;
 	}
 
 	public void systemOut(boolean istAusgabe) {

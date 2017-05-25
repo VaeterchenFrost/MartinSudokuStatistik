@@ -2,8 +2,8 @@ package sudoku.kern.feldmatrix;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * @author heroe Welche (m�gliche) Zahl ist in welchen Feldern zu finden,
@@ -56,22 +56,20 @@ public class ZahlenFeldNummern {
 		}
 	}
 
+	public int gibAnzahlVorhandene() {
+		return map.size();
+	}
+
 	/**
-	 * @return Die Zahlen. Auch null wenn f�r keine Zahl FeldNummern vermerkt
-	 *         sind.
+	 * @return Erste vorhandene Zahl oder 0 wenn es keine gibt
 	 */
-	public int[] gibZahlen() {
-		Set<Integer> keySet = map.keySet();
-		if (keySet.size() == 0) {
-			return null;
+	public int gibErsteVorhandene() {
+		for (int zahl = 0; zahl < 10; zahl++) {
+			if (istVorhanden(zahl)) {
+				return zahl;
+			}
 		}
-		Integer[] intArray = new Integer[keySet.size()];
-		keySet.toArray(intArray);
-		int[] zahlen = new int[keySet.size()];
-		for (int i = 0; i < intArray.length; i++) {
-			zahlen[i] = intArray[i];
-		}
-		return zahlen;
+		return 0;
 	}
 
 	/**
@@ -96,6 +94,24 @@ public class ZahlenFeldNummern {
 		return anzahl;
 	}
 
+	/**
+	 * @return Die Zahlen. Auch null wenn f�r keine Zahl FeldNummern vermerkt
+	 *         sind.
+	 */
+	public int[] gibZahlen() {
+		Set<Integer> keySet = map.keySet();
+		if (keySet.size() == 0) {
+			return null;
+		}
+		Integer[] intArray = new Integer[keySet.size()];
+		keySet.toArray(intArray);
+		int[] zahlen = new int[keySet.size()];
+		for (int i = 0; i < intArray.length; i++) {
+			zahlen[i] = intArray[i];
+		}
+		return zahlen;
+	}
+
 	public boolean istVorhanden(int zahl) {
 		FeldNummerListe feldNummerListe = map.get(zahl);
 		boolean vorhanden = feldNummerListe != null;
@@ -116,32 +132,27 @@ public class ZahlenFeldNummern {
 		return false;
 	}
 
-	public int gibAnzahlVorhandene() {
-		return map.size();
-	}
-
-	/**
-	 * @return Erste vorhandene Zahl oder 0 wenn es keine gibt
-	 */
-	public int gibErsteVorhandene() {
-		for (int zahl = 0; zahl < 10; zahl++) {
+	public void systemOut() {
+		for (int zahl = 1; zahl <= FeldMatrix.feldNummerMax; zahl++) {
 			if (istVorhanden(zahl)) {
-				return zahl;
+				FeldNummerListe feldNummern = gibFeldNummern(zahl);
+				String s = String.format(" Die %d nach %s", zahl, feldNummern.gibKette("+"));
+				System.out.println(s);
 			}
 		}
-		return 0;
 	}
 
-	/**
-	 * @return Die vorhandenen Zahlen aus 1 bis 9
-	 */
-	public String toStringVorhandeneZahlen() {
-		String s = new String();
-
-		// F�r jede nicht vorhandene Zahl schreiben
-		for (int zahl = 1; zahl < 10; zahl++) {
+	@Override
+	public String toString() {
+		String s = " ";
+		for (int zahl = 1; zahl <= FeldMatrix.feldNummerMax; zahl++) {
 			if (istVorhanden(zahl)) {
-				s += " " + zahl;
+				FeldNummerListe feldNummern = gibFeldNummern(zahl);
+				String s1 = String.format("(%d->%s)", zahl, feldNummern.gibKette("+"));
+				if (s.length() > 1) {
+					s += " + ";
+				}
+				s += s1;
 			}
 		}
 
@@ -164,30 +175,19 @@ public class ZahlenFeldNummern {
 		return s;
 	}
 
-	@Override
-	public String toString() {
-		String s = " ";
-		for (int zahl = 1; zahl <= FeldMatrix.feldNummerMax; zahl++) {
+	/**
+	 * @return Die vorhandenen Zahlen aus 1 bis 9
+	 */
+	public String toStringVorhandeneZahlen() {
+		String s = new String();
+
+		// F�r jede nicht vorhandene Zahl schreiben
+		for (int zahl = 1; zahl < 10; zahl++) {
 			if (istVorhanden(zahl)) {
-				FeldNummerListe feldNummern = gibFeldNummern(zahl);
-				String s1 = String.format("(%d->%s)", zahl, feldNummern.gibKette("+"));
-				if (s.length() > 1) {
-					s += " + ";
-				}
-				s += s1;
+				s += " " + zahl;
 			}
 		}
 
 		return s;
-	}
-
-	public void systemOut() {
-		for (int zahl = 1; zahl <= FeldMatrix.feldNummerMax; zahl++) {
-			if (istVorhanden(zahl)) {
-				FeldNummerListe feldNummern = gibFeldNummern(zahl);
-				String s = String.format(" Die %d nach %s", zahl, feldNummern.gibKette("+"));
-				System.out.println(s);
-			}
-		}
 	}
 }

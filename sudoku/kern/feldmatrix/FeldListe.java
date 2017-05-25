@@ -6,30 +6,27 @@ import sudoku.kern.exception.Exc;
 
 @SuppressWarnings("serial")
 public class FeldListe extends ArrayList<Feld> {
+	/**
+	 * @author Hendrick Ergebnis von @see gibAnzahlEintraege
+	 */
+	public class AnzahlEintraege {
+		public int anzahlGesamt;
+		public int nummerEbene;
+		public int anzahlEbene;
+
+		public AnzahlEintraege(int anzahlGesamt, int nummerEbene, int anzahlEbene) {
+			super();
+			this.anzahlGesamt = anzahlGesamt;
+			this.nummerEbene = nummerEbene;
+			this.anzahlEbene = anzahlEbene;
+		}
+	}
+
 	public FeldListe() {
 	}
 
 	public FeldListe(FeldListe aList) {
 		this.addAll(aList);
-	}
-
-	/**
-	 * Eine schnellere Variante, von der FeldNummer zum Feld zu kommen, sind
-	 * FeldMatrix.gibFeld() oder SudokuLogik.gibLogikFeld.
-	 * 
-	 * @param feldNummer
-	 * @return Das entsprechende Feld oder null falls eines mit dem FeldNummer
-	 *         nicht existiert
-	 */
-	public Feld gibFeld_SehrLahm(FeldNummer feldNummer) {
-		for (int i = 0; i < this.size(); i++) {
-			Feld feld = this.get(i);
-			FeldNummer iFeld = feld.gibFeldNummer();
-			if (feldNummer.equals(iFeld)) {
-				return feld;
-			}
-		}
-		return null;
 	}
 
 	// /**
@@ -67,46 +64,54 @@ public class FeldListe extends ArrayList<Feld> {
 	// }
 
 	/**
-	 * @param zahl
-	 *            1 bis 9
-	 * @return wenn in meinen Feldern zahl als Eintrag (noch) m�glich ist
+	 * @return true wenn (mindestens) ein freies Feld existiert
 	 */
-	public boolean istMoeglich(int zahl) {
+	public boolean existiertFreiesFeld() {
 		for (int i = 0; i < this.size(); i++) {
 			Feld feld = this.get(i);
-			if ((zahl == feld.gibVorgabe()) || (zahl == feld.gibEintrag())) {
-				return false;
+			if (feld.istFrei()) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	/**
-	 * @return Die Anzahl der gesetzten Eintr�ge
-	 * @throws Exc
+	 * @param ebene
+	 * @return Die Anzahl der Eintr�ge der Ebene
 	 */
-	public int setzeEintragAufKlare() throws Exc {
-		int n = 0;
-		for (int i = 0; i < this.size(); i++) {
-			if (this.get(i).setzeEintragFallsNur1Moeglich()) {
-				n++;
-			}
-		}
-		return n;
+	public int gibAnzahlEbenenEintraege(int ebene) {
+		AnzahlEintraege anzahlEintraege = gibAnzahlEintraege(ebene);
+		return anzahlEintraege.anzahlEbene;
 	}
 
 	/**
-	 * @return Die Anzahl der Vorgaben
+	 * @return Die Anzahl der Eintr�ge
 	 */
-	public int gibAnzahlVorgaben() {
-		int n = 0;
+	public int gibAnzahlEintraege() {
+		AnzahlEintraege anzahlEintraege = gibAnzahlEintraege(1);
+		return anzahlEintraege.anzahlGesamt;
+	}
+
+	/**
+	 * @param ebene
+	 *            Nummer der angefragten Ebene
+	 * @return Die Anzahl der Eintr�ge gesamt und die der angefragten Ebene
+	 */
+	public AnzahlEintraege gibAnzahlEintraege(int ebene) {
+		int nG = 0; // alle Eintr�ge
+		int nE = 0; // Eintr�ge der Ebene
 		for (int i = 0; i < this.size(); i++) {
 			Feld feld = this.get(i);
-			if (feld.istVorgabe()) {
-				n++;
+			if (feld.istEintrag()) {
+				nG++;
+				if (ebene == feld.gibEintragEbene()) {
+					nE++;
+				}
 			}
 		}
-		return n;
+		AnzahlEintraege ergebnis = new AnzahlEintraege(nG, ebene, nE);
+		return ergebnis;
 	}
 
 	/**
@@ -121,19 +126,6 @@ public class FeldListe extends ArrayList<Feld> {
 			}
 		}
 		return n;
-	}
-
-	/**
-	 * @return true wenn (mindestens) ein freies Feld existiert
-	 */
-	public boolean existiertFreiesFeld() {
-		for (int i = 0; i < this.size(); i++) {
-			Feld feld = this.get(i);
-			if (feld.istFrei()) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	// /**
@@ -168,57 +160,17 @@ public class FeldListe extends ArrayList<Feld> {
 	// }
 
 	/**
-	 * @author Hendrick Ergebnis von @see gibAnzahlEintraege
+	 * @return Die Anzahl der Vorgaben
 	 */
-	public class AnzahlEintraege {
-		public int anzahlGesamt;
-		public int nummerEbene;
-		public int anzahlEbene;
-
-		public AnzahlEintraege(int anzahlGesamt, int nummerEbene, int anzahlEbene) {
-			super();
-			this.anzahlGesamt = anzahlGesamt;
-			this.nummerEbene = nummerEbene;
-			this.anzahlEbene = anzahlEbene;
-		}
-	}
-
-	/**
-	 * @param ebene
-	 *            Nummer der angefragten Ebene
-	 * @return Die Anzahl der Eintr�ge gesamt und die der angefragten Ebene
-	 */
-	public AnzahlEintraege gibAnzahlEintraege(int ebene) {
-		int nG = 0; // alle Eintr�ge
-		int nE = 0; // Eintr�ge der Ebene
+	public int gibAnzahlVorgaben() {
+		int n = 0;
 		for (int i = 0; i < this.size(); i++) {
 			Feld feld = this.get(i);
-			if (feld.istEintrag()) {
-				nG++;
-				if (ebene == feld.gibEintragEbene()) {
-					nE++;
-				}
+			if (feld.istVorgabe()) {
+				n++;
 			}
 		}
-		AnzahlEintraege ergebnis = new AnzahlEintraege(nG, ebene, nE);
-		return ergebnis;
-	}
-
-	/**
-	 * @return Die Anzahl der Eintr�ge
-	 */
-	public int gibAnzahlEintraege() {
-		AnzahlEintraege anzahlEintraege = gibAnzahlEintraege(1);
-		return anzahlEintraege.anzahlGesamt;
-	}
-
-	/**
-	 * @param ebene
-	 * @return Die Anzahl der Eintr�ge der Ebene
-	 */
-	public int gibAnzahlEbenenEintraege(int ebene) {
-		AnzahlEintraege anzahlEintraege = gibAnzahlEintraege(ebene);
-		return anzahlEintraege.anzahlEbene;
+		return n;
 	}
 
 	/**
@@ -240,54 +192,22 @@ public class FeldListe extends ArrayList<Feld> {
 	}
 
 	/**
-	 * @param moegliche
-	 *            Die neuen m�glichen Zahlen
-	 * @return Anzahl der gel�schten M�glichen
-	 * @throws Exc
+	 * Eine schnellere Variante, von der FeldNummer zum Feld zu kommen, sind
+	 * FeldMatrix.gibFeld() oder SudokuLogik.gibLogikFeld.
+	 * 
+	 * @param feldNummer
+	 * @return Das entsprechende Feld oder null falls eines mit dem FeldNummer
+	 *         nicht existiert
 	 */
-	public int setzeMoegliche(ArrayList<Integer> moegliche) throws Exc {
-		int nGeloescht = 0;
-		for (int iFeld = 0; iFeld < this.size(); iFeld++) {
-			Feld feld = this.get(iFeld);
-			int zuvor = feld.gibMoeglicheAnzahl();
-			feld.setzeMoegliche(moegliche);
-			nGeloescht += zuvor - moegliche.size();
-		}
-		return nGeloescht;
-	}
-
-	/**
-	 * @return Die in meinen Feldern (noch) m�glichen Zahlen
-	 */
-	public ZahlenFeldNummern gibMoeglicheZahlen() {
-		ZahlenFeldNummern vorhandeneZahlen = new ZahlenFeldNummern();
-
-		for (int iFeld = 0; iFeld < this.size(); iFeld++) {
-			FeldNummer feldNummer = this.get(iFeld).gibFeldNummer();
-			ArrayList<Integer> moegliche = this.get(iFeld).gibMoegliche();
-			for (int i = 0; i < moegliche.size(); i++) {
-				vorhandeneZahlen.add(moegliche.get(i), feldNummer);
+	public Feld gibFeld_SehrLahm(FeldNummer feldNummer) {
+		for (int i = 0; i < this.size(); i++) {
+			Feld feld = this.get(i);
+			FeldNummer iFeld = feld.gibFeldNummer();
+			if (feldNummer.equals(iFeld)) {
+				return feld;
 			}
 		}
-		return vorhandeneZahlen;
-	}
-
-	/**
-	 * @return Gibt die Felder mit genau 2 m�glichen Zahlen zur�ck.
-	 */
-	public FeldListe gibFreieFelderMit2Moeglichen() {
-		FeldListe zweier = new FeldListe();
-
-		for (int iFeld = 0; iFeld < this.size(); iFeld++) {
-			Feld feld = this.get(iFeld);
-			if (feld.istFrei()) {
-				ArrayList<Integer> moegliche = feld.gibMoegliche();
-				if (2 == moegliche.size()) {
-					zweier.add(feld);
-				}
-			}
-		}
-		return zweier;
+		return null;
 	}
 
 	/**
@@ -342,6 +262,66 @@ public class FeldListe extends ArrayList<Feld> {
 		return zahlenFeldNummern;
 	}
 
+	public FeldNummerListe gibFelderVersuchStart() {
+		FeldNummerListe versuchStarts = new FeldNummerListe();
+		for (Feld feld : this) {
+			if (feld.istEintragVersuchStart()) {
+				versuchStarts.add(feld.gibFeldNummer());
+			}
+		}
+		return versuchStarts;
+	}
+
+	/**
+	 * @return Gibt die freien Felder zur�ck.
+	 */
+	public FeldListe gibFreieFelder() {
+		FeldListe freie = new FeldListe();
+
+		for (int iFeld = 0; iFeld < this.size(); iFeld++) {
+			Feld feld = this.get(iFeld);
+			if (feld.istFrei()) {
+				freie.add(feld);
+			}
+		}
+		return freie;
+	}
+
+	/**
+	 * @return Gibt die Felder mit genau 2 m�glichen Zahlen zur�ck.
+	 */
+	public FeldListe gibFreieFelderMit2Moeglichen() {
+		FeldListe zweier = new FeldListe();
+
+		for (int iFeld = 0; iFeld < this.size(); iFeld++) {
+			Feld feld = this.get(iFeld);
+			if (feld.istFrei()) {
+				ArrayList<Integer> moegliche = feld.gibMoegliche();
+				if (2 == moegliche.size()) {
+					zweier.add(feld);
+				}
+			}
+		}
+		return zweier;
+	}
+
+	/**
+	 * @return Gibt (freie) Felder zur�ck, die ein Feld eines Feldpaares sind.
+	 *         Feldpaare: In einer Gruppe gibt es genau zwei freie Felder mit
+	 *         derselben Zahl.
+	 */
+	public FeldListe gibFreieFelderPaare() {
+		FeldListe paare = new FeldListe();
+
+		for (int iFeld = 0; iFeld < this.size(); iFeld++) {
+			Feld feld = this.get(iFeld);
+			if (feld.istFrei() && feld.istFeldPaar()) {
+				paare.add(feld);
+			}
+		}
+		return paare;
+	}
+
 	/**
 	 * @return Die gr��te Anzahl M�gliche eines der Felder
 	 */
@@ -378,19 +358,16 @@ public class FeldListe extends ArrayList<Feld> {
 	}
 
 	/**
-	 * @return Alle in meinen Feldern vorhandenen Zahlen (Vorgaben, Eintr�ge,
-	 *         M�gliche)
+	 * @return Die in meinen Feldern (noch) m�glichen Zahlen
 	 */
-	public ZahlenFeldNummern gibVorhandeneZahlen() {
-		ZahlenFeldNummern vorhandeneZahlen = gibMoeglicheZahlen();
+	public ZahlenFeldNummern gibMoeglicheZahlen() {
+		ZahlenFeldNummern vorhandeneZahlen = new ZahlenFeldNummern();
 
 		for (int iFeld = 0; iFeld < this.size(); iFeld++) {
-			Feld feld = this.get(iFeld);
-			FeldNummer feldNummer = feld.gibFeldNummer();
-			if (feld.istVorgabe()) {
-				vorhandeneZahlen.add(feld.gibVorgabe(), feldNummer);
-			} else if (feld.istEintrag()) {
-				vorhandeneZahlen.add(feld.gibEintrag(), feldNummer);
+			FeldNummer feldNummer = this.get(iFeld).gibFeldNummer();
+			ArrayList<Integer> moegliche = this.get(iFeld).gibMoegliche();
+			for (int i = 0; i < moegliche.size(); i++) {
+				vorhandeneZahlen.add(moegliche.get(i), feldNummer);
 			}
 		}
 		return vorhandeneZahlen;
@@ -415,45 +392,68 @@ public class FeldListe extends ArrayList<Feld> {
 	}
 
 	/**
-	 * @return Gibt die freien Felder zur�ck.
+	 * @return Alle in meinen Feldern vorhandenen Zahlen (Vorgaben, Eintr�ge,
+	 *         M�gliche)
 	 */
-	public FeldListe gibFreieFelder() {
-		FeldListe freie = new FeldListe();
+	public ZahlenFeldNummern gibVorhandeneZahlen() {
+		ZahlenFeldNummern vorhandeneZahlen = gibMoeglicheZahlen();
 
 		for (int iFeld = 0; iFeld < this.size(); iFeld++) {
 			Feld feld = this.get(iFeld);
-			if (feld.istFrei()) {
-				freie.add(feld);
+			FeldNummer feldNummer = feld.gibFeldNummer();
+			if (feld.istVorgabe()) {
+				vorhandeneZahlen.add(feld.gibVorgabe(), feldNummer);
+			} else if (feld.istEintrag()) {
+				vorhandeneZahlen.add(feld.gibEintrag(), feldNummer);
 			}
 		}
-		return freie;
-	}
-
-	public FeldNummerListe gibFelderVersuchStart() {
-		FeldNummerListe versuchStarts = new FeldNummerListe();
-		for (Feld feld : this) {
-			if (feld.istEintragVersuchStart()) {
-				versuchStarts.add(feld.gibFeldNummer());
-			}
-		}
-		return versuchStarts;
+		return vorhandeneZahlen;
 	}
 
 	/**
-	 * @return Gibt (freie) Felder zur�ck, die ein Feld eines Feldpaares sind.
-	 *         Feldpaare: In einer Gruppe gibt es genau zwei freie Felder mit
-	 *         derselben Zahl.
+	 * @param zahl
+	 *            1 bis 9
+	 * @return wenn in meinen Feldern zahl als Eintrag (noch) m�glich ist
 	 */
-	public FeldListe gibFreieFelderPaare() {
-		FeldListe paare = new FeldListe();
-
-		for (int iFeld = 0; iFeld < this.size(); iFeld++) {
-			Feld feld = this.get(iFeld);
-			if (feld.istFrei() && feld.istFeldPaar()) {
-				paare.add(feld);
+	public boolean istMoeglich(int zahl) {
+		for (int i = 0; i < this.size(); i++) {
+			Feld feld = this.get(i);
+			if ((zahl == feld.gibVorgabe()) || (zahl == feld.gibEintrag())) {
+				return false;
 			}
 		}
-		return paare;
+		return true;
+	}
+
+	/**
+	 * @return Die Anzahl der gesetzten Eintr�ge
+	 * @throws Exc
+	 */
+	public int setzeEintragAufKlare() throws Exc {
+		int n = 0;
+		for (int i = 0; i < this.size(); i++) {
+			if (this.get(i).setzeEintragFallsNur1Moeglich()) {
+				n++;
+			}
+		}
+		return n;
+	}
+
+	/**
+	 * @param moegliche
+	 *            Die neuen m�glichen Zahlen
+	 * @return Anzahl der gel�schten M�glichen
+	 * @throws Exc
+	 */
+	public int setzeMoegliche(ArrayList<Integer> moegliche) throws Exc {
+		int nGeloescht = 0;
+		for (int iFeld = 0; iFeld < this.size(); iFeld++) {
+			Feld feld = this.get(iFeld);
+			int zuvor = feld.gibMoeglicheAnzahl();
+			feld.setzeMoegliche(moegliche);
+			nGeloescht += zuvor - moegliche.size();
+		}
+		return nGeloescht;
 	}
 
 }

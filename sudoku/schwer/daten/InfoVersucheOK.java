@@ -11,14 +11,6 @@ public class InfoVersucheOK implements AnzeigeInfo {
 		this.nVersucheOK = nVersucheOK;
 	}
 
-	private String gibVersuchOKAnzahl() {
-		if (nVersucheOK == 1) {
-			return "1 Versuch";
-		} else {
-			return String.format("%d Versuche", nVersucheOK);
-		}
-	}
-
 	@Override
 	public String gibAnzeigeText() {
 		return gibVersuchOKAnzahl();
@@ -31,6 +23,14 @@ public class InfoVersucheOK implements AnzeigeInfo {
 		// s += gibToolTipAnzeigeTextBeschreibung();
 		s += sEnde;
 		return s;
+	}
+
+	private String gibVersuchOKAnzahl() {
+		if (nVersucheOK == 1) {
+			return "1 Versuch";
+		} else {
+			return String.format("%d Versuche", nVersucheOK);
+		}
 	}
 
 }

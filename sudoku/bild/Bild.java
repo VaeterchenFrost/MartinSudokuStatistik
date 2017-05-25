@@ -19,6 +19,18 @@ public class Bild {
 	// RenderingHints hints = ImageUtilities.getRenderingHints(image);
 
 	/**
+	 * @param image
+	 * @param ausschnitt
+	 * @return Bild, das nur den Ausschnitt beinhaltet. Und auf image basiert!
+	 */
+	static public BufferedImage gibBildAusschnitt(BufferedImage image, Rectangle ausschnitt) {
+		BufferedImage bildAusschnitt = image.getSubimage(ausschnitt.x, ausschnitt.y, ausschnitt.width,
+				ausschnitt.height);
+
+		return bildAusschnitt;
+	}
+
+	/**
 	 * @param source
 	 * @return Eine Kopie, deren K�rper nichts mehr mit source zu tun hat, also
 	 *         ein echter Schnappschu� ist.
@@ -33,6 +45,57 @@ public class Bild {
 	}
 
 	/**
+	 * @return Das Monitorbild
+	 * @throws AWTException
+	 *             falls das Lesen des Monitorbildes nicht klappt
+	 */
+	public static BufferedImage gibMonitorBild() throws AWTException {
+		// Screenshot erstellen
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		Rectangle screenRect = new Rectangle(screenSize);
+		BufferedImage image = new Robot().createScreenCapture(screenRect);
+
+		return image;
+	}
+
+	/**
+	 * @param src
+	 *            (farbiges) Bild
+	 * @return Eine Kopie von src in Graut�nen
+	 */
+	public static BufferedImage grau(BufferedImage src) {
+		BufferedImage dest = new BufferedImage(src.getWidth(), src.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+		ColorConvertOp grayScaleConversionOp = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
+
+		grayScaleConversionOp.filter(src, dest);
+		return dest;
+	}
+
+	static public BufferedImage rotiere90Grad(BufferedImage srcImage) {
+		BufferedImage rotatedImage = new BufferedImage(srcImage.getHeight(), srcImage.getWidth(), srcImage.getType());
+		AffineTransform affineTransform = AffineTransform.getRotateInstance(Math.toRadians(90),
+				rotatedImage.getWidth() / 2d, srcImage.getHeight() / 2d);
+		Graphics2D g = (Graphics2D) rotatedImage.getGraphics();
+		g.setTransform(affineTransform);
+		g.drawImage(srcImage, 0, 0, null);
+		return rotatedImage;
+	}
+
+	/**
+	 * @param bildUngedreht
+	 * @param rechteck
+	 * @return neues Rechteck so, dass rechteck im 90 Grad gedrehten Bild an
+	 *         seiner Stelle verbleibt
+	 */
+	static public Rectangle rotiere90Grad(Dimension bildUngedreht, Rectangle rechteck) {
+		int x = bildUngedreht.height - rechteck.y - rechteck.height;
+		int y = rechteck.x;
+		int breite = rechteck.height;
+		int hoehe = rechteck.width;
+		return new Rectangle(x, y, breite, hoehe);
+	}
+
+	/**
 	 * @param src
 	 *            (farbiges) Bild
 	 * @return Eine Schwarz-Weiss-Kopie von src
@@ -44,6 +107,37 @@ public class Bild {
 		grayScaleConversionOp.filter(src, dest);
 		return dest;
 	}
+
+	// /**
+	// * @param image
+	// * @param grad Drehwinkel in Grad z.b. 90
+	// * @return um 90 Grad im Uhrzeigersinn gedrehtes Bild
+	// */
+	// static public BufferedImage rotiere90Grad(BufferedImage image){
+	// int xAlt = image.getWidth();
+	// int yAlt = image.getHeight();
+	//
+	// BufferedImage newImage = new BufferedImage(yAlt, xAlt, image.getType());
+	// Graphics2D graphics = (Graphics2D) newImage.getGraphics();
+	//
+	// int xDrehPunkt = yAlt / 2;
+	// int yDrehPunkt = xAlt / 2;
+	// graphics.rotate(Math.toRadians(90), xDrehPunkt, yDrehPunkt);
+	//
+	// int xT = (yAlt - xAlt) / 2;
+	// int yT = (xAlt - yAlt) / 2;
+	//
+	//// Wo Falsch ?:
+	//// int xVorDrehPunktIst = yAlt - yAlt/2 -1;
+	//// int yVorDrehPunktIst = xAlt - xAlt/2 -1;
+	//// int xT = xVorDrehPunktIst - yDrehPunkt; // kleiner schiebt das Bild
+	// nach rechts
+	//// int yT = yVorDrehPunktIst - xDrehPunkt - 10;
+	//
+	// graphics.translate(xT, yT);
+	// graphics.drawImage(image, 0, 0, xAlt, yAlt, null);
+	// return newImage;
+	// }
 
 	/**
 	 * @param src
@@ -110,99 +204,5 @@ public class Bild {
 		} // for (int iZeile
 
 		return dest;
-	}
-
-	/**
-	 * @param src
-	 *            (farbiges) Bild
-	 * @return Eine Kopie von src in Graut�nen
-	 */
-	public static BufferedImage grau(BufferedImage src) {
-		BufferedImage dest = new BufferedImage(src.getWidth(), src.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-		ColorConvertOp grayScaleConversionOp = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
-
-		grayScaleConversionOp.filter(src, dest);
-		return dest;
-	}
-
-	/**
-	 * @return Das Monitorbild
-	 * @throws AWTException
-	 *             falls das Lesen des Monitorbildes nicht klappt
-	 */
-	public static BufferedImage gibMonitorBild() throws AWTException {
-		// Screenshot erstellen
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Rectangle screenRect = new Rectangle(screenSize);
-		BufferedImage image = new Robot().createScreenCapture(screenRect);
-
-		return image;
-	}
-
-	/**
-	 * @param image
-	 * @param ausschnitt
-	 * @return Bild, das nur den Ausschnitt beinhaltet. Und auf image basiert!
-	 */
-	static public BufferedImage gibBildAusschnitt(BufferedImage image, Rectangle ausschnitt) {
-		BufferedImage bildAusschnitt = image.getSubimage(ausschnitt.x, ausschnitt.y, ausschnitt.width,
-				ausschnitt.height);
-
-		return bildAusschnitt;
-	}
-
-	// /**
-	// * @param image
-	// * @param grad Drehwinkel in Grad z.b. 90
-	// * @return um 90 Grad im Uhrzeigersinn gedrehtes Bild
-	// */
-	// static public BufferedImage rotiere90Grad(BufferedImage image){
-	// int xAlt = image.getWidth();
-	// int yAlt = image.getHeight();
-	//
-	// BufferedImage newImage = new BufferedImage(yAlt, xAlt, image.getType());
-	// Graphics2D graphics = (Graphics2D) newImage.getGraphics();
-	//
-	// int xDrehPunkt = yAlt / 2;
-	// int yDrehPunkt = xAlt / 2;
-	// graphics.rotate(Math.toRadians(90), xDrehPunkt, yDrehPunkt);
-	//
-	// int xT = (yAlt - xAlt) / 2;
-	// int yT = (xAlt - yAlt) / 2;
-	//
-	//// Wo Falsch ?:
-	//// int xVorDrehPunktIst = yAlt - yAlt/2 -1;
-	//// int yVorDrehPunktIst = xAlt - xAlt/2 -1;
-	//// int xT = xVorDrehPunktIst - yDrehPunkt; // kleiner schiebt das Bild
-	// nach rechts
-	//// int yT = yVorDrehPunktIst - xDrehPunkt - 10;
-	//
-	// graphics.translate(xT, yT);
-	// graphics.drawImage(image, 0, 0, xAlt, yAlt, null);
-	// return newImage;
-	// }
-
-	static public BufferedImage rotiere90Grad(BufferedImage srcImage) {
-		BufferedImage rotatedImage = new BufferedImage(srcImage.getHeight(), srcImage.getWidth(), srcImage.getType());
-		AffineTransform affineTransform = AffineTransform.getRotateInstance(Math.toRadians(90),
-				rotatedImage.getWidth() / 2d, srcImage.getHeight() / 2d);
-		Graphics2D g = (Graphics2D) rotatedImage.getGraphics();
-		g.setTransform(affineTransform);
-		g.drawImage(srcImage, 0, 0, null);
-		return rotatedImage;
-	}
-
-	/**
-	 * @param bildUngedreht
-	 * @param rechteck
-	 * @return neues Rechteck so, dass rechteck im 90 Grad gedrehten Bild an
-	 *         seiner Stelle verbleibt
-	 */
-	static public Rectangle rotiere90Grad(Dimension bildUngedreht, Rectangle rechteck) {
-		int x = bildUngedreht.height - rechteck.y - rechteck.height;
-		int y = rechteck.x;
-		int breite = rechteck.height;
-		int hoehe = rechteck.width;
-		return new Rectangle(x, y, breite, hoehe);
 	}
 }

@@ -29,6 +29,12 @@ class IteratorRandY extends IteratorRand {
 	}
 
 	@Override
+	Rectangle gibLinienRechteck() {
+		Rectangle rLinie = new Rectangle(linienIndexMin, currentIndex, linienLaenge, 1);
+		return rLinie;
+	}
+
+	@Override
 	void init(Rectangle r, boolean istRichtungIndex0, int testRand) {
 		this.linienIndexMin = r.x;
 		this.linienLaenge = r.width;
@@ -43,12 +49,6 @@ class IteratorRandY extends IteratorRand {
 			currentIndex = r.y - 1;
 			this.ersterIndex = currentIndex + 1;
 		}
-	}
-
-	@Override
-	Rectangle gibLinienRechteck() {
-		Rectangle rLinie = new Rectangle(linienIndexMin, currentIndex, linienLaenge, 1);
-		return rLinie;
 	}
 
 }

@@ -25,11 +25,6 @@ class Kanten {
 		this.unten = unten;
 	}
 
-	@Override
-	public String toString() {
-		return "Kanten [links=" + links + ", oben=" + oben + ", rechts=" + rechts + ", unten=" + unten + "]";
-	}
-
 	/**
 	 * @param links
 	 * @param oben
@@ -45,6 +40,19 @@ class Kanten {
 			this.rechts = rechts;
 		if (unten > this.unten)
 			this.unten = unten;
+	}
+
+	/**
+	 * @param kanten2
+	 * @return Das Maximum der beiden Rechtecke
+	 */
+	Kanten gibMaximum(Kanten kanten2) {
+		if (kanten2 == null) {
+			return this;
+		}
+
+		erweitere(kanten2.links, kanten2.oben, kanten2.rechts, kanten2.unten);
+		return this;
 	}
 
 	Rectangle gibRechteck() {
@@ -68,17 +76,9 @@ class Kanten {
 		rechts = altesUnten;
 	}
 
-	/**
-	 * @param kanten2
-	 * @return Das Maximum der beiden Rechtecke
-	 */
-	Kanten gibMaximum(Kanten kanten2) {
-		if (kanten2 == null) {
-			return this;
-		}
-
-		erweitere(kanten2.links, kanten2.oben, kanten2.rechts, kanten2.unten);
-		return this;
+	@Override
+	public String toString() {
+		return "Kanten [links=" + links + ", oben=" + oben + ", rechts=" + rechts + ", unten=" + unten + "]";
 	}
 
 }

@@ -14,16 +14,6 @@ public class BerichtKnacker extends ArrayList<KB_BerichtEintrag> {
 	public BerichtKnacker() {
 	}
 
-	public void systemOut() {
-		if (istSystemOut) {
-			System.out.println("BerichtKnacker.systemOut()");
-			for (int i = 0; i < this.size(); i++) {
-				KB_BerichtEintrag berichtEintrag = this.get(i);
-				berichtEintrag.systemOut();
-			}
-		}
-	}
-
 	@Override
 	public boolean add(KB_BerichtEintrag berichtEintrag) {
 		if (istSystemOut) {
@@ -42,5 +32,15 @@ public class BerichtKnacker extends ArrayList<KB_BerichtEintrag> {
 			}
 		}
 		return false;
+	}
+
+	public void systemOut() {
+		if (istSystemOut) {
+			System.out.println("BerichtKnacker.systemOut()");
+			for (int i = 0; i < this.size(); i++) {
+				KB_BerichtEintrag berichtEintrag = this.get(i);
+				berichtEintrag.systemOut();
+			}
+		}
 	}
 }

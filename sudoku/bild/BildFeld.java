@@ -20,90 +20,6 @@ import sudoku.kern.feldmatrix.FeldNummer;
 class BildFeld {
 	static private boolean istTestAnzeige = false; // true;
 
-	static public boolean istTestAnzeige() {
-		return istTestAnzeige;
-	}
-
-	static private void maleRechteck(BufferedImage image, Rectangle r, int vergroesserung) {
-		Graphics2D g = image.createGraphics();
-
-		r = vergroessern(r, vergroesserung);
-
-		// g.setXORMode(Color.WHITE);
-		g.setColor(Color.BLACK);
-		g.drawRect(r.x, r.y, r.width, r.height);
-
-		g.setColor(Color.WHITE);
-		int x2 = r.x + r.width;
-		int y2 = r.y + r.height;
-		g.drawLine(r.x, r.y, x2, y2);
-		g.drawLine(x2, r.y, r.x, y2);
-	}
-
-	/**
-	 * @param rechteck
-	 * @param vergroesserung
-	 *            jeden Randes. Ein negativer Wert verkleinert.
-	 * @return Das neue zu Rechteck zentrisch liegende gr��ere bzw. kleinere
-	 *         Rechteck Wenn das gewollte Rechteck eine negative L�nge bek�me,
-	 *         so wird null zur�ckgegeben.
-	 */
-	static private Rectangle vergroessern(Rectangle rechteck, int vergroesserung) {
-		int neueBreite = rechteck.width + 2 * vergroesserung;
-		int neueHoehe = rechteck.height + 2 * vergroesserung;
-
-		if ((neueBreite < 0) | (neueHoehe < 0)) {
-			return null;
-		}
-		neueHoehe = Math.max(1, neueHoehe);
-		Rectangle r = new Rectangle(rechteck.x - vergroesserung, rechteck.y - vergroesserung, neueBreite, neueHoehe);
-		return r;
-	}
-
-	/**
-	 * @param rechteck
-	 * @param vergroesserungProzent
-	 *            jeden Randes. Ein negativer Wert verkleinert.
-	 * @return Das neue zu Rechteck zentrisch liegende gr��ere bzw. kleinere
-	 *         Rechteck
-	 */
-	static private Rectangle vergroessernProzent(Rectangle rechteck, int vergroesserungProzent) {
-		int vergroesserungX = Math.round((rechteck.width * vergroesserungProzent) / 100.0f);
-		int vergroesserungY = Math.round((rechteck.height * vergroesserungProzent) / 100.0f);
-		Rectangle r = new Rectangle(rechteck.x - vergroesserungX, rechteck.y - vergroesserungY,
-				rechteck.width + 2 * vergroesserungX, rechteck.height + 2 * vergroesserungY);
-		return r;
-	}
-
-	/**
-	 * @return Das Zentrum, dass sicher weit genug vom schwarzen Feldrand
-	 *         eintfernt liegt.
-	 */
-	static private Rectangle gibZentrum(Rectangle r) {
-		int randX = r.width / 4;
-		int randY = r.height / 4;
-		int rand = -1 * Math.min(randX, randY);
-		r = vergroessern(r, rand);
-		return r;
-	}
-
-	/**
-	 * @param image
-	 * @return Anteil der weissen Pixel im Zentrum des feldRechteck in Prozent
-	 *         Dieses Zentrum ist der Bereich des feldRechtecks, in dem eine
-	 *         Zahl stehen k�nnte.
-	 */
-	static private int gibZentrumWeissAnteil(BufferedImage image, Rectangle rBasis) {
-		Rectangle r = gibZentrum(rBasis);
-		// if (istTestAnzeige){
-		// maleRechteck(image, r);
-		// }
-
-		LinienWeiss linienWeiss = new LinienWeiss(image, r);
-		int weissAnteil = linienWeiss.gibWeissAnteil();
-		return weissAnteil;
-	}
-
 	/**
 	 * @param linien
 	 *            Jede Linie sortiert nach Strichl�nge: Auf Index0 der l�ngste
@@ -167,6 +83,90 @@ class BildFeld {
 		return kanten;
 	}
 
+	/**
+	 * @return Das Zentrum, dass sicher weit genug vom schwarzen Feldrand
+	 *         eintfernt liegt.
+	 */
+	static private Rectangle gibZentrum(Rectangle r) {
+		int randX = r.width / 4;
+		int randY = r.height / 4;
+		int rand = -1 * Math.min(randX, randY);
+		r = vergroessern(r, rand);
+		return r;
+	}
+
+	/**
+	 * @param image
+	 * @return Anteil der weissen Pixel im Zentrum des feldRechteck in Prozent
+	 *         Dieses Zentrum ist der Bereich des feldRechtecks, in dem eine
+	 *         Zahl stehen k�nnte.
+	 */
+	static private int gibZentrumWeissAnteil(BufferedImage image, Rectangle rBasis) {
+		Rectangle r = gibZentrum(rBasis);
+		// if (istTestAnzeige){
+		// maleRechteck(image, r);
+		// }
+
+		LinienWeiss linienWeiss = new LinienWeiss(image, r);
+		int weissAnteil = linienWeiss.gibWeissAnteil();
+		return weissAnteil;
+	}
+
+	static public boolean istTestAnzeige() {
+		return istTestAnzeige;
+	}
+
+	static private void maleRechteck(BufferedImage image, Rectangle r, int vergroesserung) {
+		Graphics2D g = image.createGraphics();
+
+		r = vergroessern(r, vergroesserung);
+
+		// g.setXORMode(Color.WHITE);
+		g.setColor(Color.BLACK);
+		g.drawRect(r.x, r.y, r.width, r.height);
+
+		g.setColor(Color.WHITE);
+		int x2 = r.x + r.width;
+		int y2 = r.y + r.height;
+		g.drawLine(r.x, r.y, x2, y2);
+		g.drawLine(x2, r.y, r.x, y2);
+	}
+
+	/**
+	 * @param rechteck
+	 * @param vergroesserung
+	 *            jeden Randes. Ein negativer Wert verkleinert.
+	 * @return Das neue zu Rechteck zentrisch liegende gr��ere bzw. kleinere
+	 *         Rechteck Wenn das gewollte Rechteck eine negative L�nge bek�me,
+	 *         so wird null zur�ckgegeben.
+	 */
+	static private Rectangle vergroessern(Rectangle rechteck, int vergroesserung) {
+		int neueBreite = rechteck.width + 2 * vergroesserung;
+		int neueHoehe = rechteck.height + 2 * vergroesserung;
+
+		if ((neueBreite < 0) | (neueHoehe < 0)) {
+			return null;
+		}
+		neueHoehe = Math.max(1, neueHoehe);
+		Rectangle r = new Rectangle(rechteck.x - vergroesserung, rechteck.y - vergroesserung, neueBreite, neueHoehe);
+		return r;
+	}
+
+	/**
+	 * @param rechteck
+	 * @param vergroesserungProzent
+	 *            jeden Randes. Ein negativer Wert verkleinert.
+	 * @return Das neue zu Rechteck zentrisch liegende gr��ere bzw. kleinere
+	 *         Rechteck
+	 */
+	static private Rectangle vergroessernProzent(Rectangle rechteck, int vergroesserungProzent) {
+		int vergroesserungX = Math.round((rechteck.width * vergroesserungProzent) / 100.0f);
+		int vergroesserungY = Math.round((rechteck.height * vergroesserungProzent) / 100.0f);
+		Rectangle r = new Rectangle(rechteck.x - vergroesserungX, rechteck.y - vergroesserungY,
+				rechteck.width + 2 * vergroesserungX, rechteck.height + 2 * vergroesserungY);
+		return r;
+	}
+
 	// =============================================================
 	private FeldNummer feldNummer;
 	private Rectangle feldRechteck;
@@ -200,8 +200,30 @@ class BildFeld {
 		this.zahl = null;
 	}
 
+	/**
+	 * Dreht die FeldNummer, die Schwarzanteile, feldRechteck, zahlRechteck,
+	 * zahlBereiche
+	 */
+	public void drehe90GradRechts(Dimension bildDimension) {
+		Animator_DrehenRechts animator = new Animator_DrehenRechts();
+		FeldNummer neueFeldNummer = animator.gibFeldNummer(feldNummer, FeldMatrix.feldNummerMax);
+		feldNummer = neueFeldNummer;
+		if (schwarzAnteile != null) {
+			schwarzAnteile.drehen(animator);
+		}
+		feldRechteck = Bild.rotiere90Grad(bildDimension, feldRechteck);
+		zahlRechteck = Bild.rotiere90Grad(bildDimension, zahlRechteck);
+		if (zahlBereiche != null) {
+			zahlBereiche.rotiere90Grad(bildDimension);
+		}
+	}
+
 	public FeldNummer gibFeldNummer() {
 		return new FeldNummer(feldNummer);
+	}
+
+	public Rectangle gibFeldRechteck() {
+		return new Rectangle(feldRechteck);
 	}
 
 	public Integer gibZahl() {
@@ -209,10 +231,6 @@ class BildFeld {
 			return null;
 		}
 		return new Integer(zahl.intValue());
-	}
-
-	public Rectangle gibFeldRechteck() {
-		return new Rectangle(feldRechteck);
 	}
 
 	public Rectangle gibZahlRechteck() {
@@ -228,6 +246,45 @@ class BildFeld {
 	public int gibZentrumWeissAnteil(BufferedImage image) {
 		int weissAnteil = gibZentrumWeissAnteil(image, feldRechteck);
 		return weissAnteil;
+	}
+
+	/**
+	 * Setzt die Zahl auf Basis der SchwarzAnteile
+	 */
+	public Integer setzeZahl() {
+		this.zahl = null;
+		// if (BildFeld.istTestAnzeige()){
+		// System.out.println(String.format("BildFeld %s setzeZahl() auf der
+		// Basis der Schwarzanteile", feldNummer));
+		// }
+		if (schwarzAnteile != null) {
+			// Zahl-Erkennung per Bild-Info
+			this.zahlWahrscheinlichkeiten = ZahlLeser.gibZahlWahrscheinlichkeiten(schwarzAnteile);
+			this.zahl = zahlWahrscheinlichkeiten.get(0).zahl;
+
+			if (zahl != null) {
+				if (ZahlLeser.istSystemOutZahl(zahl)) {
+					schwarzAnteile.systemOut(feldNummer);
+				}
+			}
+
+		}
+		return this.zahl;
+	}
+
+	/**
+	 * Setzt die Zahl auf Basis der Ausg�nge
+	 */
+	public void setzeZahl(BufferedImage image) {
+		if (this.zahl == null) {
+			boolean istHierSystemOut = false;
+			// istHierSystemOut = feldNummer.equals(new FeldNummer(4, 5));
+
+			if (istHierSystemOut) {
+				System.out.println(String.format("BildFeld %s setzeZahl() auf der Basis der Ausg�nge", feldNummer));
+			}
+			this.zahl = ZahlLeser.gibZahl(image, zahlRechteck, istHierSystemOut);
+		}
 	}
 
 	/**
@@ -302,63 +359,6 @@ class BildFeld {
 		}
 
 		return zahlRechteck;
-	}
-
-	/**
-	 * Dreht die FeldNummer, die Schwarzanteile, feldRechteck, zahlRechteck,
-	 * zahlBereiche
-	 */
-	public void drehe90GradRechts(Dimension bildDimension) {
-		Animator_DrehenRechts animator = new Animator_DrehenRechts();
-		FeldNummer neueFeldNummer = animator.gibFeldNummer(feldNummer, FeldMatrix.feldNummerMax);
-		feldNummer = neueFeldNummer;
-		if (schwarzAnteile != null) {
-			schwarzAnteile.drehen(animator);
-		}
-		feldRechteck = Bild.rotiere90Grad(bildDimension, feldRechteck);
-		zahlRechteck = Bild.rotiere90Grad(bildDimension, zahlRechteck);
-		if (zahlBereiche != null) {
-			zahlBereiche.rotiere90Grad(bildDimension);
-		}
-	}
-
-	/**
-	 * Setzt die Zahl auf Basis der SchwarzAnteile
-	 */
-	public Integer setzeZahl() {
-		this.zahl = null;
-		// if (BildFeld.istTestAnzeige()){
-		// System.out.println(String.format("BildFeld %s setzeZahl() auf der
-		// Basis der Schwarzanteile", feldNummer));
-		// }
-		if (schwarzAnteile != null) {
-			// Zahl-Erkennung per Bild-Info
-			this.zahlWahrscheinlichkeiten = ZahlLeser.gibZahlWahrscheinlichkeiten(schwarzAnteile);
-			this.zahl = zahlWahrscheinlichkeiten.get(0).zahl;
-
-			if (zahl != null) {
-				if (ZahlLeser.istSystemOutZahl(zahl)) {
-					schwarzAnteile.systemOut(feldNummer);
-				}
-			}
-
-		}
-		return this.zahl;
-	}
-
-	/**
-	 * Setzt die Zahl auf Basis der Ausg�nge
-	 */
-	public void setzeZahl(BufferedImage image) {
-		if (this.zahl == null) {
-			boolean istHierSystemOut = false;
-			// istHierSystemOut = feldNummer.equals(new FeldNummer(4, 5));
-
-			if (istHierSystemOut) {
-				System.out.println(String.format("BildFeld %s setzeZahl() auf der Basis der Ausg�nge", feldNummer));
-			}
-			this.zahl = ZahlLeser.gibZahl(image, zahlRechteck, istHierSystemOut);
-		}
 	}
 
 	public void systemOutErgebnis(BufferedImage image) {

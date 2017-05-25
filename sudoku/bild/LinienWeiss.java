@@ -9,7 +9,24 @@ import java.awt.image.BufferedImage;
  *         Weiss-Pixel auf Spalte[i] bzw. Zeile[i] auf?
  */
 class LinienWeiss {
+	static public void systemOutSchwarz(int[] linienWeiss, int schwarzUnter) {
+		System.out.print("Schwar: ");
+
+		for (int i = 0; i < linienWeiss.length; i++) {
+			int weiss = linienWeiss[i];
+			String s = null;
+			if (weiss < schwarzUnter) {
+				s = " ###";
+			} else {
+				s = " ___";
+			}
+			System.out.print(s);
+		}
+		System.out.println();
+	}
+
 	final int zeilenWeiss[];
+
 	final int spaltenWeiss[];
 
 	public LinienWeiss(BufferedImage image, Rectangle r) {
@@ -40,12 +57,16 @@ class LinienWeiss {
 		} // for (int iZeile
 	}
 
-	private int gibWeissPixelAnzahl() {
-		int nWeissPixel = 0;
-		for (int i = 0; i < zeilenWeiss.length; i++) {
-			nWeissPixel += zeilenWeiss[i];
-		}
-		return nWeissPixel;
+	/**
+	 * @return Anteil der schwarzen Pixel in Prozent bezogen auf das
+	 *         Pixel-Rechteck
+	 */
+	public float gibSchwarzAnteil() {
+		int nWeissPixel = gibWeissPixelAnzahl();
+		int nPixel = spaltenWeiss.length * zeilenWeiss.length;
+		int nSchwarzPixel = nPixel - nWeissPixel;
+		float schwarzAnteil = (nSchwarzPixel * 100.0f) / nPixel;
+		return schwarzAnteil;
 	}
 
 	/**
@@ -59,16 +80,12 @@ class LinienWeiss {
 		return weissAnteil;
 	}
 
-	/**
-	 * @return Anteil der schwarzen Pixel in Prozent bezogen auf das
-	 *         Pixel-Rechteck
-	 */
-	public float gibSchwarzAnteil() {
-		int nWeissPixel = gibWeissPixelAnzahl();
-		int nPixel = spaltenWeiss.length * zeilenWeiss.length;
-		int nSchwarzPixel = nPixel - nWeissPixel;
-		float schwarzAnteil = (nSchwarzPixel * 100.0f) / nPixel;
-		return schwarzAnteil;
+	private int gibWeissPixelAnzahl() {
+		int nWeissPixel = 0;
+		for (int i = 0; i < zeilenWeiss.length; i++) {
+			nWeissPixel += zeilenWeiss[i];
+		}
+		return nWeissPixel;
 	}
 
 	public void systemOut() {
@@ -91,22 +108,6 @@ class LinienWeiss {
 		System.out.print("Zeilen: ");
 		for (int i = 0; i < zeilenWeiss.length; i++) {
 			System.out.print(String.format("%4d", zeilenWeiss[i]));
-		}
-		System.out.println();
-	}
-
-	static public void systemOutSchwarz(int[] linienWeiss, int schwarzUnter) {
-		System.out.print("Schwar: ");
-
-		for (int i = 0; i < linienWeiss.length; i++) {
-			int weiss = linienWeiss[i];
-			String s = null;
-			if (weiss < schwarzUnter) {
-				s = " ###";
-			} else {
-				s = " ___";
-			}
-			System.out.print(s);
 		}
 		System.out.println();
 	}

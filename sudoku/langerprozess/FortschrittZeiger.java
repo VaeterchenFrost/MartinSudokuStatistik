@@ -2,6 +2,11 @@ package sudoku.langerprozess;
 
 public interface FortschrittZeiger {
 	/**
+	 * @return true wenn Abbruch gefordert wurde.
+	 */
+	public boolean istAbbruchGefordert();
+
+	/**
 	 * @param fortschritt
 	 *            Zeigt den Fortschritt an (z.B. in der Form eines
 	 *            Fortschritt-Balkens).
@@ -15,9 +20,4 @@ public interface FortschrittZeiger {
 	 *            passieren.
 	 */
 	public void zeigeInfo(String info);
-
-	/**
-	 * @return true wenn Abbruch gefordert wurde.
-	 */
-	public boolean istAbbruchGefordert();
 }

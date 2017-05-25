@@ -36,76 +36,137 @@ import sudoku.logik.tipinfo.TipInfo0;
  *         L�sung des Sudoku schadet das garnichts!
  */
 class Logik_Auswirkungskette implements Logik__Interface {
+	// ===========================================================
+	/**
+	 * @author heroe Die �bergebenen Felder sind alles Felder der einen Gruppe,
+	 *         die alle die eine m�gliche Zahl besitzen. Die �bergebenen Felder
+	 *         werden zu FeldPaaren kombiniert, wenn sie jeweils genau 2
+	 *         m�gliche Zahlen enthalten.
+	 */
+	class KettenFeldPaarGeber extends FeldPaarGeber {
+		@Override
+		ArrayList<FeldPaar> gibFeldPaare(Gruppe gruppe, int zahl, FeldListe felder) {
+			FeldListe zweier = new FeldListe();
+			for (Feld feld : felder) {
+				if (feld.gibMoeglicheAnzahl() == 2) {
+					zweier.add(feld);
+				}
+			}
+			if (zweier.size() < 2) {
+				// Wenn es nicht wenigstens zwei Felder der Zahl in der einen
+				// Gruppe gibt, gibt es hierin keine FeldPaare.
+				return null;
+			}
+
+			int[] teilnehmer = new int[zweier.size()];
+			for (int i = 0; i < teilnehmer.length; i++) {
+				teilnehmer[i] = i;
+			}
+
+			// 2: Immer 2 Felder bilden ein FeldPaar
+			ArrayList<int[]> kombinationen = Kombinationen.gibAlleKombinationen(teilnehmer, 2);
+
+			ArrayList<FeldPaar> feldPaare = new ArrayList<>();
+			for (int iKombination = 0; iKombination < kombinationen.size(); iKombination++) {
+				int[] kombination = kombinationen.get(iKombination);
+				// Also besitzt jede Kombination zwei Feld-Indizees
+				Feld feld1 = zweier.get(kombination[0]);
+				Feld feld2 = zweier.get(kombination[1]);
+				FeldPaar feldPaar = new FeldPaar(gruppe, zahl, feld1, feld2);
+				feldPaare.add(feldPaar);
+			}
+
+			if (!feldPaare.isEmpty()) {
+				return feldPaare;
+			}
+			return null;
+		}
+	}
+
+	private class TipInfoKette extends TipInfo0 {
+		private FeldNummerMitZahl sollEintrag;
+		private ZahlenListe kette;
+
+		private TipInfoKette(FeldNummerMitZahl sollEintrag, ZahlenListe kette) {
+			super(Logik_ID.AUSWIRKUNGSKETTE, new FeldNummerListe(kette));
+			this.sollEintrag = sollEintrag;
+			this.kette = kette;
+		}
+
+		@Override
+		public FeldNummerListe gibAktiveFelder() {
+			FeldNummerListe aktiveFelder = new FeldNummerListe();
+			FeldNummerMitZahl f = gibZahlFeld();
+			if (f != null) {
+				aktiveFelder.add(f.gibFeldNummer());
+			}
+			return aktiveFelder;
+		}
+
+		@Override
+		public ZahlenListe gibLoeschZahlen() {
+			FeldNummerMitZahl feldNummerMitZahl = kette.get(kette.size() - 1);
+			ZahlenListe loeschZahlen = new ZahlenListe();
+			loeschZahlen.add(feldNummerMitZahl);
+			return loeschZahlen;
+		}
+
+		public EinTipText[] gibTip() {
+			String s1a = String.format("Das Verschlu�-Feld%s der Kette", this.sollEintrag.gibFeldNummer());
+			EinTipText t1 = new EinTipText(s1a, kette.toString());
+
+			int verschlussZahl = kette.get(kette.size() - 1).gibZahl();
+			FeldNummerMitZahl nachbarStart = kette.get(1);
+			FeldNummerMitZahl nachbarEnde = kette.get(kette.size() - 2);
+			String s2a = String.format("ist �ber nur die EINE Zahl %d ", verschlussZahl);
+			String s2b = String.format("mit seinen BEIDEN Nachbarn Feld%s und Feld%s verbunden.",
+					nachbarStart.gibFeldNummer(), nachbarEnde.gibFeldNummer());
+			EinTipText t2 = new EinTipText(s2a, s2b);
+
+			String s3a = String.format("Daher ist im Feld%s einzig die Zahl %d m�glich.",
+					this.sollEintrag.gibFeldNummer(), sollEintrag.gibZahl());
+			EinTipText t3 = new EinTipText(s3a, null);
+
+			int beispielFeldIndex = kette.size() / 2;
+			FeldNummerMitZahl beispielFeldZahl = kette.get(beispielFeldIndex);
+			String s4a = String.format("Beispiel der Auswirkung der Belegungen des Ketten-Feldes%s:",
+					beispielFeldZahl.gibFeldNummer());
+			EinTipText t4 = new EinTipText(s4a, null);
+
+			ZahlenListe ketteRueckwaerts = gibKetteRueckwaerst(kette, beispielFeldIndex);
+			ZahlenListe ketteVorwaerts = gibKetteVorwaerst(kette, beispielFeldIndex);
+
+			EinTipText t5 = new EinTipText(gibAuswirkung(ketteRueckwaerts), null);
+			EinTipText t6 = new EinTipText(gibAuswirkung(ketteVorwaerts), null);
+
+			EinTipText[] sArray = new EinTipText[] { t1, t2, t3, t4, t5, t6 };
+			return sArray;
+		}
+
+		@Override
+		public FeldNummerMitZahl gibZahlFeld() {
+			return this.sollEintrag;
+		}
+
+		@Override
+		public boolean istZahl() {
+			return true;
+		}
+
+	}
+
 	static private boolean istSystemOut = false;
 
-	static private void systemOut(String s) {
-		if (istSystemOut) {
-			System.out.println(s);
+	static private String gibAuswirkung(ZahlenListe kette) {
+		String s = "";
+		for (int i = 0; i < kette.size(); i++) {
+			FeldNummerMitZahl feld = kette.get(i);
+			if (!s.isEmpty()) {
+				s += " => ";
+			}
+			s += feld;
 		}
-	}
-
-	static private void systemOut(ArrayList<FeldPaar> feldPaare) {
-		if (!istSystemOut) {
-			return;
-		}
-
-		System.out.println(Logik_Auswirkungskette.class.getSimpleName() + ": FeldPaare");
-		for (FeldPaar feldPaar : feldPaare) {
-			String sMoegliche1 = feldPaar.feld1.gibMoegliche().toString();
-			String sMoegliche2 = feldPaar.feld2.gibMoegliche().toString();
-			systemOut(String.format("%s: Die Zahl %d verbindet Feld%s(%s) mit Feld%s(%s)",
-					feldPaar.gruppe.gibInText(true), feldPaar.zahl, feldPaar.feld1.gibFeldNummer(), sMoegliche1,
-					feldPaar.feld2.gibFeldNummer(), sMoegliche2));
-
-		}
-	}
-
-	static private void systemOut(Map<FeldNummer, ZahlenFeldNummern> feldPartner) {
-		if (!istSystemOut) {
-			return;
-		}
-
-		System.out.println(Logik_Auswirkungskette.class.getSimpleName() + ": FeldPartner");
-		Set<FeldNummer> feldNummernSet = feldPartner.keySet();
-		FeldNummer[] feldNummernArray = new FeldNummer[feldNummernSet.size()];
-		feldNummernSet.toArray(feldNummernArray);
-		Arrays.sort(feldNummernArray);
-
-		for (int iFeldNummer = 0; iFeldNummer < feldNummernArray.length; iFeldNummer++) {
-			FeldNummer feldNummer = feldNummernArray[iFeldNummer];
-			ZahlenFeldNummern partner = feldPartner.get(feldNummer);
-			System.out.println(String.format("Feld%s mit den Partnern: %s", feldNummer, partner));
-		}
-	}
-
-	static private String gibKettenVorspann(ZahlenListe kette) {
-		String vorspann = "";
-		for (int iKettenGlied = 1; iKettenGlied < kette.size(); iKettenGlied++) {
-			vorspann += "  ";
-		}
-		vorspann = String.format("%sTiefe %d:: ", vorspann, kette.size());
-		return vorspann;
-	}
-
-	/**
-	 * @param kette
-	 *            Wird ausgegeben
-	 * @param titel
-	 */
-	static private void systemOut(ZahlenListe kette, boolean mitVorspann, String titel) {
-		if (!istSystemOut) {
-			return;
-		}
-
-		if (mitVorspann) {
-			System.out.print(gibKettenVorspann(kette));
-		}
-		for (int iKettenGlied = 0; iKettenGlied < kette.size(); iKettenGlied++) {
-			FeldNummerMitZahl kettenGlied = kette.get(iKettenGlied);
-			System.out.print(String.format("%d->%s ", kettenGlied.gibZahl(), kettenGlied.gibFeldNummer()));
-		}
-		System.out.print(Logik_Auswirkungskette.class.getSimpleName() + ": " + titel);
-		System.out.println();
+		return s;
 	}
 
 	static private Map<FeldNummer, ZahlenFeldNummern> gibFeldPartner(ArrayList<FeldPaar> feldPaare) {
@@ -129,6 +190,90 @@ class Logik_Auswirkungskette implements Logik__Interface {
 			partnerDesFeld2.addNurNeue(feldPaar.zahl, feldNummer1);
 		}
 		return feldPartner;
+	}
+
+	/**
+	 * @param feldPartner
+	 *            Alle Felder mit ihren Partnern, die jeweils in einer Kette
+	 *            sein k�nnten.
+	 * @param istTip
+	 *            bei true wird die k�rzestes Kette gesucht
+	 * @param sudoku
+	 *            Gibt Felder f�r FeldNummern
+	 * @return Eine Kette oder null, falls keine gefunden werden konnte. Die
+	 *         Kette startet und endet auf demselben Feld mit derselben Zahl.
+	 *         Die andere m�gliche Zahl des Star- bzw. Ende-Feldes ist dann
+	 *         schon der Vorschlag f�r einen Eintrag: Egal wie die
+	 *         Ketten-Felder, die weder Start noch Ende sind, belegt sind: Die
+	 *         andere m�gliche Zahl muss im Start- bzw. Ende-Feld gesetzt sein,
+	 *         wenn das Sudoku l�sbar ist.
+	 * @throws Exc
+	 */
+	static private ZahlenListe gibKette(Map<FeldNummer, ZahlenFeldNummern> feldPartner, boolean istTip,
+			SudokuLogik sudoku) throws Exc {
+		// Auf Index 0 steht die k�rzeste Kette
+		ArrayList<ZahlenListe> ketten = new ArrayList<>();
+
+		// Alle Felder durchklappern
+		Set<FeldNummer> feldNummernSet = feldPartner.keySet();
+		for (FeldNummer feldNummer : feldNummernSet) {
+			ZahlenFeldNummern partner = feldPartner.get(feldNummer);
+
+			int[] zahlen = partner.gibZahlen();
+			// Es gibt hier f�r jedes Feld Zahlen, mindestens eine.
+			// Mit allen Zahlen, die verbinden
+			for (int iZahl = 0; iZahl < zahlen.length; iZahl++) {
+				int zahl = zahlen[iZahl];
+				if (partner.gibFeldNummernAnzahl(zahl) >= 2) {
+					// Dies Feld ist m�glicherweise ein Ketten-Ende-Feld
+
+					// Die StartZahl (die andere als Zahl) ermitteln
+					Feld startFeld = sudoku.gibLogikFeld(feldNummer);
+					ArrayList<Integer> moegliche = startFeld.gibMoegliche();
+					int zahl1 = moegliche.get(0);
+					int zahl2 = moegliche.get(1);
+					int startZahl = zahl1;
+					if (startZahl == zahl) {
+						startZahl = zahl2;
+					}
+
+					FeldNummerMitZahl start = new FeldNummerMitZahl(feldNummer, startZahl);
+					ZahlenListe testKette = new ZahlenListe(start);
+					systemOut(testKette, true, " ==================> Ketten-Start");
+					ZahlenListe kette = gibKette(testKette, feldPartner); // sudoku);
+					if (kette != null) {
+						if (istTip) {
+							if (ketten.isEmpty()) {
+								ketten.add(kette);
+							} else {
+								if (kette.size() < ketten.get(0).size()) {
+									ketten.add(0, kette);
+								} else {
+									ketten.add(kette);
+								}
+							}
+						} else {
+							return kette;
+						}
+					}
+					systemOut(testKette, true,
+							" ==================> Es gibt keine Auswirkungs-Kette auf diesem Startfeld");
+				} // if (partner.gibFeldNummernAnzahl(zahl) >= 2) {
+			} // for (int iZahl = 0; iZahl < zahlen.length; iZahl++) {
+		} // for (FeldNummer feldNummer : feldNummernSet) {
+
+		if (ketten.isEmpty()) {
+			return null;
+		}
+
+		if (istSystemOut) {
+			systemOut(Logik_Auswirkungskette.class.getSimpleName() + ": Tip-Ketten");
+			for (int iKette = 0; iKette < ketten.size(); iKette++) {
+				systemOut(ketten.get(iKette), false, "");
+			}
+		}
+		// k�rzeste Kette
+		return ketten.get(0);
 	}
 
 	/**
@@ -231,88 +376,13 @@ class Logik_Auswirkungskette implements Logik__Interface {
 		return null;
 	}
 
-	/**
-	 * @param feldPartner
-	 *            Alle Felder mit ihren Partnern, die jeweils in einer Kette
-	 *            sein k�nnten.
-	 * @param istTip
-	 *            bei true wird die k�rzestes Kette gesucht
-	 * @param sudoku
-	 *            Gibt Felder f�r FeldNummern
-	 * @return Eine Kette oder null, falls keine gefunden werden konnte. Die
-	 *         Kette startet und endet auf demselben Feld mit derselben Zahl.
-	 *         Die andere m�gliche Zahl des Star- bzw. Ende-Feldes ist dann
-	 *         schon der Vorschlag f�r einen Eintrag: Egal wie die
-	 *         Ketten-Felder, die weder Start noch Ende sind, belegt sind: Die
-	 *         andere m�gliche Zahl muss im Start- bzw. Ende-Feld gesetzt sein,
-	 *         wenn das Sudoku l�sbar ist.
-	 * @throws Exc
-	 */
-	static private ZahlenListe gibKette(Map<FeldNummer, ZahlenFeldNummern> feldPartner, boolean istTip,
-			SudokuLogik sudoku) throws Exc {
-		// Auf Index 0 steht die k�rzeste Kette
-		ArrayList<ZahlenListe> ketten = new ArrayList<>();
-
-		// Alle Felder durchklappern
-		Set<FeldNummer> feldNummernSet = feldPartner.keySet();
-		for (FeldNummer feldNummer : feldNummernSet) {
-			ZahlenFeldNummern partner = feldPartner.get(feldNummer);
-
-			int[] zahlen = partner.gibZahlen();
-			// Es gibt hier f�r jedes Feld Zahlen, mindestens eine.
-			// Mit allen Zahlen, die verbinden
-			for (int iZahl = 0; iZahl < zahlen.length; iZahl++) {
-				int zahl = zahlen[iZahl];
-				if (partner.gibFeldNummernAnzahl(zahl) >= 2) {
-					// Dies Feld ist m�glicherweise ein Ketten-Ende-Feld
-
-					// Die StartZahl (die andere als Zahl) ermitteln
-					Feld startFeld = sudoku.gibLogikFeld(feldNummer);
-					ArrayList<Integer> moegliche = startFeld.gibMoegliche();
-					int zahl1 = moegliche.get(0);
-					int zahl2 = moegliche.get(1);
-					int startZahl = zahl1;
-					if (startZahl == zahl) {
-						startZahl = zahl2;
-					}
-
-					FeldNummerMitZahl start = new FeldNummerMitZahl(feldNummer, startZahl);
-					ZahlenListe testKette = new ZahlenListe(start);
-					systemOut(testKette, true, " ==================> Ketten-Start");
-					ZahlenListe kette = gibKette(testKette, feldPartner); // sudoku);
-					if (kette != null) {
-						if (istTip) {
-							if (ketten.isEmpty()) {
-								ketten.add(kette);
-							} else {
-								if (kette.size() < ketten.get(0).size()) {
-									ketten.add(0, kette);
-								} else {
-									ketten.add(kette);
-								}
-							}
-						} else {
-							return kette;
-						}
-					}
-					systemOut(testKette, true,
-							" ==================> Es gibt keine Auswirkungs-Kette auf diesem Startfeld");
-				} // if (partner.gibFeldNummernAnzahl(zahl) >= 2) {
-			} // for (int iZahl = 0; iZahl < zahlen.length; iZahl++) {
-		} // for (FeldNummer feldNummer : feldNummernSet) {
-
-		if (ketten.isEmpty()) {
-			return null;
+	static private String gibKettenVorspann(ZahlenListe kette) {
+		String vorspann = "";
+		for (int iKettenGlied = 1; iKettenGlied < kette.size(); iKettenGlied++) {
+			vorspann += "  ";
 		}
-
-		if (istSystemOut) {
-			systemOut(Logik_Auswirkungskette.class.getSimpleName() + ": Tip-Ketten");
-			for (int iKette = 0; iKette < ketten.size(); iKette++) {
-				systemOut(ketten.get(iKette), false, "");
-			}
-		}
-		// k�rzeste Kette
-		return ketten.get(0);
+		vorspann = String.format("%sTiefe %d:: ", vorspann, kette.size());
+		return vorspann;
 	}
 
 	/**
@@ -351,135 +421,65 @@ class Logik_Auswirkungskette implements Logik__Interface {
 		return ketteNeu;
 	}
 
-	static private String gibAuswirkung(ZahlenListe kette) {
-		String s = "";
-		for (int i = 0; i < kette.size(); i++) {
-			FeldNummerMitZahl feld = kette.get(i);
-			if (!s.isEmpty()) {
-				s += " => ";
-			}
-			s += feld;
+	static private void systemOut(ArrayList<FeldPaar> feldPaare) {
+		if (!istSystemOut) {
+			return;
 		}
-		return s;
+
+		System.out.println(Logik_Auswirkungskette.class.getSimpleName() + ": FeldPaare");
+		for (FeldPaar feldPaar : feldPaare) {
+			String sMoegliche1 = feldPaar.feld1.gibMoegliche().toString();
+			String sMoegliche2 = feldPaar.feld2.gibMoegliche().toString();
+			systemOut(String.format("%s: Die Zahl %d verbindet Feld%s(%s) mit Feld%s(%s)",
+					feldPaar.gruppe.gibInText(true), feldPaar.zahl, feldPaar.feld1.gibFeldNummer(), sMoegliche1,
+					feldPaar.feld2.gibFeldNummer(), sMoegliche2));
+
+		}
 	}
 
-	// ===========================================================
+	static private void systemOut(Map<FeldNummer, ZahlenFeldNummern> feldPartner) {
+		if (!istSystemOut) {
+			return;
+		}
+
+		System.out.println(Logik_Auswirkungskette.class.getSimpleName() + ": FeldPartner");
+		Set<FeldNummer> feldNummernSet = feldPartner.keySet();
+		FeldNummer[] feldNummernArray = new FeldNummer[feldNummernSet.size()];
+		feldNummernSet.toArray(feldNummernArray);
+		Arrays.sort(feldNummernArray);
+
+		for (int iFeldNummer = 0; iFeldNummer < feldNummernArray.length; iFeldNummer++) {
+			FeldNummer feldNummer = feldNummernArray[iFeldNummer];
+			ZahlenFeldNummern partner = feldPartner.get(feldNummer);
+			System.out.println(String.format("Feld%s mit den Partnern: %s", feldNummer, partner));
+		}
+	}
+
+	static private void systemOut(String s) {
+		if (istSystemOut) {
+			System.out.println(s);
+		}
+	}
+
 	/**
-	 * @author heroe Die �bergebenen Felder sind alles Felder der einen Gruppe,
-	 *         die alle die eine m�gliche Zahl besitzen. Die �bergebenen Felder
-	 *         werden zu FeldPaaren kombiniert, wenn sie jeweils genau 2
-	 *         m�gliche Zahlen enthalten.
+	 * @param kette
+	 *            Wird ausgegeben
+	 * @param titel
 	 */
-	class KettenFeldPaarGeber extends FeldPaarGeber {
-		@Override
-		ArrayList<FeldPaar> gibFeldPaare(Gruppe gruppe, int zahl, FeldListe felder) {
-			FeldListe zweier = new FeldListe();
-			for (Feld feld : felder) {
-				if (feld.gibMoeglicheAnzahl() == 2) {
-					zweier.add(feld);
-				}
-			}
-			if (zweier.size() < 2) {
-				// Wenn es nicht wenigstens zwei Felder der Zahl in der einen
-				// Gruppe gibt, gibt es hierin keine FeldPaare.
-				return null;
-			}
-
-			int[] teilnehmer = new int[zweier.size()];
-			for (int i = 0; i < teilnehmer.length; i++) {
-				teilnehmer[i] = i;
-			}
-
-			// 2: Immer 2 Felder bilden ein FeldPaar
-			ArrayList<int[]> kombinationen = Kombinationen.gibAlleKombinationen(teilnehmer, 2);
-
-			ArrayList<FeldPaar> feldPaare = new ArrayList<>();
-			for (int iKombination = 0; iKombination < kombinationen.size(); iKombination++) {
-				int[] kombination = kombinationen.get(iKombination);
-				// Also besitzt jede Kombination zwei Feld-Indizees
-				Feld feld1 = zweier.get(kombination[0]);
-				Feld feld2 = zweier.get(kombination[1]);
-				FeldPaar feldPaar = new FeldPaar(gruppe, zahl, feld1, feld2);
-				feldPaare.add(feldPaar);
-			}
-
-			if (!feldPaare.isEmpty()) {
-				return feldPaare;
-			}
-			return null;
-		}
-	}
-
-	private class TipInfoKette extends TipInfo0 {
-		private FeldNummerMitZahl sollEintrag;
-		private ZahlenListe kette;
-
-		private TipInfoKette(FeldNummerMitZahl sollEintrag, ZahlenListe kette) {
-			super(Logik_ID.AUSWIRKUNGSKETTE, new FeldNummerListe(kette));
-			this.sollEintrag = sollEintrag;
-			this.kette = kette;
+	static private void systemOut(ZahlenListe kette, boolean mitVorspann, String titel) {
+		if (!istSystemOut) {
+			return;
 		}
 
-		public EinTipText[] gibTip() {
-			String s1a = String.format("Das Verschlu�-Feld%s der Kette", this.sollEintrag.gibFeldNummer());
-			EinTipText t1 = new EinTipText(s1a, kette.toString());
-
-			int verschlussZahl = kette.get(kette.size() - 1).gibZahl();
-			FeldNummerMitZahl nachbarStart = kette.get(1);
-			FeldNummerMitZahl nachbarEnde = kette.get(kette.size() - 2);
-			String s2a = String.format("ist �ber nur die EINE Zahl %d ", verschlussZahl);
-			String s2b = String.format("mit seinen BEIDEN Nachbarn Feld%s und Feld%s verbunden.",
-					nachbarStart.gibFeldNummer(), nachbarEnde.gibFeldNummer());
-			EinTipText t2 = new EinTipText(s2a, s2b);
-
-			String s3a = String.format("Daher ist im Feld%s einzig die Zahl %d m�glich.",
-					this.sollEintrag.gibFeldNummer(), sollEintrag.gibZahl());
-			EinTipText t3 = new EinTipText(s3a, null);
-
-			int beispielFeldIndex = kette.size() / 2;
-			FeldNummerMitZahl beispielFeldZahl = kette.get(beispielFeldIndex);
-			String s4a = String.format("Beispiel der Auswirkung der Belegungen des Ketten-Feldes%s:",
-					beispielFeldZahl.gibFeldNummer());
-			EinTipText t4 = new EinTipText(s4a, null);
-
-			ZahlenListe ketteRueckwaerts = gibKetteRueckwaerst(kette, beispielFeldIndex);
-			ZahlenListe ketteVorwaerts = gibKetteVorwaerst(kette, beispielFeldIndex);
-
-			EinTipText t5 = new EinTipText(gibAuswirkung(ketteRueckwaerts), null);
-			EinTipText t6 = new EinTipText(gibAuswirkung(ketteVorwaerts), null);
-
-			EinTipText[] sArray = new EinTipText[] { t1, t2, t3, t4, t5, t6 };
-			return sArray;
+		if (mitVorspann) {
+			System.out.print(gibKettenVorspann(kette));
 		}
-
-		@Override
-		public FeldNummerListe gibAktiveFelder() {
-			FeldNummerListe aktiveFelder = new FeldNummerListe();
-			FeldNummerMitZahl f = gibZahlFeld();
-			if (f != null) {
-				aktiveFelder.add(f.gibFeldNummer());
-			}
-			return aktiveFelder;
+		for (int iKettenGlied = 0; iKettenGlied < kette.size(); iKettenGlied++) {
+			FeldNummerMitZahl kettenGlied = kette.get(iKettenGlied);
+			System.out.print(String.format("%d->%s ", kettenGlied.gibZahl(), kettenGlied.gibFeldNummer()));
 		}
-
-		@Override
-		public ZahlenListe gibLoeschZahlen() {
-			FeldNummerMitZahl feldNummerMitZahl = kette.get(kette.size() - 1);
-			ZahlenListe loeschZahlen = new ZahlenListe();
-			loeschZahlen.add(feldNummerMitZahl);
-			return loeschZahlen;
-		}
-
-		@Override
-		public boolean istZahl() {
-			return true;
-		}
-
-		@Override
-		public FeldNummerMitZahl gibZahlFeld() {
-			return this.sollEintrag;
-		}
-
+		System.out.print(Logik_Auswirkungskette.class.getSimpleName() + ": " + titel);
+		System.out.println();
 	}
 
 	// ===========================================================
@@ -492,8 +492,13 @@ class Logik_Auswirkungskette implements Logik__Interface {
 	}
 
 	@Override
-	public Logik_ID gibLogikID() {
-		return Logik_ID.AUSWIRKUNGSKETTE;
+	public String gibErgebnis() {
+		return "Die nicht verkette m�gliche Zahl des Verschlu�feldes ist ein Eintrag.";
+	}
+
+	@Override
+	public double gibKontrollZeit1() {
+		return 120;
 	}
 
 	@Override
@@ -502,21 +507,13 @@ class Logik_Auswirkungskette implements Logik__Interface {
 	}
 
 	@Override
+	public Logik_ID gibLogikID() {
+		return Logik_ID.AUSWIRKUNGSKETTE;
+	}
+
+	@Override
 	public String gibName() {
 		return "Auswirkungskette";
-	}
-
-	@Override
-	public String[] gibWo() {
-		return new String[] { "Es handelt sich nur um Felder mit genau 2 m�glichen Zahlen.",
-				"Es handelt sich nur um Feldpaare:",
-				"Es gibt in einer der 9-Felder-Gruppen eines Feldes mind. ein weiteres Feld mit einer der m�glichen Zahlen des Feldes." };
-	}
-
-	@Override
-	public String[] gibSituationAbstrakt() {
-		return new String[] { "In einem Feld einer Kette von Feldern ist eine Zahl festgelegt",
-				"unabh�ngig davon welche Alternative in einem anderen Feld der Kette gew�hlt wird." };
 	}
 
 	@Override
@@ -528,13 +525,16 @@ class Logik_Auswirkungskette implements Logik__Interface {
 	}
 
 	@Override
-	public String gibErgebnis() {
-		return "Die nicht verkette m�gliche Zahl des Verschlu�feldes ist ein Eintrag.";
+	public String[] gibSituationAbstrakt() {
+		return new String[] { "In einem Feld einer Kette von Feldern ist eine Zahl festgelegt",
+				"unabh�ngig davon welche Alternative in einem anderen Feld der Kette gew�hlt wird." };
 	}
 
 	@Override
-	public double gibKontrollZeit1() {
-		return 120;
+	public String[] gibWo() {
+		return new String[] { "Es handelt sich nur um Felder mit genau 2 m�glichen Zahlen.",
+				"Es handelt sich nur um Feldpaare:",
+				"Es gibt in einer der 9-Felder-Gruppen eines Feldes mind. ein weiteres Feld mit einer der m�glichen Zahlen des Feldes." };
 	}
 
 	@Override

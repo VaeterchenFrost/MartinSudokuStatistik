@@ -17,6 +17,26 @@ import sudoku.kern.feldmatrix.FeldNummer;
 @SuppressWarnings("serial")
 class ZahlBereiche extends HashMap<FeldNummer, Rectangle> {
 
+	ZahlBereiche(Rectangle r) {
+		int[] breiten = gibLaengen(r.width, ZahlBildInfo.nLinien);
+		int[] hoehen = gibLaengen(r.height, ZahlBildInfo.nLinien);
+
+		for (int zeile = 1; zeile <= ZahlBildInfo.nLinien; zeile++) {
+			for (int spalte = 1; spalte <= ZahlBildInfo.nLinien; spalte++) {
+				int x = r.x + gibSumme(breiten, spalte - 1);
+				int y = r.y + gibSumme(hoehen, zeile - 1);
+				int breite = breiten[spalte - 1];
+				int hoehe = hoehen[zeile - 1];
+				Rectangle rBereich = new Rectangle(x, y, breite, hoehe);
+				FeldNummer feldNummer = new FeldNummer(spalte, zeile);
+				this.put(feldNummer, rBereich);
+			}
+		}
+		// if (istTestAnzeige){
+		// systemOut(r);
+		// }
+	}
+
 	/**
 	 * @param laengeGesamt
 	 * @param nBereiche
@@ -61,36 +81,11 @@ class ZahlBereiche extends HashMap<FeldNummer, Rectangle> {
 		return summe;
 	}
 
-	ZahlBereiche(Rectangle r) {
-		int[] breiten = gibLaengen(r.width, ZahlBildInfo.nLinien);
-		int[] hoehen = gibLaengen(r.height, ZahlBildInfo.nLinien);
-
-		for (int zeile = 1; zeile <= ZahlBildInfo.nLinien; zeile++) {
-			for (int spalte = 1; spalte <= ZahlBildInfo.nLinien; spalte++) {
-				int x = r.x + gibSumme(breiten, spalte - 1);
-				int y = r.y + gibSumme(hoehen, zeile - 1);
-				int breite = breiten[spalte - 1];
-				int hoehe = hoehen[zeile - 1];
-				Rectangle rBereich = new Rectangle(x, y, breite, hoehe);
-				FeldNummer feldNummer = new FeldNummer(spalte, zeile);
-				this.put(feldNummer, rBereich);
-			}
-		}
-		// if (istTestAnzeige){
-		// systemOut(r);
-		// }
-	}
-
-	@SuppressWarnings("unused")
-	private void systemOut(Rectangle zahlRechteck) {
-		System.out.println(String.format("%s ZahlRechteck %s", getClass().getName(), zahlRechteck));
-		for (int zeile = 1; zeile <= ZahlBildInfo.nLinien; zeile++) {
-			for (int spalte = 1; spalte <= ZahlBildInfo.nLinien; spalte++) {
-				FeldNummer feldNummer = new FeldNummer(spalte, zeile);
-				Rectangle r = this.get(feldNummer);
-				System.out.print(String.format(" [%d %d %d %d]", r.x, r.y, r.width, r.height));
-			}
-			System.out.println();
+	void male(BufferedImage image) {
+		for (Rectangle r : this.values()) {
+			Graphics2D g = image.createGraphics();
+			g.setColor(Color.BLACK);
+			g.drawRect(r.x, r.y, r.width, r.height);
 		}
 	}
 
@@ -107,11 +102,16 @@ class ZahlBereiche extends HashMap<FeldNummer, Rectangle> {
 		this.putAll(gedrehte);
 	}
 
-	void male(BufferedImage image) {
-		for (Rectangle r : this.values()) {
-			Graphics2D g = image.createGraphics();
-			g.setColor(Color.BLACK);
-			g.drawRect(r.x, r.y, r.width, r.height);
+	@SuppressWarnings("unused")
+	private void systemOut(Rectangle zahlRechteck) {
+		System.out.println(String.format("%s ZahlRechteck %s", getClass().getName(), zahlRechteck));
+		for (int zeile = 1; zeile <= ZahlBildInfo.nLinien; zeile++) {
+			for (int spalte = 1; spalte <= ZahlBildInfo.nLinien; spalte++) {
+				FeldNummer feldNummer = new FeldNummer(spalte, zeile);
+				Rectangle r = this.get(feldNummer);
+				System.out.print(String.format(" [%d %d %d %d]", r.x, r.y, r.width, r.height));
+			}
+			System.out.println();
 		}
 	}
 }

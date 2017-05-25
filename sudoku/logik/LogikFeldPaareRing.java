@@ -18,83 +18,101 @@ import sudoku.logik.tipinfo.TipInfo;
 import sudoku.logik.tipinfo.TipInfo0;
 
 abstract class LogikFeldPaareRing implements Logik__Interface {
+	// =========================================================
+	private class TipInfoRingFeldPaare extends TipInfo0 {
+
+		final int zahl;
+		final FeldNummerListe ringFeldNummern;
+		final Gruppe[] linien;
+		final Gruppe[] senkrechte;
+		final ZahlenListe loeschZahlen;
+
+		private TipInfoRingFeldPaare(Logik_ID logik, int zahl, FeldNummerListe ringFeldNummern, Gruppe[] linien,
+				Gruppe[] senkrechte, ZahlenListe loeschZahlen) {
+			super(logik, LogikFeldPaareRing.gibMitspieler(linien, senkrechte));
+			this.zahl = zahl;
+			this.ringFeldNummern = ringFeldNummern;
+			this.linien = linien;
+			this.senkrechte = senkrechte;
+			this.loeschZahlen = loeschZahlen;
+		}
+
+		@Override
+		public FeldNummerListe gibAktiveFelder() {
+			return ringFeldNummern;
+		}
+
+		@Override
+		public ZahlenListe gibLoeschZahlen() {
+			return loeschZahlen;
+		}
+
+		public EinTipText[] gibTip() {
+			ArrayList<EinTipText> texte = new ArrayList<>();
+			{
+				String s1 = String.format("Die m�gliche Zahl %d muss %s", zahl, Gruppe.gibInText(linien, false));
+				String s2 = "in einem der beiden jeweils m�glichen Felder stehen.";
+				EinTipText tipText1 = new EinTipText(s1, s2);
+				texte.add(tipText1);
+				s1 = "Die genannten Linien sind �ber ihre Senkrechten miteinander verbunden.";
+				tipText1 = new EinTipText(s1, null);
+				texte.add(tipText1);
+				s1 = String.format("Daher muss die m�gliche Zahl %d auch in den Senkrechten ", zahl);
+				s2 = "in genau einem von beiden Feldern stehen.";
+				tipText1 = new EinTipText(s1, s2);
+				texte.add(tipText1);
+			}
+			{
+				String s1 = String.format("Deshalb wird die Zahl %d ansonsten ", zahl);
+				String s2 = String.format("%s gel�scht.", Gruppe.gibInText(senkrechte, false));
+				EinTipText tipText1 = new EinTipText(s1, s2);
+				texte.add(tipText1);
+			}
+
+			EinTipText[] texteArr = texte.toArray(new EinTipText[texte.size()]);
+			return texteArr;
+		}
+
+		@Override
+		public FeldNummerMitZahl gibZahlFeld() {
+			return null;
+		}
+
+		@Override
+		public boolean istZahl() {
+			return false;
+		}
+
+	}
+
 	/**
 	 * Wenn diese Zahl == anzahlFeldPaare ist, erfolgt systemOut()
 	 */
 	static private int istSystemOut = 0;
 
-	static private FeldNummerListe gibMitspieler(Gruppe[] gruppen) {
-		FeldNummerListe mitspieler = new FeldNummerListe();
-		for (int i = 0; i < gruppen.length; i++) {
-			FeldNummerListe fNL = new FeldNummerListe(gruppen[i]);
-			mitspieler.addAll(fNL);
-		}
-		return mitspieler;
-	}
-
-	/**
-	 * Diese Logik wird nur im TipInfo ben�tigt. Sie steht deshalb hier, weil
-	 * die interne Klasse keine statischen Methoden besitzen kann.
-	 * 
-	 * @param linien
-	 * @param senkrechte
-	 * @return Alle FeldNummern der an der Logik beteiligten Gruppen
-	 */
-	static private FeldNummerListe gibMitspieler(Gruppe[] linien, Gruppe[] senkrechte) {
-		FeldNummerListe mitspieler = new FeldNummerListe();
-		FeldNummerListe fNLinien = gibMitspieler(linien);
-		FeldNummerListe fNSenkrechte = gibMitspieler(senkrechte);
-
-		mitspieler.addAll(fNLinien);
-		mitspieler.addAll(fNSenkrechte);
-		return mitspieler;
-	}
-
-	/**
-	 * @param paarFeldNummern
-	 * @param typZu0
-	 * @return FeldNummern, deren Zeile bzw. Spalte entsprechend typZu0 0 ist.
-	 */
-	static private FeldNummerListe gibMit0(FeldNummerListe paarFeldNummern, Gruppe.Typ typZu0) {
-		FeldNummerListe feldNummern0 = new FeldNummerListe();
-
-		for (int i = 0; i < paarFeldNummern.size(); i++) {
-			FeldNummer paarFeldNummer = paarFeldNummern.get(i);
-			FeldNummer feldNummer0 = Gruppe.gibFeldNummerMit0(paarFeldNummer, typZu0);
-
-			feldNummern0.add(feldNummer0);
-		}
-		return feldNummern0;
+	static private FeldNummerListe gibFeldNummern(FeldPaar feldPaar) {
+		FeldNummerListe feldNummernDerZahl = new FeldNummerListe();
+		feldNummernDerZahl.add(feldPaar.feld1.gibFeldNummer());
+		feldNummernDerZahl.add(feldPaar.feld2.gibFeldNummer());
+		return feldNummernDerZahl;
 	}
 
 	/**
 	 * @param feldPaare
-	 * @param linien
-	 * @return Die Linien, die durch die FeldPaare benannt sind.
+	 * @return Alle FeldNummern der FeldPaare. Jede FeldNummer nur einmal.
 	 */
-	static private Gruppe[] gibRingGruppen(FeldPaar[] feldPaare, ArrayList<Gruppe> linien) {
-		ArrayList<Gruppe> feldPaareLinien = new ArrayList<>();
-		Gruppe linie0 = linien.get(0);
-		// Gruppe.Typ linienTyp = linie0.gibTyp();
-		Gruppe.Typ senkrechteTyp = linie0.gibTypDerSenkrechten();
-		FeldNummerListe paarFeldNummern = gibFeldNummern(feldPaare);
-		FeldNummerListe testFeldNummern = gibMit0(paarFeldNummern, senkrechteTyp);
-
-		for (int iTestNummer = 0; iTestNummer < testFeldNummern.size(); iTestNummer++) {
-			FeldNummer testFeldNummer = testFeldNummern.get(iTestNummer);
-			for (int iLinie = 0; iLinie < linien.size(); iLinie++) {
-				Gruppe linie = linien.get(iLinie);
-				FeldNummer linieFeldNummer = linie.get(0).gibFeldNummer();
-				if (linieFeldNummer.equals(testFeldNummer)) {
-					if (!feldPaareLinien.contains(linie)) {
-						feldPaareLinien.add(linie);
-					}
+	static private FeldNummerListe gibFeldNummern(FeldPaar[] feldPaare) {
+		FeldNummerListe feldNummern = new FeldNummerListe();
+		for (int iFeldPaar = 0; iFeldPaar < feldPaare.length; iFeldPaar++) {
+			FeldNummerListe paarFeldNummern = gibFeldNummern(feldPaare[iFeldPaar]);
+			for (int iFeldNummer = 0; iFeldNummer < paarFeldNummern.size(); iFeldNummer++) {
+				FeldNummer feldNummer = paarFeldNummern.get(iFeldNummer);
+				if (!feldNummern.contains(feldNummer)) {
+					feldNummern.add(feldNummer);
 				}
 			}
 		}
-
-		Gruppe[] feldPaareLinienArray = new Gruppe[feldPaareLinien.size()];
-		return feldPaareLinien.toArray(feldPaareLinienArray);
+		return feldNummern;
 	}
 
 	/**
@@ -129,6 +147,108 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 		return loeschZahlen;
 	}
 
+	/**
+	 * @param paarFeldNummern
+	 * @param typZu0
+	 * @return FeldNummern, deren Zeile bzw. Spalte entsprechend typZu0 0 ist.
+	 */
+	static private FeldNummerListe gibMit0(FeldNummerListe paarFeldNummern, Gruppe.Typ typZu0) {
+		FeldNummerListe feldNummern0 = new FeldNummerListe();
+
+		for (int i = 0; i < paarFeldNummern.size(); i++) {
+			FeldNummer paarFeldNummer = paarFeldNummern.get(i);
+			FeldNummer feldNummer0 = Gruppe.gibFeldNummerMit0(paarFeldNummer, typZu0);
+
+			feldNummern0.add(feldNummer0);
+		}
+		return feldNummern0;
+	}
+
+	static private FeldNummerListe gibMitspieler(Gruppe[] gruppen) {
+		FeldNummerListe mitspieler = new FeldNummerListe();
+		for (int i = 0; i < gruppen.length; i++) {
+			FeldNummerListe fNL = new FeldNummerListe(gruppen[i]);
+			mitspieler.addAll(fNL);
+		}
+		return mitspieler;
+	}
+
+	/**
+	 * Diese Logik wird nur im TipInfo ben�tigt. Sie steht deshalb hier, weil
+	 * die interne Klasse keine statischen Methoden besitzen kann.
+	 * 
+	 * @param linien
+	 * @param senkrechte
+	 * @return Alle FeldNummern der an der Logik beteiligten Gruppen
+	 */
+	static private FeldNummerListe gibMitspieler(Gruppe[] linien, Gruppe[] senkrechte) {
+		FeldNummerListe mitspieler = new FeldNummerListe();
+		FeldNummerListe fNLinien = gibMitspieler(linien);
+		FeldNummerListe fNSenkrechte = gibMitspieler(senkrechte);
+
+		mitspieler.addAll(fNLinien);
+		mitspieler.addAll(fNSenkrechte);
+		return mitspieler;
+	}
+
+	/**
+	 * @param feldPaare
+	 * @param anzahlRingFeldPaare
+	 * @return Alle m�glichen Kombinationen der FeldPaare, die einen Ring bilden
+	 *         k�nnten. Jede Kombination besitzt genau anzahlFeldPaare
+	 *         FeldPaare.
+	 */
+	static private ArrayList<FeldPaar[]> gibMoeglicheRinge(ArrayList<FeldPaar> feldPaare, int anzahlRingFeldPaare) {
+		int[] teilnehmer = new int[feldPaare.size()];
+		for (int i = 0; i < teilnehmer.length; i++) {
+			teilnehmer[i] = i;
+		}
+
+		ArrayList<int[]> kombinationen = Kombinationen.gibAlleKombinationen(teilnehmer, anzahlRingFeldPaare);
+		ArrayList<FeldPaar[]> moeglicheRinge = new ArrayList<>();
+
+		for (int iKombination = 0; iKombination < kombinationen.size(); iKombination++) {
+			int[] kombination = kombinationen.get(iKombination);
+			FeldPaar[] moeglicherRing = new FeldPaar[kombination.length];
+			for (int i = 0; i < kombination.length; i++) {
+				int feldPaarIndex = kombination[i];
+				moeglicherRing[i] = feldPaare.get(feldPaarIndex);
+			}
+			moeglicheRinge.add(moeglicherRing);
+		}
+		return moeglicheRinge;
+	}
+
+	/**
+	 * @param feldPaare
+	 * @param linien
+	 * @return Die Linien, die durch die FeldPaare benannt sind.
+	 */
+	static private Gruppe[] gibRingGruppen(FeldPaar[] feldPaare, ArrayList<Gruppe> linien) {
+		ArrayList<Gruppe> feldPaareLinien = new ArrayList<>();
+		Gruppe linie0 = linien.get(0);
+		// Gruppe.Typ linienTyp = linie0.gibTyp();
+		Gruppe.Typ senkrechteTyp = linie0.gibTypDerSenkrechten();
+		FeldNummerListe paarFeldNummern = gibFeldNummern(feldPaare);
+		FeldNummerListe testFeldNummern = gibMit0(paarFeldNummern, senkrechteTyp);
+
+		for (int iTestNummer = 0; iTestNummer < testFeldNummern.size(); iTestNummer++) {
+			FeldNummer testFeldNummer = testFeldNummern.get(iTestNummer);
+			for (int iLinie = 0; iLinie < linien.size(); iLinie++) {
+				Gruppe linie = linien.get(iLinie);
+				FeldNummer linieFeldNummer = linie.get(0).gibFeldNummer();
+				if (linieFeldNummer.equals(testFeldNummer)) {
+					if (!feldPaareLinien.contains(linie)) {
+						feldPaareLinien.add(linie);
+					}
+				}
+			}
+		}
+
+		Gruppe[] feldPaareLinienArray = new Gruppe[feldPaareLinien.size()];
+		return feldPaareLinien.toArray(feldPaareLinienArray);
+	}
+
 	static private boolean istErgebnisIgnorieren(List<TipInfo> ignorierTips, TipInfoRingFeldPaare tipInfoLogik) {
 		if (ignorierTips == null) {
 			return false;
@@ -149,29 +269,31 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 		return false;
 	}
 
-	static private FeldNummerListe gibFeldNummern(FeldPaar feldPaar) {
-		FeldNummerListe feldNummernDerZahl = new FeldNummerListe();
-		feldNummernDerZahl.add(feldPaar.feld1.gibFeldNummer());
-		feldNummernDerZahl.add(feldPaar.feld2.gibFeldNummer());
-		return feldNummernDerZahl;
-	}
-
 	/**
 	 * @param feldPaare
-	 * @return Alle FeldNummern der FeldPaare. Jede FeldNummer nur einmal.
+	 *            genau die richtige Anzahl FeldPaare
+	 * @return true wenn es sich um einen FeldPaare-Ring handelt.
 	 */
-	static private FeldNummerListe gibFeldNummern(FeldPaar[] feldPaare) {
-		FeldNummerListe feldNummern = new FeldNummerListe();
-		for (int iFeldPaar = 0; iFeldPaar < feldPaare.length; iFeldPaar++) {
-			FeldNummerListe paarFeldNummern = gibFeldNummern(feldPaare[iFeldPaar]);
-			for (int iFeldNummer = 0; iFeldNummer < paarFeldNummern.size(); iFeldNummer++) {
-				FeldNummer feldNummer = paarFeldNummern.get(iFeldNummer);
-				if (!feldNummern.contains(feldNummer)) {
-					feldNummern.add(feldNummer);
-				}
-			}
+	static private boolean istRing(FeldPaar[] feldPaare) {
+		FeldPaar basisFeldPaar = feldPaare[0];
+		Gruppe.Typ linienTyp = feldPaare[0].gruppe.gibTyp();
+		FeldNummer anfang = basisFeldPaar.feld1.gibFeldNummer();
+		anfang = Gruppe.gibFeldNummerMit0(anfang, linienTyp);
+
+		FeldNummer ende = basisFeldPaar.feld2.gibFeldNummer();
+		ende = Gruppe.gibFeldNummerMit0(ende, linienTyp);
+
+		ArrayList<FeldPaar> ringFeldPaare = new ArrayList<>();
+		ringFeldPaare.add(basisFeldPaar);
+
+		ArrayList<FeldPaar> suchFeldPaare = new ArrayList<>();
+		for (int i = 1; i < feldPaare.length; i++) {
+			suchFeldPaare.add(feldPaare[i]);
 		}
-		return feldNummern;
+
+		// Der Ring besteht jetzt zun�chst nur aus dem Basis-FeldPaar
+		boolean istRingKomplett = istRingKomplett(ringFeldPaare, anfang, ende, suchFeldPaare);
+		return istRingKomplett;
 	}
 
 	/**
@@ -245,128 +367,6 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 		} // while true
 	}
 
-	/**
-	 * @param feldPaare
-	 *            genau die richtige Anzahl FeldPaare
-	 * @return true wenn es sich um einen FeldPaare-Ring handelt.
-	 */
-	static private boolean istRing(FeldPaar[] feldPaare) {
-		FeldPaar basisFeldPaar = feldPaare[0];
-		Gruppe.Typ linienTyp = feldPaare[0].gruppe.gibTyp();
-		FeldNummer anfang = basisFeldPaar.feld1.gibFeldNummer();
-		anfang = Gruppe.gibFeldNummerMit0(anfang, linienTyp);
-
-		FeldNummer ende = basisFeldPaar.feld2.gibFeldNummer();
-		ende = Gruppe.gibFeldNummerMit0(ende, linienTyp);
-
-		ArrayList<FeldPaar> ringFeldPaare = new ArrayList<>();
-		ringFeldPaare.add(basisFeldPaar);
-
-		ArrayList<FeldPaar> suchFeldPaare = new ArrayList<>();
-		for (int i = 1; i < feldPaare.length; i++) {
-			suchFeldPaare.add(feldPaare[i]);
-		}
-
-		// Der Ring besteht jetzt zun�chst nur aus dem Basis-FeldPaar
-		boolean istRingKomplett = istRingKomplett(ringFeldPaare, anfang, ende, suchFeldPaare);
-		return istRingKomplett;
-	}
-
-	/**
-	 * @param feldPaare
-	 * @param anzahlRingFeldPaare
-	 * @return Alle m�glichen Kombinationen der FeldPaare, die einen Ring bilden
-	 *         k�nnten. Jede Kombination besitzt genau anzahlFeldPaare
-	 *         FeldPaare.
-	 */
-	static private ArrayList<FeldPaar[]> gibMoeglicheRinge(ArrayList<FeldPaar> feldPaare, int anzahlRingFeldPaare) {
-		int[] teilnehmer = new int[feldPaare.size()];
-		for (int i = 0; i < teilnehmer.length; i++) {
-			teilnehmer[i] = i;
-		}
-
-		ArrayList<int[]> kombinationen = Kombinationen.gibAlleKombinationen(teilnehmer, anzahlRingFeldPaare);
-		ArrayList<FeldPaar[]> moeglicheRinge = new ArrayList<>();
-
-		for (int iKombination = 0; iKombination < kombinationen.size(); iKombination++) {
-			int[] kombination = kombinationen.get(iKombination);
-			FeldPaar[] moeglicherRing = new FeldPaar[kombination.length];
-			for (int i = 0; i < kombination.length; i++) {
-				int feldPaarIndex = kombination[i];
-				moeglicherRing[i] = feldPaare.get(feldPaarIndex);
-			}
-			moeglicheRinge.add(moeglicherRing);
-		}
-		return moeglicheRinge;
-	}
-
-	// =========================================================
-	private class TipInfoRingFeldPaare extends TipInfo0 {
-
-		final int zahl;
-		final FeldNummerListe ringFeldNummern;
-		final Gruppe[] linien;
-		final Gruppe[] senkrechte;
-		final ZahlenListe loeschZahlen;
-
-		private TipInfoRingFeldPaare(Logik_ID logik, int zahl, FeldNummerListe ringFeldNummern, Gruppe[] linien,
-				Gruppe[] senkrechte, ZahlenListe loeschZahlen) {
-			super(logik, LogikFeldPaareRing.gibMitspieler(linien, senkrechte));
-			this.zahl = zahl;
-			this.ringFeldNummern = ringFeldNummern;
-			this.linien = linien;
-			this.senkrechte = senkrechte;
-			this.loeschZahlen = loeschZahlen;
-		}
-
-		public EinTipText[] gibTip() {
-			ArrayList<EinTipText> texte = new ArrayList<>();
-			{
-				String s1 = String.format("Die m�gliche Zahl %d muss %s", zahl, Gruppe.gibInText(linien, false));
-				String s2 = "in einem der beiden jeweils m�glichen Felder stehen.";
-				EinTipText tipText1 = new EinTipText(s1, s2);
-				texte.add(tipText1);
-				s1 = "Die genannten Linien sind �ber ihre Senkrechten miteinander verbunden.";
-				tipText1 = new EinTipText(s1, null);
-				texte.add(tipText1);
-				s1 = String.format("Daher muss die m�gliche Zahl %d auch in den Senkrechten ", zahl);
-				s2 = "in genau einem von beiden Feldern stehen.";
-				tipText1 = new EinTipText(s1, s2);
-				texte.add(tipText1);
-			}
-			{
-				String s1 = String.format("Deshalb wird die Zahl %d ansonsten ", zahl);
-				String s2 = String.format("%s gel�scht.", Gruppe.gibInText(senkrechte, false));
-				EinTipText tipText1 = new EinTipText(s1, s2);
-				texte.add(tipText1);
-			}
-
-			EinTipText[] texteArr = texte.toArray(new EinTipText[texte.size()]);
-			return texteArr;
-		}
-
-		@Override
-		public FeldNummerListe gibAktiveFelder() {
-			return ringFeldNummern;
-		}
-
-		@Override
-		public ZahlenListe gibLoeschZahlen() {
-			return loeschZahlen;
-		}
-
-		@Override
-		public boolean istZahl() {
-			return false;
-		}
-
-		@Override
-		public FeldNummerMitZahl gibZahlFeld() {
-			return null;
-		}
-
-	}
-
 	// =========================================================
 	private final int anzahlRingFeldPaare;
 	private final ArrayList<Gruppe> zeilen;
@@ -379,34 +379,8 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 	}
 
 	@Override
-	public String[] gibWo() {
-		String s = String.format(
-				"Auf %d parallelen Zeilen. (Alles gesagte gilt auch f�r %d parallele Spalten und Zeilen als Senkrechte.)",
-				anzahlRingFeldPaare, anzahlRingFeldPaare);
-		return new String[] { s };
-	}
-
-	@Override
-	public String[] gibSituationAbstrakt() {
-		return new String[] { "1 Zahl ist nur an 2 Orten je Linie m�glich.",
-				"Die Linien sind �ber gleiche Orte der Zahlen �ber ihre Senkrechten verbunden." };
-	}
-
-	@Override
-	public String[] gibSituation() {
-		return new String[] { "1 Zahl ist nur auf 2 Feldern je Zeile m�glich.",
-				"Je zwei der Felder der relevanten Zeilen befinden sich auf den gleichen Spalten." };
-	}
-
-	@Override
 	public String gibErgebnis() {
 		return "Au�er in den betrachteten Feldern kann die m�gliche Zahl in den betreffenden Spalten gel�scht werden.";
-	}
-
-	private void systemOut(String s) {
-		if (istSystemOut == this.anzahlRingFeldPaare) {
-			System.out.println(s);
-		}
 	}
 
 	/**
@@ -471,6 +445,26 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 	}
 
 	@Override
+	public String[] gibSituation() {
+		return new String[] { "1 Zahl ist nur auf 2 Feldern je Zeile m�glich.",
+				"Je zwei der Felder der relevanten Zeilen befinden sich auf den gleichen Spalten." };
+	}
+
+	@Override
+	public String[] gibSituationAbstrakt() {
+		return new String[] { "1 Zahl ist nur an 2 Orten je Linie m�glich.",
+				"Die Linien sind �ber gleiche Orte der Zahlen �ber ihre Senkrechten verbunden." };
+	}
+
+	@Override
+	public String[] gibWo() {
+		String s = String.format(
+				"Auf %d parallelen Zeilen. (Alles gesagte gilt auch f�r %d parallele Spalten und Zeilen als Senkrechte.)",
+				anzahlRingFeldPaare, anzahlRingFeldPaare);
+		return new String[] { s };
+	}
+
+	@Override
 	public LogikErgebnis laufen(boolean istTip, List<TipInfo> ignorierTips) throws Exc {
 		ArrayList<Gruppe> freieZeilen = Gruppe.gibFreieGruppen(zeilen, 2);
 		ArrayList<Gruppe> freieSpalten = Gruppe.gibFreieGruppen(spalten, 2);
@@ -493,6 +487,12 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 			return new LogikErgebnis(gruppenLaeufeListe);
 		} // if ((!freieZeilen.isEmpty()) & (!freieSpalten.isEmpty())) {
 		return null;
+	}
+
+	private void systemOut(String s) {
+		if (istSystemOut == this.anzahlRingFeldPaare) {
+			System.out.println(s);
+		}
 	}
 
 }

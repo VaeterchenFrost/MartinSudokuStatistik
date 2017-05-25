@@ -2,6 +2,15 @@ package sudoku.kern.info;
 
 public class MoeglicheZahl {
 
+	private int zahl;
+
+	private boolean istMarkiert;
+
+	public MoeglicheZahl(int zahl) {
+		this.zahl = zahl;
+		istMarkiert = false;
+	}
+
 	public int gibZahl() {
 		return zahl;
 	}
@@ -12,13 +21,5 @@ public class MoeglicheZahl {
 
 	public void setzeMarkiert() {
 		this.istMarkiert = true;
-	}
-
-	private int zahl;
-	private boolean istMarkiert;
-
-	public MoeglicheZahl(int zahl) {
-		this.zahl = zahl;
-		istMarkiert = false;
 	}
 }

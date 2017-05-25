@@ -30,56 +30,31 @@ public class TipBericht implements TipKurier {
 		this.infos.add(info);
 	}
 
-	private void init(ArrayList<TipInfo> ignorierTips) {
-		this.infos = new ArrayList<>();
-		this.ignorierTips = ignorierTips;
+	private boolean existiertZahl() {
+		for (TipInfo tipInfo : infos) {
+			if (tipInfo.istZahl()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public List<TipInfo> gibIgnorierTips(Logik_ID logikID) {
+		if (ignorierTips == null) {
+			return null;
+		}
+
+		List<TipInfo> ignorierTipsDerLogik = new ArrayList<>();
+		for (TipInfo tipInfo : ignorierTips) {
+			if (tipInfo.gibLogik() == logikID) {
+				ignorierTipsDerLogik.add(tipInfo);
+			}
+		}
+		return ignorierTipsDerLogik;
 	}
 
 	public ArrayList<TipInfo> gibInfos() {
 		return infos;
-	}
-
-	public FeldNummerListe gibMitSpieler() {
-		FeldNummerListe mitSpieler = new FeldNummerListe();
-		for (TipInfo tipInfo : infos) {
-			FeldNummerListe mitSpieler1 = tipInfo.gibMitSpieler();
-			if (mitSpieler1 != null) {
-				mitSpieler.addAll(mitSpieler1);
-			}
-		}
-		return mitSpieler;
-	}
-
-	/**
-	 * @return Das Feld mit der (ersten) erkannten Zahl oder null wenn keine
-	 *         Tip-Zahl gefunden wurde. Da der letzte Tip nur die
-	 *         Zusammenfassung darstellt, wird er nicht ber�cksichtigt!
-	 */
-	public FeldNummerMitZahl gibZahlFeld() {
-		for (int iTip = 0; iTip < infos.size() - 1; iTip++) {
-			TipInfo tipInfo = infos.get(iTip);
-			FeldNummerMitZahl zahlFeld = tipInfo.gibZahlFeld();
-			if (zahlFeld != null) {
-				return zahlFeld;
-			}
-		}
-		return null;
-	}
-
-	public ArrayList<InfoSudoku> gibSudokus() {
-		ArrayList<InfoSudoku> infoSudokus = new ArrayList<InfoSudoku>();
-		int sudokuNummer = 0;
-		for (int iTip = 0; iTip < infos.size(); iTip++) {
-			TipInfo tipInfo = infos.get(iTip);
-			InfoSudoku infoSudoku = tipInfo.gibSudoku();
-			if (infoSudoku != null) {
-				String sNummer = new Integer(sudokuNummer).toString();
-				infoSudoku.setzeTitel(sNummer);
-				sudokuNummer++;
-				infoSudokus.add(infoSudoku);
-			}
-		}
-		return infoSudokus;
 	}
 
 	/**
@@ -105,13 +80,52 @@ public class TipBericht implements TipKurier {
 		return infoArray;
 	}
 
-	private boolean existiertZahl() {
+	public FeldNummerListe gibMitSpieler() {
+		FeldNummerListe mitSpieler = new FeldNummerListe();
 		for (TipInfo tipInfo : infos) {
-			if (tipInfo.istZahl()) {
-				return true;
+			FeldNummerListe mitSpieler1 = tipInfo.gibMitSpieler();
+			if (mitSpieler1 != null) {
+				mitSpieler.addAll(mitSpieler1);
 			}
 		}
-		return false;
+		return mitSpieler;
+	}
+
+	public ArrayList<InfoSudoku> gibSudokus() {
+		ArrayList<InfoSudoku> infoSudokus = new ArrayList<InfoSudoku>();
+		int sudokuNummer = 0;
+		for (int iTip = 0; iTip < infos.size(); iTip++) {
+			TipInfo tipInfo = infos.get(iTip);
+			InfoSudoku infoSudoku = tipInfo.gibSudoku();
+			if (infoSudoku != null) {
+				String sNummer = new Integer(sudokuNummer).toString();
+				infoSudoku.setzeTitel(sNummer);
+				sudokuNummer++;
+				infoSudokus.add(infoSudoku);
+			}
+		}
+		return infoSudokus;
+	}
+
+	/**
+	 * @return Das Feld mit der (ersten) erkannten Zahl oder null wenn keine
+	 *         Tip-Zahl gefunden wurde. Da der letzte Tip nur die
+	 *         Zusammenfassung darstellt, wird er nicht ber�cksichtigt!
+	 */
+	public FeldNummerMitZahl gibZahlFeld() {
+		for (int iTip = 0; iTip < infos.size() - 1; iTip++) {
+			TipInfo tipInfo = infos.get(iTip);
+			FeldNummerMitZahl zahlFeld = tipInfo.gibZahlFeld();
+			if (zahlFeld != null) {
+				return zahlFeld;
+			}
+		}
+		return null;
+	}
+
+	private void init(ArrayList<TipInfo> ignorierTips) {
+		this.infos = new ArrayList<>();
+		this.ignorierTips = ignorierTips;
 	}
 
 	boolean istKomprimierbar() {
@@ -142,20 +156,6 @@ public class TipBericht implements TipKurier {
 			return false;
 		}
 		return true;
-	}
-
-	public List<TipInfo> gibIgnorierTips(Logik_ID logikID) {
-		if (ignorierTips == null) {
-			return null;
-		}
-
-		List<TipInfo> ignorierTipsDerLogik = new ArrayList<>();
-		for (TipInfo tipInfo : ignorierTips) {
-			if (tipInfo.gibLogik() == logikID) {
-				ignorierTipsDerLogik.add(tipInfo);
-			}
-		}
-		return ignorierTipsDerLogik;
 	}
 
 }

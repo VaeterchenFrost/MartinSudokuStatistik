@@ -8,18 +8,18 @@ public class FeldNummerListe extends ArrayList<FeldNummer> {
 	public FeldNummerListe() {
 	}
 
-	public FeldNummerListe(FeldNummerListe src) {
-		for (int i = 0; i < src.size(); i++) {
-			FeldNummer feldNummer = new FeldNummer(src.get(i));
-			this.add(feldNummer);
-		}
-	}
-
 	public FeldNummerListe(FeldListe felder) {
 		for (int i = 0; i < felder.size(); i++) {
 			Feld feld = felder.get(i);
 			FeldNummer iFeld = feld.gibFeldNummer();
 			this.add(new FeldNummer(iFeld));
+		}
+	}
+
+	public FeldNummerListe(FeldNummerListe src) {
+		for (int i = 0; i < src.size(); i++) {
+			FeldNummer feldNummer = new FeldNummer(src.get(i));
+			this.add(feldNummer);
 		}
 	}
 
@@ -53,31 +53,21 @@ public class FeldNummerListe extends ArrayList<FeldNummer> {
 		return s;
 	}
 
-	@Override
-	public String toString() {
-		String s = new String("[");
-		for (FeldNummer feldNummer : this) {
-			s += " " + feldNummer;
-		}
-		s += "]";
-		return s;
-	}
-
 	/**
-	 * @return Eine Zeilen-Nummer wenn alle Felder in derselben Zeile liegen,
-	 *         sonst 0
+	 * @return null wenn die Felder nicht auf einer Spalte bzw. Zeile liegen
+	 *         ansonsten den Namen "Spalte n" bzw. "Zeile n"
 	 */
-	public int gibZeile() {
-		if (this.size() == 0) {
-			return 0;
+	public String gibLinienName() {
+		int spalte = gibSpalte();
+		int zeile = gibZeile();
+
+		if (spalte > 0) {
+			return String.format("Spalte %d", spalte);
 		}
-		int zeile = this.get(0).gibZeile();
-		for (int i = 1; i < this.size(); i++) {
-			if (this.get(i).gibZeile() != zeile) {
-				return 0;
-			}
+		if (zeile > 0) {
+			return String.format("Zeile %d", zeile);
 		}
-		return zeile;
+		return null;
 	}
 
 	/**
@@ -98,20 +88,20 @@ public class FeldNummerListe extends ArrayList<FeldNummer> {
 	}
 
 	/**
-	 * @return null wenn die Felder nicht auf einer Spalte bzw. Zeile liegen
-	 *         ansonsten den Namen "Spalte n" bzw. "Zeile n"
+	 * @return Eine Zeilen-Nummer wenn alle Felder in derselben Zeile liegen,
+	 *         sonst 0
 	 */
-	public String gibLinienName() {
-		int spalte = gibSpalte();
-		int zeile = gibZeile();
-
-		if (spalte > 0) {
-			return String.format("Spalte %d", spalte);
+	public int gibZeile() {
+		if (this.size() == 0) {
+			return 0;
 		}
-		if (zeile > 0) {
-			return String.format("Zeile %d", zeile);
+		int zeile = this.get(0).gibZeile();
+		for (int i = 1; i < this.size(); i++) {
+			if (this.get(i).gibZeile() != zeile) {
+				return 0;
+			}
 		}
-		return null;
+		return zeile;
 	}
 
 	/**
@@ -133,6 +123,16 @@ public class FeldNummerListe extends ArrayList<FeldNummer> {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		String s = new String("[");
+		for (FeldNummer feldNummer : this) {
+			s += " " + feldNummer;
+		}
+		s += "]";
+		return s;
 	}
 
 }

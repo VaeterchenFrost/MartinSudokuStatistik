@@ -10,20 +10,6 @@ import sudoku.tools.Verzeichnis;
 
 class LogikAnzahlenSpeicher {
 
-	static private String gibLogText(LogikAnzahlen logikAnzahlen) {
-		final String sCR = String.format("%n");
-		Logik_ID[] logiken = logikAnzahlen.gibLogiken();
-		String s = "";
-
-		for (int iLogik = 0; iLogik < logiken.length; iLogik++) {
-			Logik_ID logik = logiken[iLogik];
-			int n = logikAnzahlen.gibAnzahl(logik);
-
-			s += " �" + n + "=" + logik.name() + "$ " + sCR;
-		}
-		return s;
-	}
-
 	static private LogikAnzahlen gibLogiken(String text) {
 		LogikAnzahlen logikAnzahlen = new LogikAnzahlen();
 
@@ -58,6 +44,20 @@ class LogikAnzahlenSpeicher {
 			}
 		}
 		return logikAnzahlen;
+	}
+
+	static private String gibLogText(LogikAnzahlen logikAnzahlen) {
+		final String sCR = String.format("%n");
+		Logik_ID[] logiken = logikAnzahlen.gibLogiken();
+		String s = "";
+
+		for (int iLogik = 0; iLogik < logiken.length; iLogik++) {
+			Logik_ID logik = logiken[iLogik];
+			int n = logikAnzahlen.gibAnzahl(logik);
+
+			s += " �" + n + "=" + logik.name() + "$ " + sCR;
+		}
+		return s;
 	}
 
 	static private LogikAnzahlen gibSumme(LogikAnzahlen basis, LogikAnzahlen neue) {

@@ -12,6 +12,19 @@ import sudoku.kern.feldmatrix.FeldNummerListe;
 @SuppressWarnings("serial")
 public class Kasten extends Gruppe {
 	/**
+	 * @author Hendrick Ist die Liste der (3) Spalten bzw. Zeilen des Kastens
+	 */
+	public class LinienListe extends ArrayList<FeldListe> {
+		public LinienListe() {
+			for (int iLinie = 0; iLinie < 3; iLinie++) {
+				this.add(new FeldListe());
+			}
+		}
+	}
+	// ----------------------------------------------------------------------------
+	// private class
+
+	/**
 	 * @param kastenIndex
 	 *            Spalte/Zeile 0 bis 2
 	 * @return FeldNummer des linken oberen Feldes des Kastens
@@ -21,6 +34,16 @@ public class Kasten extends Gruppe {
 		int feld1Zeile = 1 + 3 * kastenIndex.iZeile;
 		FeldNummer feld1Index = new FeldNummer(feld1Spalte, feld1Zeile);
 		return feld1Index;
+	}
+
+	static public Kasten gibKasten(KastenIndex kastenIndex, ArrayList<Kasten> kaesten) {
+		for (int i = 0; i < kaesten.size(); i++) {
+			Kasten kasten = kaesten.get(i);
+			if (kastenIndex.equals(kasten.kastenIndex)) {
+				return kasten;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -47,20 +70,6 @@ public class Kasten extends Gruppe {
 	}
 
 	/**
-	 * @param kasten
-	 * @param anderer
-	 * @param istSpalte
-	 * @return true wenn anderer ein Nachbar von kasten ist
-	 */
-	private static boolean istNachbar(KastenIndex kasten, KastenIndex anderer, boolean istSpalte) {
-		if (istSpalte) {
-			return (kasten.iSpalte == anderer.iSpalte) && (kasten.iZeile != anderer.iZeile);
-		} else {
-			return (kasten.iZeile == anderer.iZeile) && (kasten.iSpalte != anderer.iSpalte);
-		}
-	}
-
-	/**
 	 * @param feldNummer
 	 *            Nummer eines beliebigen Feldes (des Kastens)
 	 * @return Index des Kastens im Sudoku: Spalte/Zeile 0 bis 2
@@ -70,6 +79,49 @@ public class Kasten extends Gruppe {
 		int iSpalte = (feldNummer.gibSpalte() - 1) / 3;
 		KastenIndex kastenIndex = new KastenIndex(iSpalte, iZeile);
 		return kastenIndex;
+	}
+
+	/**
+	 * @param zahl
+	 * @param linien
+	 * @return Die Indizees der linien, die Zahl als M�gliche enthalten
+	 */
+	static public ArrayListInt gibLinienDerZahl(int zahl, LinienListe linien) {
+		ArrayListInt iLinienDerZahl = new ArrayListInt();
+		for (int iLinie = 0; iLinie < linien.size(); iLinie++) {
+			FeldListe linie = linien.get(iLinie);
+			FeldListe felderMoegliche = linie.gibFelderDerMoeglichenZahl(zahl);
+			if (!felderMoegliche.isEmpty()) {
+				iLinienDerZahl.add(iLinie);
+			}
+		}
+		return iLinienDerZahl;
+	}
+
+	// ----------------------------------------------------------------------------
+	// static
+
+	/**
+	 * @param istSpalte
+	 * @return Die beiden Nachbark�sten als KastenIndex (Zeile/Spalte je 0..2)
+	 */
+	public static KastenIndex[] gibNachbarn(KastenIndex kastenIndex, boolean istSpalte) {
+		KastenIndex[] nachbarn = new KastenIndex[2];
+
+		int iNachbar = 0;
+		for (int i = 0; i < 3; i++) {
+			KastenIndex nachBarIndex = null;
+			if (istSpalte) {
+				nachBarIndex = new KastenIndex(kastenIndex.iSpalte, i);
+			} else {
+				nachBarIndex = new KastenIndex(i, kastenIndex.iZeile);
+			}
+			if (!kastenIndex.equals(nachBarIndex)) {
+				nachbarn[iNachbar] = nachBarIndex;
+				iNachbar++;
+			}
+		}
+		return nachbarn;
 	}
 
 	/**
@@ -113,34 +165,23 @@ public class Kasten extends Gruppe {
 		return s;
 	}
 
-	static public Kasten gibKasten(KastenIndex kastenIndex, ArrayList<Kasten> kaesten) {
-		for (int i = 0; i < kaesten.size(); i++) {
-			Kasten kasten = kaesten.get(i);
-			if (kastenIndex.equals(kasten.kastenIndex)) {
-				return kasten;
-			}
-		}
-		return null;
-	}
-
-	// ----------------------------------------------------------------------------
-	// static
-
 	/**
-	 * @author Hendrick Ist die Liste der (3) Spalten bzw. Zeilen des Kastens
+	 * @param kasten
+	 * @param anderer
+	 * @param istSpalte
+	 * @return true wenn anderer ein Nachbar von kasten ist
 	 */
-	public class LinienListe extends ArrayList<FeldListe> {
-		public LinienListe() {
-			for (int iLinie = 0; iLinie < 3; iLinie++) {
-				this.add(new FeldListe());
-			}
+	private static boolean istNachbar(KastenIndex kasten, KastenIndex anderer, boolean istSpalte) {
+		if (istSpalte) {
+			return (kasten.iSpalte == anderer.iSpalte) && (kasten.iZeile != anderer.iZeile);
+		} else {
+			return (kasten.iZeile == anderer.iZeile) && (kasten.iSpalte != anderer.iSpalte);
 		}
 	}
-	// ----------------------------------------------------------------------------
-	// private class
 
 	// Spalte / Zeile 0, 1, 2
 	public final KastenIndex kastenIndex;
+
 	// meine Spalten
 	private final LinienListe spalten;
 	// meine Zeilen
@@ -148,6 +189,7 @@ public class Kasten extends Gruppe {
 
 	// Je Nachbar [0, 1] dessen Spalten
 	private ArrayList<LinienListe> nachbarnLinienArraySpalten;
+
 	// Je Nachbar [0, 1] dessen Zeilen
 	private ArrayList<LinienListe> nachbarnLinienArrayZeilen;
 
@@ -196,43 +238,14 @@ public class Kasten extends Gruppe {
 		}
 	}
 
-	/**
-	 * @param alleKaesten
-	 * @param istSpalte
-	 * @return Die beiden Nachbark�sten
-	 */
-	private ArrayList<Kasten> gibNachbarn(ArrayList<Kasten> alleKaesten, boolean istSpalte) {
-		ArrayList<Kasten> nachbarn = new ArrayList<Kasten>();
-		for (int i = 0; i < alleKaesten.size(); i++) {
-			Kasten kasten = alleKaesten.get(i);
-			if ((kasten != this) && (istNachbar(this.kastenIndex, kasten.kastenIndex, istSpalte))) {
-				nachbarn.add(kasten);
-			}
+	public LinienListe gibMeineLinien(boolean istSpalte) {
+		LinienListe meineLinien = null;
+		if (istSpalte) {
+			meineLinien = this.spalten;
+		} else {
+			meineLinien = this.zeilen;
 		}
-		return nachbarn;
-	}
-
-	/**
-	 * @param istSpalte
-	 * @return Die beiden Nachbark�sten als KastenIndex (Zeile/Spalte je 0..2)
-	 */
-	public static KastenIndex[] gibNachbarn(KastenIndex kastenIndex, boolean istSpalte) {
-		KastenIndex[] nachbarn = new KastenIndex[2];
-
-		int iNachbar = 0;
-		for (int i = 0; i < 3; i++) {
-			KastenIndex nachBarIndex = null;
-			if (istSpalte) {
-				nachBarIndex = new KastenIndex(kastenIndex.iSpalte, i);
-			} else {
-				nachBarIndex = new KastenIndex(i, kastenIndex.iZeile);
-			}
-			if (!kastenIndex.equals(nachBarIndex)) {
-				nachbarn[iNachbar] = nachBarIndex;
-				iNachbar++;
-			}
-		}
-		return nachbarn;
+		return meineLinien;
 	}
 
 	/**
@@ -254,6 +267,30 @@ public class Kasten extends Gruppe {
 		return nachbarLinien;
 	}
 
+	public ArrayList<LinienListe> gibNachbarLinienArray(boolean istSpalte) {
+		if (istSpalte) {
+			return nachbarnLinienArraySpalten;
+		} else {
+			return nachbarnLinienArrayZeilen;
+		}
+	}
+
+	/**
+	 * @param alleKaesten
+	 * @param istSpalte
+	 * @return Die beiden Nachbark�sten
+	 */
+	private ArrayList<Kasten> gibNachbarn(ArrayList<Kasten> alleKaesten, boolean istSpalte) {
+		ArrayList<Kasten> nachbarn = new ArrayList<Kasten>();
+		for (int i = 0; i < alleKaesten.size(); i++) {
+			Kasten kasten = alleKaesten.get(i);
+			if ((kasten != this) && (istNachbar(this.kastenIndex, kasten.kastenIndex, istSpalte))) {
+				nachbarn.add(kasten);
+			}
+		}
+		return nachbarn;
+	}
+
 	/**
 	 * @param alleKaesten
 	 *            Setzt die Linien der Nachbarn
@@ -266,41 +303,6 @@ public class Kasten extends Gruppe {
 
 		ArrayList<Kasten> nachbarnArrayZeilen = gibNachbarn(alleKaesten, false);
 		this.nachbarnLinienArrayZeilen = gibNachbarLinienArray(nachbarnArrayZeilen, false);
-	}
-
-	public LinienListe gibMeineLinien(boolean istSpalte) {
-		LinienListe meineLinien = null;
-		if (istSpalte) {
-			meineLinien = this.spalten;
-		} else {
-			meineLinien = this.zeilen;
-		}
-		return meineLinien;
-	}
-
-	/**
-	 * @param zahl
-	 * @param linien
-	 * @return Die Indizees der linien, die Zahl als M�gliche enthalten
-	 */
-	static public ArrayListInt gibLinienDerZahl(int zahl, LinienListe linien) {
-		ArrayListInt iLinienDerZahl = new ArrayListInt();
-		for (int iLinie = 0; iLinie < linien.size(); iLinie++) {
-			FeldListe linie = linien.get(iLinie);
-			FeldListe felderMoegliche = linie.gibFelderDerMoeglichenZahl(zahl);
-			if (!felderMoegliche.isEmpty()) {
-				iLinienDerZahl.add(iLinie);
-			}
-		}
-		return iLinienDerZahl;
-	}
-
-	public ArrayList<LinienListe> gibNachbarLinienArray(boolean istSpalte) {
-		if (istSpalte) {
-			return nachbarnLinienArraySpalten;
-		} else {
-			return nachbarnLinienArrayZeilen;
-		}
 	}
 
 	// public boolean istKasten(KastenIndex kastenIndex){

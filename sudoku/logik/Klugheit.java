@@ -62,10 +62,6 @@ public class Klugheit {
 		}
 	}
 
-	public String gibTextKurz() {
-		return this.toString();
-	}
-
 	/**
 	 * @return true wenn die Klugheit erh�ht werden konnte um eine weitere Logik
 	 */
@@ -81,6 +77,60 @@ public class Klugheit {
 		}
 
 		return false;
+	}
+
+	/**
+	 * @return Die gr��te meiner Logiken, auch null bei kompletter Dummheit!
+	 */
+	public Logik_ID gibGroessteLogik() {
+		Logik_ID logiken[] = Logik_ID.values();
+		for (int i = logiken.length - 1; i >= 0; i--) {
+			Logik_ID logik = logiken[i];
+			if (meineLogiken.contains(logik)) {
+				return logik;
+			}
+		}
+
+		return null;
+	}
+
+	public String gibTextKurz() {
+		return this.toString();
+	}
+
+	/**
+	 * @return true wenn nur die leichteste Logik beherrscht wird
+	 */
+	public boolean istMinimum() {
+		Logik_ID mini = Logik_ID.gibMinimum();
+
+		boolean exsistiertMinimum = meineLogiken.contains(mini);
+		boolean istMini = (meineLogiken.size() == 1) & exsistiertMinimum;
+		return istMini;
+	}
+
+	/**
+	 * @param klugheit
+	 * @return true wenn ich die logik beherrsche (anwende).
+	 */
+	public boolean istSoKlug(Logik_ID logik) {
+		boolean istSoKlug = meineLogiken.contains(logik);
+		return istSoKlug;
+	}
+
+	/**
+	 * Setzt die kleinste m�gliche Klugheit und die "andere" dazu
+	 * 
+	 * @param andere
+	 */
+	public void setze(Klugheit andere) {
+		this.setzeExtrem(false);
+
+		Iterator<Logik_ID> iterator = andere.meineLogiken.iterator();
+		while (iterator.hasNext()) {
+			Logik_ID logik = iterator.next();
+			this.setzeLogik(logik, true);
+		}
 	}
 
 	/**
@@ -121,56 +171,6 @@ public class Klugheit {
 				meineLogiken.remove(logik);
 			}
 		}
-	}
-
-	/**
-	 * Setzt die kleinste m�gliche Klugheit und die "andere" dazu
-	 * 
-	 * @param andere
-	 */
-	public void setze(Klugheit andere) {
-		this.setzeExtrem(false);
-
-		Iterator<Logik_ID> iterator = andere.meineLogiken.iterator();
-		while (iterator.hasNext()) {
-			Logik_ID logik = iterator.next();
-			this.setzeLogik(logik, true);
-		}
-	}
-
-	/**
-	 * @param klugheit
-	 * @return true wenn ich die logik beherrsche (anwende).
-	 */
-	public boolean istSoKlug(Logik_ID logik) {
-		boolean istSoKlug = meineLogiken.contains(logik);
-		return istSoKlug;
-	}
-
-	/**
-	 * @return true wenn nur die leichteste Logik beherrscht wird
-	 */
-	public boolean istMinimum() {
-		Logik_ID mini = Logik_ID.gibMinimum();
-
-		boolean exsistiertMinimum = meineLogiken.contains(mini);
-		boolean istMini = (meineLogiken.size() == 1) & exsistiertMinimum;
-		return istMini;
-	}
-
-	/**
-	 * @return Die gr��te meiner Logiken, auch null bei kompletter Dummheit!
-	 */
-	public Logik_ID gibGroessteLogik() {
-		Logik_ID logiken[] = Logik_ID.values();
-		for (int i = logiken.length - 1; i >= 0; i--) {
-			Logik_ID logik = logiken[i];
-			if (meineLogiken.contains(logik)) {
-				return logik;
-			}
-		}
-
-		return null;
 	}
 
 	@Override

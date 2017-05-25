@@ -27,24 +27,6 @@ class Logik_OrtFest1 implements Logik__Interface {
 			this.gruppe = gruppe;
 		}
 
-		public EinTipText[] gibTip() {
-			String s1 = String.format("%s ist die Zahl %d", gruppe.gibInText(true), klareZahl.gibZahl());
-			String s2 = String.format(" nur in dem einen Feld %s m�glich.", klareZahl.gibFeldNummer());
-
-			EinTipText[] sArray = new EinTipText[] { new EinTipText(s1, s2) };
-			return sArray;
-		}
-
-		@Override
-		public boolean istZahl() {
-			return true;
-		}
-
-		@Override
-		public FeldNummerMitZahl gibZahlFeld() {
-			return klareZahl;
-		}
-
 		@Override
 		public FeldNummerListe gibAktiveFelder() {
 			FeldNummerListe feldNummerListe = new FeldNummerListe();
@@ -56,6 +38,24 @@ class Logik_OrtFest1 implements Logik__Interface {
 		public ZahlenListe gibLoeschZahlen() {
 			return null;
 		}
+
+		public EinTipText[] gibTip() {
+			String s1 = String.format("%s ist die Zahl %d", gruppe.gibInText(true), klareZahl.gibZahl());
+			String s2 = String.format(" nur in dem einen Feld %s m�glich.", klareZahl.gibFeldNummer());
+
+			EinTipText[] sArray = new EinTipText[] { new EinTipText(s1, s2) };
+			return sArray;
+		}
+
+		@Override
+		public FeldNummerMitZahl gibZahlFeld() {
+			return klareZahl;
+		}
+
+		@Override
+		public boolean istZahl() {
+			return true;
+		}
 	}
 
 	// =========================================================
@@ -66,8 +66,13 @@ class Logik_OrtFest1 implements Logik__Interface {
 	}
 
 	@Override
-	public Logik_ID gibLogikID() {
-		return Logik_ID.ORTFEST1;
+	public String gibErgebnis() {
+		return "Diese Zahl wird ein Eintrag.";
+	}
+
+	@Override
+	public double gibKontrollZeit1() {
+		return 4.4;
 	}
 
 	@Override
@@ -76,18 +81,13 @@ class Logik_OrtFest1 implements Logik__Interface {
 	}
 
 	@Override
+	public Logik_ID gibLogikID() {
+		return Logik_ID.ORTFEST1;
+	}
+
+	@Override
 	public String gibName() {
 		return "Ort ist fest f�r 1 Zahl";
-	}
-
-	@Override
-	public String[] gibWo() {
-		return new String[] { "In einer Gruppe (Zeile, Spalte bzw. Kasten)" };
-	}
-
-	@Override
-	public String[] gibSituationAbstrakt() {
-		return new String[] { "Der Ort f�r 1 Zahl ist festgelegt." };
 	}
 
 	@Override
@@ -96,8 +96,13 @@ class Logik_OrtFest1 implements Logik__Interface {
 	}
 
 	@Override
-	public String gibErgebnis() {
-		return "Diese Zahl wird ein Eintrag.";
+	public String[] gibSituationAbstrakt() {
+		return new String[] { "Der Ort f�r 1 Zahl ist festgelegt." };
+	}
+
+	@Override
+	public String[] gibWo() {
+		return new String[] { "In einer Gruppe (Zeile, Spalte bzw. Kasten)" };
 	}
 
 	@Override
@@ -137,11 +142,6 @@ class Logik_OrtFest1 implements Logik__Interface {
 		} // if ( ! freieGruppen.isEmpty()){
 
 		return null;
-	}
-
-	@Override
-	public double gibKontrollZeit1() {
-		return 4.4;
 	}
 
 }

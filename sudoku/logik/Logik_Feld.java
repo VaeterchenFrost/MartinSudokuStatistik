@@ -17,6 +17,54 @@ import sudoku.logik.tipinfo.TipInfo0;
 
 class Logik_Feld implements Logik__Interface {
 
+	// =========================================================
+	private class TipInfoFeld extends TipInfo0 {
+		private FeldNummerMitZahl feldNummerMitZahl;
+
+		private TipInfoFeld(FeldNummerListe mitSpieler, FeldNummerMitZahl feldNummerMitZahl) {
+			super(Logik_ID.FELD, mitSpieler);
+			this.feldNummerMitZahl = feldNummerMitZahl;
+		}
+
+		// private String gibInText(FeldNummer feldNummer){
+		// String s = feldNummer == null ? "" : feldNummer.toString();
+		// return "Im Feld " + s;
+		// }
+
+		@Override
+		public FeldNummerListe gibAktiveFelder() {
+			FeldNummerListe aktiveFelder = new FeldNummerListe();
+			FeldNummerMitZahl f = gibZahlFeld();
+			if (f != null) {
+				aktiveFelder.add(f.gibFeldNummer());
+			}
+			return aktiveFelder;
+		}
+
+		@Override
+		public ZahlenListe gibLoeschZahlen() {
+			return null;
+		}
+
+		public EinTipText[] gibTip() {
+			String s1 = String.format("Im Feld %s ist einzig die Zahl %d m�glich.",
+					this.feldNummerMitZahl.gibFeldNummer(), feldNummerMitZahl.gibZahl());
+			EinTipText[] sArray = new EinTipText[] { new EinTipText(s1, null) };
+			return sArray;
+		}
+
+		@Override
+		public FeldNummerMitZahl gibZahlFeld() {
+			return this.feldNummerMitZahl;
+		}
+
+		@Override
+		public boolean istZahl() {
+			return this.feldNummerMitZahl != null;
+		}
+
+	}
+
 	/**
 	 * @param feld
 	 * @param alleFelder
@@ -43,54 +91,6 @@ class Logik_Feld implements Logik__Interface {
 	}
 
 	// =========================================================
-	private class TipInfoFeld extends TipInfo0 {
-		private FeldNummerMitZahl feldNummerMitZahl;
-
-		private TipInfoFeld(FeldNummerListe mitSpieler, FeldNummerMitZahl feldNummerMitZahl) {
-			super(Logik_ID.FELD, mitSpieler);
-			this.feldNummerMitZahl = feldNummerMitZahl;
-		}
-
-		// private String gibInText(FeldNummer feldNummer){
-		// String s = feldNummer == null ? "" : feldNummer.toString();
-		// return "Im Feld " + s;
-		// }
-
-		public EinTipText[] gibTip() {
-			String s1 = String.format("Im Feld %s ist einzig die Zahl %d m�glich.",
-					this.feldNummerMitZahl.gibFeldNummer(), feldNummerMitZahl.gibZahl());
-			EinTipText[] sArray = new EinTipText[] { new EinTipText(s1, null) };
-			return sArray;
-		}
-
-		@Override
-		public FeldNummerListe gibAktiveFelder() {
-			FeldNummerListe aktiveFelder = new FeldNummerListe();
-			FeldNummerMitZahl f = gibZahlFeld();
-			if (f != null) {
-				aktiveFelder.add(f.gibFeldNummer());
-			}
-			return aktiveFelder;
-		}
-
-		@Override
-		public ZahlenListe gibLoeschZahlen() {
-			return null;
-		}
-
-		@Override
-		public boolean istZahl() {
-			return this.feldNummerMitZahl != null;
-		}
-
-		@Override
-		public FeldNummerMitZahl gibZahlFeld() {
-			return this.feldNummerMitZahl;
-		}
-
-	}
-
-	// =========================================================
 	private FeldListe feldListe;
 	private Map<Feld, FeldNummerListe> gruppenFeldNummern;
 
@@ -102,8 +102,13 @@ class Logik_Feld implements Logik__Interface {
 	}
 
 	@Override
-	public Logik_ID gibLogikID() {
-		return Logik_ID.FELD;
+	public String gibErgebnis() {
+		return "Diese Zahl wird ein Eintrag.";
+	}
+
+	@Override
+	public double gibKontrollZeit1() {
+		return 8;
 	}
 
 	@Override
@@ -112,19 +117,13 @@ class Logik_Feld implements Logik__Interface {
 	}
 
 	@Override
+	public Logik_ID gibLogikID() {
+		return Logik_ID.FELD;
+	}
+
+	@Override
 	public String gibName() {
 		return "In 1 Feld steht 1 Zahl fest";
-	}
-
-	@Override
-	public String[] gibWo() {
-		return new String[] { "In einem Feld" };
-	}
-
-	@Override
-	public String[] gibSituationAbstrakt() {
-		return new String[] {
-				"In 1 Feld ist 1 Zahl festgelegt aufgrund der Belegung seiner Gruppen (Zeile, Spalte und Kasten)." };
 	}
 
 	@Override
@@ -134,8 +133,14 @@ class Logik_Feld implements Logik__Interface {
 	}
 
 	@Override
-	public String gibErgebnis() {
-		return "Diese Zahl wird ein Eintrag.";
+	public String[] gibSituationAbstrakt() {
+		return new String[] {
+				"In 1 Feld ist 1 Zahl festgelegt aufgrund der Belegung seiner Gruppen (Zeile, Spalte und Kasten)." };
+	}
+
+	@Override
+	public String[] gibWo() {
+		return new String[] { "In einem Feld" };
 	}
 
 	@Override
@@ -169,11 +174,6 @@ class Logik_Feld implements Logik__Interface {
 		} // if ( ! freieFelder.isEmpty()){
 
 		return null;
-	}
-
-	@Override
-	public double gibKontrollZeit1() {
-		return 8;
 	}
 
 }

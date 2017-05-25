@@ -26,12 +26,6 @@ class SudokuNachVorlage implements LangerProzess {
 	private static int ersterLauf = 1;
 	private static int letzterLauf = 100;
 
-	private static void systemOut(String text) {
-		if (istSystemOut) {
-			System.out.println(text);
-		}
-	}
-
 	/**
 	 * @param vorlage
 	 *            != null und beinhaltet seinen namen als titel1
@@ -50,6 +44,12 @@ class SudokuNachVorlage implements LangerProzess {
 		return sudoku;
 	}
 
+	private static void systemOut(String text) {
+		if (istSystemOut) {
+			System.out.println(text);
+		}
+	}
+
 	// =============================================================
 	private InfoSudoku vorlage;
 	private SudokuPool sudokuPool;
@@ -60,6 +60,11 @@ class SudokuNachVorlage implements LangerProzess {
 	SudokuNachVorlage(InfoSudoku vorlage, SudokuPool sudokuPool) {
 		this.vorlage = vorlage;
 		this.sudokuPool = sudokuPool;
+	}
+
+	@Override
+	public Paar<Integer, Integer> gibFortschrittBereich() {
+		return new Paar<Integer, Integer>(ersterLauf, letzterLauf);
 	}
 
 	InfoSudoku gibSudoku() {
@@ -77,11 +82,6 @@ class SudokuNachVorlage implements LangerProzess {
 	@Override
 	public String gibTitel() {
 		return "Neues Sudoku auf Basis der Vorlage " + vorlage.gibTitel1() + " erstellen";
-	}
-
-	@Override
-	public Paar<Integer, Integer> gibFortschrittBereich() {
-		return new Paar<Integer, Integer>(ersterLauf, letzterLauf);
 	}
 
 	private boolean istAbbruch(FortschrittZeiger fortschrittZeiger) {
@@ -183,8 +183,9 @@ class SudokuNachVorlage implements LangerProzess {
 			} // if (neuesSudoku != null){
 			neuesSudoku = null;
 		} // for (nLauf
-		// systemOut(String.format("SudokuBedienung.gibNeuesNachVorlage(): %d
-		// L�ufe", nLauf));
+			// systemOut(String.format("SudokuBedienung.gibNeuesNachVorlage():
+			// %d
+			// L�ufe", nLauf));
 		if (bestesSudoku != null) {
 			bestesSudoku.setzeTitel(vorlage.gibTitel1());
 		}

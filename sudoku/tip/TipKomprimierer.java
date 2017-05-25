@@ -6,6 +6,8 @@ import sudoku.bedienung.SudokuBedienung;
 import sudoku.logik.tipinfo.TipInfo;
 
 public class TipKomprimierer {
+	private static boolean istSystemOut = false; // true;
+
 	/**
 	 * @param sudoku
 	 * @param basisBericht
@@ -53,8 +55,6 @@ public class TipKomprimierer {
 
 		return komprimierterBericht;
 	}
-
-	private static boolean istSystemOut = false; // true;
 
 	private static void sysOutKontrollTips(TipInfo[] kontrollTips) {
 		for (int i = 0; i < kontrollTips.length; i++) {

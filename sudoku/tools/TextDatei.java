@@ -16,19 +16,6 @@ public class TextDatei {
 	 * @param dateiname
 	 *            Es wird eine neue Datei erstellt. Eine bestehende wird zuvor
 	 *            gel�scht.
-	 * @param text
-	 * @throws IOException
-	 */
-	public static void erstelle(String dateiname, String text) throws IOException {
-		ArrayList<String> texte = new ArrayList<>();
-		texte.add(text);
-		erstelle(dateiname, texte);
-	}
-
-	/**
-	 * @param dateiname
-	 *            Es wird eine neue Datei erstellt. Eine bestehende wird zuvor
-	 *            gel�scht.
 	 * @param texte
 	 * @throws IOException
 	 */
@@ -50,16 +37,15 @@ public class TextDatei {
 
 	/**
 	 * @param dateiname
-	 * @return Alle Zeilen der Datei in einem String (ohne CR + Zeilenvorsch�be)
+	 *            Es wird eine neue Datei erstellt. Eine bestehende wird zuvor
+	 *            gel�scht.
+	 * @param text
 	 * @throws IOException
 	 */
-	public static String lese1String(String dateiname) throws IOException {
-		ArrayList<String> texte = lese(dateiname);
-		String returnText = "";
-		for (int iText = 0; iText < texte.size(); iText++) {
-			returnText += texte.get(iText);
-		}
-		return returnText;
+	public static void erstelle(String dateiname, String text) throws IOException {
+		ArrayList<String> texte = new ArrayList<>();
+		texte.add(text);
+		erstelle(dateiname, texte);
 	}
 
 	/**
@@ -83,6 +69,20 @@ public class TextDatei {
 		}
 		in.close();
 		return texte;
+	}
+
+	/**
+	 * @param dateiname
+	 * @return Alle Zeilen der Datei in einem String (ohne CR + Zeilenvorsch�be)
+	 * @throws IOException
+	 */
+	public static String lese1String(String dateiname) throws IOException {
+		ArrayList<String> texte = lese(dateiname);
+		String returnText = "";
+		for (int iText = 0; iText < texte.size(); iText++) {
+			returnText += texte.get(iText);
+		}
+		return returnText;
 	}
 
 }

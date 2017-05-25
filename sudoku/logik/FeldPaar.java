@@ -15,30 +15,33 @@ import sudoku.kern.feldmatrix.FeldListe;
  */
 class FeldPaar {
 	/**
-	 * F�r die Logiken.
-	 * 
-	 * @param gruppen
-	 * @return Je Zahl, f�r die es Feldpaare in den Gruppen gibt, ein
-	 *         Map-Eintrag. Der Map-Eintrag benennt all die FeldPaare, die �ber
-	 *         die m�gliche "Zahl" verbunden sind. Oder anders gesagt: Er
-	 *         benennt alle Gruppen, die FeldPaare besitzen, die �ber die
-	 *         m�gliche "Zahl" verbunden sind.
+	 * @author heroe Die �bergebenen Felder sind ein FeldPaar, wenn es genau 2
+	 *         Felder gibt (in dieser Gruppe der Felder)
 	 */
-	static Map<Integer, ArrayList<FeldPaar>> gibZahlenPartner(ArrayList<Gruppe> gruppen) {
-		Map<Integer, ArrayList<FeldPaar>> zahlenPartner = new HashMap<Integer, ArrayList<FeldPaar>>();
-		ArrayList<FeldPaar> feldPaare = gibFeldPaare(gruppen);
-
-		for (FeldPaar feldPaar : feldPaare) {
-			ArrayList<FeldPaar> zahlFeldPaare = zahlenPartner.get(feldPaar.zahl);
-
-			if (zahlFeldPaare == null) {
-				zahlFeldPaare = new ArrayList<>();
-				zahlenPartner.put(feldPaar.zahl, zahlFeldPaare);
+	class EchterFeldPaarGeber extends FeldPaarGeber {
+		@Override
+		ArrayList<FeldPaar> gibFeldPaare(Gruppe gruppe, int zahl, FeldListe felder) {
+			if (felder.size() == 2) {
+				// Es handelt sich bei 2 Feldern um ein FeldPaar in der Gruppe
+				FeldPaar feldPaar = new FeldPaar(gruppe, zahl, felder.get(0), felder.get(1));
+				ArrayList<FeldPaar> feldPaare = new ArrayList<>();
+				feldPaare.add(feldPaar);
+				return feldPaare;
 			}
-			zahlFeldPaare.add(feldPaar);
+			return null;
 		}
+	}
 
-		return zahlenPartner;
+	/**
+	 * @param gruppen
+	 * @return Alle FeldPaare der gruppen
+	 */
+	static ArrayList<FeldPaar> gibFeldPaare(ArrayList<Gruppe> gruppen) {
+		FeldPaar dummy = new FeldPaar(null, 0, null, null);
+		FeldPaarGeber feldPaarGeber = dummy.new EchterFeldPaarGeber();
+
+		ArrayList<FeldPaar> feldPaare = gibFeldPaare(gruppen, feldPaarGeber);
+		return feldPaare;
 	}
 
 	/**
@@ -66,36 +69,6 @@ class FeldPaar {
 				}
 			}
 		}
-		return feldPaare;
-	}
-
-	/**
-	 * @author heroe Die �bergebenen Felder sind ein FeldPaar, wenn es genau 2
-	 *         Felder gibt (in dieser Gruppe der Felder)
-	 */
-	class EchterFeldPaarGeber extends FeldPaarGeber {
-		@Override
-		ArrayList<FeldPaar> gibFeldPaare(Gruppe gruppe, int zahl, FeldListe felder) {
-			if (felder.size() == 2) {
-				// Es handelt sich bei 2 Feldern um ein FeldPaar in der Gruppe
-				FeldPaar feldPaar = new FeldPaar(gruppe, zahl, felder.get(0), felder.get(1));
-				ArrayList<FeldPaar> feldPaare = new ArrayList<>();
-				feldPaare.add(feldPaar);
-				return feldPaare;
-			}
-			return null;
-		}
-	}
-
-	/**
-	 * @param gruppen
-	 * @return Alle FeldPaare der gruppen
-	 */
-	static ArrayList<FeldPaar> gibFeldPaare(ArrayList<Gruppe> gruppen) {
-		FeldPaar dummy = new FeldPaar(null, 0, null, null);
-		FeldPaarGeber feldPaarGeber = dummy.new EchterFeldPaarGeber();
-
-		ArrayList<FeldPaar> feldPaare = gibFeldPaare(gruppen, feldPaarGeber);
 		return feldPaare;
 	}
 
@@ -131,6 +104,33 @@ class FeldPaar {
 			} // for zahl
 		}
 		return gruppenMap;
+	}
+
+	/**
+	 * F�r die Logiken.
+	 * 
+	 * @param gruppen
+	 * @return Je Zahl, f�r die es Feldpaare in den Gruppen gibt, ein
+	 *         Map-Eintrag. Der Map-Eintrag benennt all die FeldPaare, die �ber
+	 *         die m�gliche "Zahl" verbunden sind. Oder anders gesagt: Er
+	 *         benennt alle Gruppen, die FeldPaare besitzen, die �ber die
+	 *         m�gliche "Zahl" verbunden sind.
+	 */
+	static Map<Integer, ArrayList<FeldPaar>> gibZahlenPartner(ArrayList<Gruppe> gruppen) {
+		Map<Integer, ArrayList<FeldPaar>> zahlenPartner = new HashMap<Integer, ArrayList<FeldPaar>>();
+		ArrayList<FeldPaar> feldPaare = gibFeldPaare(gruppen);
+
+		for (FeldPaar feldPaar : feldPaare) {
+			ArrayList<FeldPaar> zahlFeldPaare = zahlenPartner.get(feldPaar.zahl);
+
+			if (zahlFeldPaare == null) {
+				zahlFeldPaare = new ArrayList<>();
+				zahlenPartner.put(feldPaar.zahl, zahlFeldPaare);
+			}
+			zahlFeldPaare.add(feldPaar);
+		}
+
+		return zahlenPartner;
 	}
 
 	// =================================================================

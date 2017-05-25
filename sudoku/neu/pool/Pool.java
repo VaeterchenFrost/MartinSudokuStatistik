@@ -55,23 +55,17 @@ class Pool implements Pool0 {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see sudoku.schwer.neu.pool.Pool0#gibSudoku(sudoku.schwer.neu.NeuTyp,
-	 * sudoku.schwer.neu.pool.NeuTypOption)
+	/**
+	 * @return alle zu erstellenden Typen
 	 */
-	public InfoSudoku gibSudoku(NeuTyp neuTyp, NeuTypOption option) {
-		synchronized (pool) {
-			for (Topf topf : pool) {
-				if (neuTyp.equals(topf.gibNeuTyp())) {
-					systemout(neuTyp, topf.gibNeuTyp(), false);
-					return topf.gibSudoku();
-				}
-			}
+	private ArrayList<NeuTyp> gibErstellungsTypen() {
+		ArrayList<NeuTyp> neuTypen = new ArrayList<>();
+
+		neuTypen.add(new NeuTyp(Typ.VOLL));
+		for (Schwierigkeit wieSchwer : Schwierigkeit.values()) {
+			neuTypen.add(new NeuTyp(wieSchwer));
 		}
-		systemout(neuTyp, null, false);
-		return null;
+		return neuTypen;
 	}
 
 	public NeuTyp gibForderung() {
@@ -95,6 +89,35 @@ class Pool implements Pool0 {
 		return null;
 	}
 
+	@Override
+	public PoolInfo gibPoolInfo() {
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see sudoku.schwer.neu.pool.Pool0#gibSudoku(sudoku.schwer.neu.NeuTyp,
+	 * sudoku.schwer.neu.pool.NeuTypOption)
+	 */
+	public InfoSudoku gibSudoku(NeuTyp neuTyp, NeuTypOption option) {
+		synchronized (pool) {
+			for (Topf topf : pool) {
+				if (neuTyp.equals(topf.gibNeuTyp())) {
+					systemout(neuTyp, topf.gibNeuTyp(), false);
+					return topf.gibSudoku();
+				}
+			}
+		}
+		systemout(neuTyp, null, false);
+		return null;
+	}
+
+	@Override
+	public String gibTopfName(NeuTyp neuTyp) {
+		return null;
+	}
+
 	public Boolean setze(NeuTyp neuTyp, InfoSudoku sudoku, int loesungsZeit) {
 		// Fehler:
 		if (neuTyp == null) {
@@ -113,29 +136,6 @@ class Pool implements Pool0 {
 			}
 		}
 		throw new UnerwarteterNeuTyp(neuTyp.gibName());
-	}
-
-	/**
-	 * @return alle zu erstellenden Typen
-	 */
-	private ArrayList<NeuTyp> gibErstellungsTypen() {
-		ArrayList<NeuTyp> neuTypen = new ArrayList<>();
-
-		neuTypen.add(new NeuTyp(Typ.VOLL));
-		for (Schwierigkeit wieSchwer : Schwierigkeit.values()) {
-			neuTypen.add(new NeuTyp(wieSchwer));
-		}
-		return neuTypen;
-	}
-
-	@Override
-	public PoolInfo gibPoolInfo() {
-		return null;
-	}
-
-	@Override
-	public String gibTopfName(NeuTyp neuTyp) {
-		return null;
 	}
 
 }

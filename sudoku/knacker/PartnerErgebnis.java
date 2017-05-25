@@ -15,12 +15,12 @@ public class PartnerErgebnis {
 		return (istProblemEintrag && istProblemAlternative);
 	}
 
-	public boolean istProblemfrei() {
-		return ((istProblemEintrag == false) && (istProblemAlternative == false));
-	}
-
 	public boolean istProblemEintrag() {
 		return istProblemEintrag;
+	}
+
+	public boolean istProblemfrei() {
+		return ((istProblemEintrag == false) && (istProblemAlternative == false));
 	}
 
 }

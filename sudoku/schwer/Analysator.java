@@ -16,11 +16,15 @@ import sudoku.logik.SudokuLogik;
  */
 public class Analysator {
 
-	private Klugheit klugheit;
-	private EintragsEbenen ebenen;
-	private SudokuLogik feldmatrix;
-	private Protokoll protokoll;
-	private Knacker knacker;
+	/**
+	 * @param vorgaben
+	 *            Definiert die Vorgaben des Sudoku
+	 * @return Schwierigkeit des Sudoku
+	 * @throws Exc
+	 */
+	public static SudokuSchwierigkeit gibSchwierigkeit(InfoSudoku vorgaben) throws Exc {
+		return gibSchwierigkeit(vorgaben, null);
+	}
 
 	/**
 	 * @param vorgaben
@@ -54,15 +58,13 @@ public class Analysator {
 		}
 	}
 
-	/**
-	 * @param vorgaben
-	 *            Definiert die Vorgaben des Sudoku
-	 * @return Schwierigkeit des Sudoku
-	 * @throws Exc
-	 */
-	public static SudokuSchwierigkeit gibSchwierigkeit(InfoSudoku vorgaben) throws Exc {
-		return gibSchwierigkeit(vorgaben, null);
-	}
+	private Klugheit klugheit;
+	private EintragsEbenen ebenen;
+	private SudokuLogik feldmatrix;
+
+	private Protokoll protokoll;
+
+	private Knacker knacker;
 
 	protected Analysator() {
 		klugheit = new Klugheit(true);
@@ -120,10 +122,6 @@ public class Analysator {
 		return new BerichtKnacker();
 	}
 
-	protected Klugheit gibKlugheit() {
-		return klugheit;
-	}
-
 	protected EintragsEbenen gibEbenen() {
 		return ebenen;
 	}
@@ -132,12 +130,16 @@ public class Analysator {
 		return feldmatrix;
 	}
 
-	protected Protokoll gibProtokoll() {
-		return protokoll;
+	protected Klugheit gibKlugheit() {
+		return klugheit;
 	}
 
 	protected Knacker gibKnacker() {
 		return knacker;
+	}
+
+	protected Protokoll gibProtokoll() {
+		return protokoll;
 	}
 
 	protected void setKlugheit(Klugheit klugheit) {

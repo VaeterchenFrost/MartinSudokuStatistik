@@ -29,65 +29,33 @@ class Generator1 extends Analysator {
 
 	private int nLaufMax = 0;
 
-	private void loescheVorgaben(ZahlenListe gesetzte) throws Exc {
-		for (FeldNummerMitZahl feldNummerMitZahl : gesetzte) {
-			this.gibFeldmatrix().setzeVorgabe(feldNummerMitZahl.gibFeldNummer(), 0);
-		}
-	}
-
 	/**
-	 * F�llt eine - unabh�ngige! - Gruppe
+	 * Die drei unabh�ngigen K�sten zuf�llig ausw�hlen. Jeden dieser 3 K�sten
+	 * zuf�llig f�llen (hier gibt es keine Probleme).
 	 * 
-	 * @param felder
-	 *            Indizees der zuf�llig zu f�llenden 9 Felder
+	 * @return Indizees der Felder, die gesetzt wurden
 	 * @throws Exc
 	 */
-	private void fuelleGruppe(FeldNummerListe felder) throws Exc {
-		FeldNummerListe freie = new FeldNummerListe();
-		freie.addAll(felder);
+	private FeldNummerListe fuelle3StartKaesten() throws Exc {
+		FeldNummerListe gesetzte = new FeldNummerListe();
 
-		for (int i = 1; i < 9; i++) {
-			int indexInFelder = setze(freie, i);
-			freie.remove(indexInFelder);
+		// Die drei unabh�ngigen K�sten zuf�llig ausw�hlen
+		UnabhaengigeKasten kastengruppen = new UnabhaengigeKasten();
+		int iGruppe = Zufall.gib(kastengruppen.size());
+		ArrayList<KastenIndex> kastengruppe = kastengruppen.get(iGruppe);
+
+		// Jeden dieser 3 K�sten zuf�llig f�llen (hier gibt es keine Probleme)
+		for (int iKasten = 0; iKasten < kastengruppe.size(); iKasten++) {
+			KastenIndex kastenIndex = kastengruppe.get(iKasten);
+			FeldNummerListe kastenFelder = Kasten.gibKastenFeldNummern(kastenIndex);
+			// Die Felder dieser Indizees jetzt mit 1 bis 9 zuf�llig f�llen
+			fuelleGruppe(kastenFelder);
+			gesetzte.addAll(kastenFelder);
 		}
-		this.gibFeldmatrix().setzeVorgabe(freie.get(0), 9);
-	}
-
-	/**
-	 * Setzt Zahl in ein zuf�llig ausgew�hltes Feld
-	 * 
-	 * @param felder
-	 *            In (zuf�llig) eines der Felder soll der Eintrag rein
-	 * @param zahl
-	 *            soll gesetzt werden auf eines der Felder
-	 * @return Index in Felder: Das Feld, das den Eintrag erhielt
-	 * @throws Exc
-	 *             Bei falschen Parametern
-	 */
-	private int setze(FeldNummerListe felder, int zahl) throws Exc {
-		int iFeld = Zufall.gib(felder.size());
-		this.gibFeldmatrix().setzeVorgabe(felder.get(iFeld), zahl);
-		return iFeld;
-	}
-
-	/**
-	 * Setzt in das Feld eine zuf�llig ausgew�hlte m�gliche Zahl
-	 * 
-	 * @param feldNummer
-	 * @return gesetzte Zahl oder null wenn ein Feld ohne M�gliche erwischt
-	 *         wurde.
-	 * @throws Exc
-	 */
-	private Integer setzeEinFeld(FeldNummer feldNummer) throws Exc {
-		FeldInfo feldInfo = this.gibFeldmatrix().gibFeldInfo(feldNummer);
-		ArrayList<Integer> moegliche = feldInfo.gibMoegliche();
-		if (moegliche.isEmpty()) {
-			return null;
+		if (istSystemOut() && istSystemOutAlles()) {
+			System.out.println(String.format("f�lle3StartKaesten(): iGruppe=%d", iGruppe));
 		}
-		int iZahl = Zufall.gib(moegliche.size());
-		int zahl = moegliche.get(iZahl);
-		this.gibFeldmatrix().setzeVorgabe(feldNummer, zahl);
-		return new Integer(zahl);
+		return gesetzte;
 	}
 
 	/**
@@ -124,32 +92,34 @@ class Generator1 extends Analysator {
 	}
 
 	/**
-	 * Die drei unabh�ngigen K�sten zuf�llig ausw�hlen. Jeden dieser 3 K�sten
-	 * zuf�llig f�llen (hier gibt es keine Probleme).
+	 * F�llt eine - unabh�ngige! - Gruppe
 	 * 
-	 * @return Indizees der Felder, die gesetzt wurden
+	 * @param felder
+	 *            Indizees der zuf�llig zu f�llenden 9 Felder
 	 * @throws Exc
 	 */
-	private FeldNummerListe fuelle3StartKaesten() throws Exc {
-		FeldNummerListe gesetzte = new FeldNummerListe();
+	private void fuelleGruppe(FeldNummerListe felder) throws Exc {
+		FeldNummerListe freie = new FeldNummerListe();
+		freie.addAll(felder);
 
-		// Die drei unabh�ngigen K�sten zuf�llig ausw�hlen
-		UnabhaengigeKasten kastengruppen = new UnabhaengigeKasten();
-		int iGruppe = Zufall.gib(kastengruppen.size());
-		ArrayList<KastenIndex> kastengruppe = kastengruppen.get(iGruppe);
+		for (int i = 1; i < 9; i++) {
+			int indexInFelder = setze(freie, i);
+			freie.remove(indexInFelder);
+		}
+		this.gibFeldmatrix().setzeVorgabe(freie.get(0), 9);
+	}
 
-		// Jeden dieser 3 K�sten zuf�llig f�llen (hier gibt es keine Probleme)
-		for (int iKasten = 0; iKasten < kastengruppe.size(); iKasten++) {
-			KastenIndex kastenIndex = kastengruppe.get(iKasten);
-			FeldNummerListe kastenFelder = Kasten.gibKastenFeldNummern(kastenIndex);
-			// Die Felder dieser Indizees jetzt mit 1 bis 9 zuf�llig f�llen
-			fuelleGruppe(kastenFelder);
-			gesetzte.addAll(kastenFelder);
+	/**
+	 * Alle Klaren zu Vorgaben setzen
+	 */
+	private void fuelleKlare() {
+		try {
+			this.gibFeldmatrix().setzeEintraegeAufKlare(this.gibKlugheit(), true, false);
+			this.gibFeldmatrix().wandleEintraegeZuVorgaben();
+		} catch (Exc e) {
+			// ist hier v�llig unerwartet
+			e.printStackTrace();
 		}
-		if (istSystemOut() && istSystemOutAlles()) {
-			System.out.println(String.format("f�lle3StartKaesten(): iGruppe=%d", iGruppe));
-		}
-		return gesetzte;
 	}
 
 	/**
@@ -168,19 +138,6 @@ class Generator1 extends Analysator {
 			System.out.println(String.format("fuelleMitKnackerVersuch() : %s", ergebnis));
 		}
 		return ergebnis;
-	}
-
-	/**
-	 * Alle Klaren zu Vorgaben setzen
-	 */
-	private void fuelleKlare() {
-		try {
-			this.gibFeldmatrix().setzeEintraegeAufKlare(this.gibKlugheit(), true, false);
-			this.gibFeldmatrix().wandleEintraegeZuVorgaben();
-		} catch (Exc e) {
-			// ist hier v�llig unerwartet
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -213,6 +170,67 @@ class Generator1 extends Analysator {
 					nFuellen, nLaufMax, ergebnis));
 		}
 		return ergebnis;
+	}
+
+	/**
+	 * F�llt feldmatrix vollst�ndig mit Vorgaben eines neuen Sudoku
+	 * 
+	 * @param neuTyp
+	 * @throws Exc
+	 */
+	protected boolean fuelleSudoku(FeldNummerListe alle) throws Exc {
+		FeldNummerListe freie = new FeldNummerListe();
+		freie.addAll(alle);
+
+		this.gibKlugheit().setzeExtrem(true);
+		this.gibFeldmatrix().setzeMoegliche(this.gibKlugheit(), false);
+		// a) 3 unabh�ngige K�sten f�llen
+		{
+			FeldNummerListe belegte = fuelle3StartKaesten();
+			freie.removeAll(belegte);
+		}
+		this.gibFeldmatrix().setzeMoegliche(this.gibKlugheit(), false);
+
+		// b) Zuf�llige Felder bef�llen bis FERTIG
+		// H�rt sich gef�hrlich an, ist es aber nicht:
+		for (int nFuellen = 1; true; nFuellen++) {
+			if (istSystemOut() && istSystemOutAlles()) {
+				System.out.println(String.format("Generator1.fuelleSudoku() nFuellen=%d", nFuellen));
+			}
+
+			// Weiter um n Zahlen auff�llen: Knacker kontrolliert ohne Versuch
+			Ergebnis ergebnis = fuelleOhneKnackerVersuch(freie);
+			if (ergebnis.gibArt() == Ergebnis.Art.FERTIG) {
+				break;
+			}
+
+			fuelleKlare();
+
+			// Soviel Bestimmtheit herstellen, dass der Knacker sehr
+			// wahrscheinlich l�st
+			boolean geschafft = schaffeBestimmtheit();
+			if (!geschafft) {
+				return false;
+			}
+
+			// Knacker l�st mit EINER Versuchsebene (wegen Schnelligkeit)
+			ergebnis = fuelleMitKnackerVersuch();
+			if (ergebnis.gibArt() == Ergebnis.Art.FERTIG) {
+				break;
+			}
+
+			if (nFuellen > 10000) {
+				Exc.endlosSchleife();
+			}
+
+		} // for endlos
+		return true;
+	}
+
+	private void loescheVorgaben(ZahlenListe gesetzte) throws Exc {
+		for (FeldNummerMitZahl feldNummerMitZahl : gesetzte) {
+			this.gibFeldmatrix().setzeVorgabe(feldNummerMitZahl.gibFeldNummer(), 0);
+		}
 	}
 
 	/**
@@ -273,57 +291,39 @@ class Generator1 extends Analysator {
 	}
 
 	/**
-	 * F�llt feldmatrix vollst�ndig mit Vorgaben eines neuen Sudoku
+	 * Setzt Zahl in ein zuf�llig ausgew�hltes Feld
 	 * 
-	 * @param neuTyp
+	 * @param felder
+	 *            In (zuf�llig) eines der Felder soll der Eintrag rein
+	 * @param zahl
+	 *            soll gesetzt werden auf eines der Felder
+	 * @return Index in Felder: Das Feld, das den Eintrag erhielt
+	 * @throws Exc
+	 *             Bei falschen Parametern
+	 */
+	private int setze(FeldNummerListe felder, int zahl) throws Exc {
+		int iFeld = Zufall.gib(felder.size());
+		this.gibFeldmatrix().setzeVorgabe(felder.get(iFeld), zahl);
+		return iFeld;
+	}
+
+	/**
+	 * Setzt in das Feld eine zuf�llig ausgew�hlte m�gliche Zahl
+	 * 
+	 * @param feldNummer
+	 * @return gesetzte Zahl oder null wenn ein Feld ohne M�gliche erwischt
+	 *         wurde.
 	 * @throws Exc
 	 */
-	protected boolean fuelleSudoku(FeldNummerListe alle) throws Exc {
-		FeldNummerListe freie = new FeldNummerListe();
-		freie.addAll(alle);
-
-		this.gibKlugheit().setzeExtrem(true);
-		this.gibFeldmatrix().setzeMoegliche(this.gibKlugheit(), false);
-		// a) 3 unabh�ngige K�sten f�llen
-		{
-			FeldNummerListe belegte = fuelle3StartKaesten();
-			freie.removeAll(belegte);
+	private Integer setzeEinFeld(FeldNummer feldNummer) throws Exc {
+		FeldInfo feldInfo = this.gibFeldmatrix().gibFeldInfo(feldNummer);
+		ArrayList<Integer> moegliche = feldInfo.gibMoegliche();
+		if (moegliche.isEmpty()) {
+			return null;
 		}
-		this.gibFeldmatrix().setzeMoegliche(this.gibKlugheit(), false);
-
-		// b) Zuf�llige Felder bef�llen bis FERTIG
-		// H�rt sich gef�hrlich an, ist es aber nicht:
-		for (int nFuellen = 1; true; nFuellen++) {
-			if (istSystemOut() && istSystemOutAlles()) {
-				System.out.println(String.format("Generator1.fuelleSudoku() nFuellen=%d", nFuellen));
-			}
-
-			// Weiter um n Zahlen auff�llen: Knacker kontrolliert ohne Versuch
-			Ergebnis ergebnis = fuelleOhneKnackerVersuch(freie);
-			if (ergebnis.gibArt() == Ergebnis.Art.FERTIG) {
-				break;
-			}
-
-			fuelleKlare();
-
-			// Soviel Bestimmtheit herstellen, dass der Knacker sehr
-			// wahrscheinlich l�st
-			boolean geschafft = schaffeBestimmtheit();
-			if (!geschafft) {
-				return false;
-			}
-
-			// Knacker l�st mit EINER Versuchsebene (wegen Schnelligkeit)
-			ergebnis = fuelleMitKnackerVersuch();
-			if (ergebnis.gibArt() == Ergebnis.Art.FERTIG) {
-				break;
-			}
-
-			if (nFuellen > 10000) {
-				Exc.endlosSchleife();
-			}
-
-		} // for endlos
-		return true;
+		int iZahl = Zufall.gib(moegliche.size());
+		int zahl = moegliche.get(iZahl);
+		this.gibFeldmatrix().setzeVorgabe(feldNummer, zahl);
+		return new Integer(zahl);
 	}
 }
