@@ -51,7 +51,7 @@ public class SudokuStatistik implements GeneratorStatistik {
 			final int laufNummer, final Boolean istErstesDerLoesungsZeit, final int loesungsZeit,
 			final String topfName) {
 		// Wenn null -> return ohne Funktionalität.
-		if (infoSudoku == null) {
+		if (infoSudoku == null || forderung == null || neuTyp == null) {
 			return;
 		}
 		if (loesungsZeit < 1) {
@@ -66,11 +66,10 @@ public class SudokuStatistik implements GeneratorStatistik {
 											// neuTyp.gibName().substring(1).toLowerCase();
 			f = new RandomAccessFile(String.format("%s%s%s", topfName, dname, ".txt"), "rws");
 
-			String sSudoku = forderung.gibName().equals(neuTyp.gibName()) ? "-ok-"
-					: "-> " + neuTyp.gibName().toUpperCase() + "";
+			String sSudoku = forderung.gibName().equals(dname) ? "-ok-" : "-> " + dname.toUpperCase() + "";
 
 			String sGespeichert = "nicht gespeichert";
-			if ((infoSudoku != null) & (istErstesDerLoesungsZeit != null)) {
+			if (istErstesDerLoesungsZeit != null) {
 				if (istErstesDerLoesungsZeit) {
 					sGespeichert = "gespeichert als 1.";
 				} else {
@@ -92,7 +91,7 @@ public class SudokuStatistik implements GeneratorStatistik {
 			System.out.println("Logge t=" + loesungsZeit + " in " + topfName);
 			incrementOnLine(f, loesungsZeit);
 
-		} catch (Exception e) { // ___________________________________________________________
+		} catch (Exception e) { // Exceptions=====================================
 			try {
 				// TODO: handle exception
 				System.err.println("Error occured while trying to log: " + neuTyp + ": " + new Integer(loesungsZeit));
@@ -129,7 +128,7 @@ public class SudokuStatistik implements GeneratorStatistik {
 			throw new IllegalArgumentException("Line number starts at 1.");
 		}
 		if (line > max_lines) {
-			throw new IllegalArgumentException("Line number for safety purposes <= " + max_lines);
+			throw new IllegalArgumentException("Line number for safety purposes smaller " + max_lines);
 		}
 		// ----------------------Start:
 		f.seek(0);

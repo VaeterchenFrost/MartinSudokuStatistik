@@ -166,8 +166,10 @@ public enum Schwierigkeit {
 			Schwierigkeit[] typen = Schwierigkeit.values();
 			Schwierigkeit groesster = typen[typen.length-1];
 			//
-//			if(!typ.equals(groesster))return groesster;
-//			if(typ.equals(groesster))return typen[typen.length-2];
+			if (!typ.equals(groesster))
+				return groesster;
+			if (typ.equals(groesster))
+				return typen[typen.length - 2];
 			//
 			if (groesster.equals(typ)){
 				return typen[0];
