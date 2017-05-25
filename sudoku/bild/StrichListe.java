@@ -6,17 +6,6 @@ import sudoku.Paar;
 
 @SuppressWarnings("serial")
 public class StrichListe extends ArrayList<Strich> {
-	/**
-	 * Transformiert alle Indizees so, dass sie sich auf den neuen
-	 * Indize-Ursprung beziehen.
-	 * 
-	 * @param neuerUrsprung
-	 */
-	public void transformiereIndizees(int neuerUrsprung) {
-		for (Strich strich : this) {
-			strich.transformiereIndizees(neuerUrsprung);
-		}
-	}
 
 	public StrichListe() {
 		// TODO Auto-generated constructor stub
@@ -34,6 +23,12 @@ public class StrichListe extends ArrayList<Strich> {
 		Paar<Integer, Integer> pair = new Paar<Integer, Integer>(ersterIndex, letzterIndex);
 
 		return pair;
+	}
+
+	public void loescheAlleAb(int index) {
+		while (size() > index) {
+			remove(size() - 1);
+		}
 	}
 
 	/**
@@ -55,9 +50,15 @@ public class StrichListe extends ArrayList<Strich> {
 		}
 	}
 
-	public void loescheAlleAb(int index) {
-		while (size() > index) {
-			remove(size() - 1);
+	/**
+	 * Transformiert alle Indizees so, dass sie sich auf den neuen
+	 * Indize-Ursprung beziehen.
+	 * 
+	 * @param neuerUrsprung
+	 */
+	public void transformiereIndizees(int neuerUrsprung) {
+		for (Strich strich : this) {
+			strich.transformiereIndizees(neuerUrsprung);
 		}
 	}
 

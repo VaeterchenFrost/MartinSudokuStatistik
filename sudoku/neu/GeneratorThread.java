@@ -9,10 +9,12 @@ class GeneratorThread extends Thread {
 	private sudoku.tools.AusnahmeBehandlung externeAusnahmeBehandlung;
 
 	/**
-	 * @param pool Der Pool, der die Sudokus verwaltet
-	 * @param externeAusnahmeBehandlung falls != null wird im Thread 
-	 * 				diese Ausnahmebehandlung für nicht gefangene Ausnahmen eingeklinkt, 
-	 * 				ansonsten die Standardbehandlung des genannten Typs. 
+	 * @param pool
+	 *            Der Pool, der die Sudokus verwaltet
+	 * @param externeAusnahmeBehandlung
+	 *            falls != null wird im Thread diese Ausnahmebehandlung fï¿½r
+	 *            nicht gefangene Ausnahmen eingeklinkt, ansonsten die
+	 *            Standardbehandlung des genannten Typs.
 	 */
 	GeneratorThread(Pool0 pool, sudoku.tools.AusnahmeBehandlung externeAusnahmeBehandlung) {
 		super(GeneratorThread.class.getName());
@@ -34,7 +36,8 @@ class GeneratorThread extends Thread {
 
 		// int i = 0;
 		// if (i == 0){
-		// throw new UnerwarteterInhalt("Hallo Exception - Test im GeneratorThread");
+		// throw new UnerwarteterInhalt("Hallo Exception - Test im
+		// GeneratorThread");
 		// }
 
 		while (!this.isInterrupted()) {
