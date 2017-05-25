@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -21,10 +20,6 @@ public class SudokuStatistik implements GeneratorStatistik {
 	static public void main(String args[]) throws Exc {
 		SudokuStatistik statistik = new SudokuStatistik();
 		SudokuPool.setzeGeneratorStatistik(statistik);
-		@SuppressWarnings("unused")
-		// Ohne die Zuweisung auf eine Variable w�rde SudokuBedienung vom
-		// Garbitscher sofort wieder weggeschmissen!
-
 		SudokuBedienung sudokuBedienung = new SudokuBedienung(null);
 
 		// ==Auslesen Fuellstand============
