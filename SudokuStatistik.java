@@ -48,7 +48,8 @@ public class SudokuStatistik implements GeneratorStatistik {
 
 	@Override
 	public void neuesSudoku(final NeuTyp forderung, final InfoSudoku infoSudoku, final NeuTyp neuTyp,
-			final int laufNummer, final Boolean istErstesDerLoesungsZeit, final int loesungsZeit, final String topfName) {
+			final int laufNummer, final Boolean istErstesDerLoesungsZeit, final int loesungsZeit,
+			final String topfName) {
 		// Wenn null -> return ohne Funktionalität.
 		if (infoSudoku == null) {
 			return;
@@ -64,7 +65,10 @@ public class SudokuStatistik implements GeneratorStatistik {
 											// +
 											// neuTyp.gibName().substring(1).toLowerCase();
 			f = new RandomAccessFile(String.format("%s%s%s", topfName, dname, ".txt"), "rws");
-			String sSudoku = infoSudoku == null ? "null" : "Erfolg";
+
+			String sSudoku = forderung.gibName().equals(neuTyp.gibName()) ? "-ok-"
+					: "-> " + neuTyp.gibName().toUpperCase() + "";
+
 			String sGespeichert = "nicht gespeichert";
 			if ((infoSudoku != null) & (istErstesDerLoesungsZeit != null)) {
 				if (istErstesDerLoesungsZeit) {
@@ -81,16 +85,21 @@ public class SudokuStatistik implements GeneratorStatistik {
 																// information
 																// (offsets)
 			// Log Console:
-			System.out.println("(" + zeitString + ") Hallo SudokuStatistik " + neuTyp + " " + sSudoku + ": "
-					+ sGespeichert + " " + new Integer(loesungsZeit));
+			System.out.println("(" + zeitString + ") Hallo SudokuStatistik :: Forderung="
+					+ padRight(forderung.gibName(), 7) + " " + padLeft(sSudoku, 10) + " ("
+					+ padLeft("x" + laufNummer, 3) + ")" + ": " + sGespeichert + " " + new Integer(loesungsZeit));
 			// Log Datei:
 			System.out.println("Logge t=" + loesungsZeit + " in " + topfName);
 			incrementOnLine(f, loesungsZeit);
 
-		} catch (Exception e) {
-			// TODO: handle exception
-			System.err.println("Error occured while trying to log: " + neuTyp + ": " + new Integer(loesungsZeit));
-			System.err.println("To " + topfName);
+		} catch (Exception e) { // ___________________________________________________________
+			try {
+				// TODO: handle exception
+				System.err.println("Error occured while trying to log: " + neuTyp + ": " + new Integer(loesungsZeit));
+				System.err.println("To " + topfName);
+			} catch (Exception e2) {
+				// TODO: handle output-exception
+			}
 			e.printStackTrace();
 
 		} finally {
@@ -129,7 +138,7 @@ public class SudokuStatistik implements GeneratorStatistik {
 		String newline = ws + System.getProperty("line.separator");
 		int len_newline = newline.length();
 		// DEBUG:
-		System.out.println("write at " + line);
+		System.out.println("SudokuStatistik.incrementOnLine write at " + line);
 		// Gehe zu benötigter Line, zählend bei 1
 		// Erstelle erste Zeile
 		if (f.length() < len_newline) {
@@ -169,5 +178,13 @@ public class SudokuStatistik implements GeneratorStatistik {
 		f.writeBytes(Integer.toString((int) oldnum + 1));
 
 		return true;
+	}
+
+	public static String padRight(String s, int n) {
+		return String.format("%1$-" + n + "s", s);
+	}
+
+	public static String padLeft(String s, int n) {
+		return String.format("%1$" + n + "s", s);
 	}
 }
