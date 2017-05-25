@@ -4,16 +4,20 @@ package sudoku.neu.pool;
  * @author heroe
  */
 public enum NeuTypOption {
-	/** Zufällig ein Sudoku auswählen
+	/**
+	 * Zufï¿½llig ein Sudoku auswï¿½hlen
 	 */
-	MIX, 
-	/** Ein Sudoku mit geringer Lösungszeit auswählen
+	MIX,
+	/**
+	 * Ein Sudoku mit geringer Lï¿½sungszeit auswï¿½hlen
 	 */
-	KURZ, 
-	/** Ein Sudoku mit mittlerer Lösungszeit auswählen
+	KURZ,
+	/**
+	 * Ein Sudoku mit mittlerer Lï¿½sungszeit auswï¿½hlen
 	 */
-	NORMAL, 
-	/** Ein Sudoku mit großer Lösungszeit auswählen
+	NORMAL,
+	/**
+	 * Ein Sudoku mit groï¿½er Lï¿½sungszeit auswï¿½hlen
 	 */
 	LANGWIERIG
 }

@@ -1,16 +1,17 @@
 package sudoku.bild.leser;
 
 /**
- * @author heroe
- * Kriterium für die Bestimmung einer Zahl
+ * @author heroe Kriterium fï¿½r die Bestimmung einer Zahl
  */
 interface KriteriumBildInfo {
 	/**
-	 * @param zahlBildInfo Auf dieser Basis wird der Erfüllungsgrad dieses Kriteriums bestimmt
+	 * @param zahlBildInfo
+	 *            Auf dieser Basis wird der Erfï¿½llungsgrad dieses Kriteriums
+	 *            bestimmt
 	 * @param istSystemOut
-	 * @return Erfüllungsgrad in Prozent
+	 * @return Erfï¿½llungsgrad in Prozent
 	 */
 	public float gibErfuellungsGrad(ZahlBildInfo zahlBildInfo, boolean istSystemOut);
-	
+
 	public String gibName();
 }

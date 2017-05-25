@@ -20,7 +20,8 @@ class LogikOrtFestN implements Logik__Interface {
 
 	/**
 	 * @param anzahlZahlen
-	 * @return Die id für diese Logik. Diese Logiken müssen im enum Logik nicht hintereinander stehen! 
+	 * @return Die id fï¿½r diese Logik. Diese Logiken mï¿½ssen im enum Logik nicht
+	 *         hintereinander stehen!
 	 */
 	static private Logik_ID gibLogikID(int anzahlZahlen) {
 		String name1 = Logik_ID.ORTFEST1.name();
@@ -32,47 +33,59 @@ class LogikOrtFestN implements Logik__Interface {
 	}
 
 	/**
-	 * Erkennt und setzt MöglichGeschwister, nämlich n Zahlen in n  Feldern in einer Gruppe: 
-	 * Eine Zahl ist in ZWEI Feldern der Gruppe möglich: Wenn es EINE weitere Zahl mit genau diesen Feldern gibt:
-	 *     		=> Die Möglichen dieser Felder erhalten nur diese ZWEI Zahlen.
-	 * Eine Zahl ist in DREI Feldern der Gruppe möglich: Wenn es ZWEI weitere Zahlen mit genau diesen Feldern gibt:
-	 *     		=> Die Möglichen dieser Felder erhalten nur diese DREI Zahlen.
-	 * u.s.w.
-	 * MöglichGeschwister ist allerdings nur, wer mindestens 1 mögliche Zahl löscht.
+	 * Erkennt und setzt Mï¿½glichGeschwister, nï¿½mlich n Zahlen in n Feldern in
+	 * einer Gruppe: Eine Zahl ist in ZWEI Feldern der Gruppe mï¿½glich: Wenn es
+	 * EINE weitere Zahl mit genau diesen Feldern gibt: => Die Mï¿½glichen dieser
+	 * Felder erhalten nur diese ZWEI Zahlen. Eine Zahl ist in DREI Feldern der
+	 * Gruppe mï¿½glich: Wenn es ZWEI weitere Zahlen mit genau diesen Feldern
+	 * gibt: => Die Mï¿½glichen dieser Felder erhalten nur diese DREI Zahlen.
+	 * u.s.w. Mï¿½glichGeschwister ist allerdings nur, wer mindestens 1 mï¿½gliche
+	 * Zahl lï¿½scht.
+	 * 
 	 * @param gruppe
-	 * @param anzahlFelder  oder 3 (Felder in der Gruppe mit genau  bzw. 3 gleichen möglichen Zahlen
+	 * @param anzahlFelder
+	 *            oder 3 (Felder in der Gruppe mit genau bzw. 3 gleichen
+	 *            mï¿½glichen Zahlen
 	 * @return Geschwister oder null
-	 * @throws Exc 
+	 * @throws Exc
 	 */
 	static private Geschwister gibMoeglichGeschwister(Gruppe gruppe, int anzahlFelder) throws Exc {
 
 		// Jede Zahl (basisZahl = 1 bis 9) wird kontrolliert in der Gruppe:
-		// 1. Ob sie in genau anzahlFelder möglich ist und
-		// . ob es eine weitere Zahl (bzw. weitere bei anzahlFelder=3) gibt, die in genau denselben Feldern möglich ist wie die basisZahl.
+		// 1. Ob sie in genau anzahlFelder mï¿½glich ist und
+		// . ob es eine weitere Zahl (bzw. weitere bei anzahlFelder=3) gibt, die
+		// in genau denselben Feldern mï¿½glich ist wie die basisZahl.
 		for (int basisZahl = 1; basisZahl < 10; basisZahl++) {
 
 			// Sicht auf die Gruppe erschaffen
-			// Der Parameter '1': 
-			// Nach dem Lauf der Logik OrtFest1 können weitere mögliche Zahlen so gelöscht worden sein,
-			// dass eine mögliche Zahl als einzige im Feld steht. Auch diese ist hier relevant!
+			// Der Parameter '1':
+			// Nach dem Lauf der Logik OrtFest1 kï¿½nnen weitere mï¿½gliche Zahlen
+			// so gelï¿½scht worden sein,
+			// dass eine mï¿½gliche Zahl als einzige im Feld steht. Auch diese ist
+			// hier relevant!
 			ZahlenFeldNummern moeglicheFelderJeZahl = gruppe.gibFelderJeMoeglicheZahl(1);
 
-			// Die freien Felder dieser möglichen basisZahl
+			// Die freien Felder dieser mï¿½glichen basisZahl
 			FeldNummerListe basisZahlFelder = moeglicheFelderJeZahl.gibFeldNummern(basisZahl);
 			if (basisZahlFelder != null) {
-				// Die Anzahl der freien Felder dieser möglichen basisZahl
+				// Die Anzahl der freien Felder dieser mï¿½glichen basisZahl
 				int basisZahlFeldAnzahl = basisZahlFelder.size();
 
-				// Wenn Anzahl der freien Felder dieser möglichen basisZahl genau anzahlFelder ist:
-				// Könnte (!) es sich um gesuchte Geschwister handeln
+				// Wenn Anzahl der freien Felder dieser mï¿½glichen basisZahl
+				// genau anzahlFelder ist:
+				// Kï¿½nnte (!) es sich um gesuchte Geschwister handeln
 				if (basisZahlFeldAnzahl == anzahlFelder) {
 
-					// Auflisten aller Zahlen, die genau dieselben Felder besitzen wie diese basisZahl
+					// Auflisten aller Zahlen, die genau dieselben Felder
+					// besitzen wie diese basisZahl
 					ArrayList<Integer> geschwisterZahlen = new ArrayList<Integer>();
 
-					// Alle (! also auch mehr als anzahlFelder) Geschwister zusammensammeln:
-					// Also die Zahlen, die in genau denselben Feldern und nur dort möglich sind wie die basisZahl.
-					// Die kleineren Zahlen wurden in dieser for-Schleife bereits abgehandelt.
+					// Alle (! also auch mehr als anzahlFelder) Geschwister
+					// zusammensammeln:
+					// Also die Zahlen, die in genau denselben Feldern und nur
+					// dort mï¿½glich sind wie die basisZahl.
+					// Die kleineren Zahlen wurden in dieser for-Schleife
+					// bereits abgehandelt.
 					for (int zahl = basisZahl + 1; zahl < 10; zahl++) {
 						FeldNummerListe zahlFelder = moeglicheFelderJeZahl.gibFeldNummern(zahl);
 						if (zahlFelder != null) {
@@ -88,12 +101,15 @@ class LogikOrtFestN implements Logik__Interface {
 					}
 
 					// Geschwister-Zahlen auswerten:
-					// Wenn anzahlFelder-1 == Geschwister-Anzahl ist: Es handelt sich um Möglich-Geschwister.
-					// "-1" weil die basisZahl selbst ja eine der endgültigen Geschwisterzahlen ist.
+					// Wenn anzahlFelder-1 == Geschwister-Anzahl ist: Es handelt
+					// sich um Mï¿½glich-Geschwister.
+					// "-1" weil die basisZahl selbst ja eine der endgï¿½ltigen
+					// Geschwisterzahlen ist.
 					int braucheGeschwisterAnzahl = anzahlFelder - 1;
 					if (braucheGeschwisterAnzahl == geschwisterZahlen.size()) {
 						// Geschwister sind gefunden:
-						// Wieviele mögliche Zahlen besitzen die Geschwister (basisZahlFelder)?
+						// Wieviele mï¿½gliche Zahlen besitzen die Geschwister
+						// (basisZahlFelder)?
 						FeldListe basisZahlFelderListe = new FeldListe();
 						for (int iBasisZahlFeld = 0; iBasisZahlFeld < basisZahlFelder.size(); iBasisZahlFeld++) {
 							Feld feld = gruppe.gibFeld_SehrLahm(basisZahlFelder.get(iBasisZahlFeld));
@@ -102,13 +118,16 @@ class LogikOrtFestN implements Logik__Interface {
 						ZahlenFeldNummern moegliche = basisZahlFelderListe.gibMoeglicheZahlen();
 
 						if (moegliche.gibAnzahlVorhandene() > anzahlFelder) {
-							// Wenn mehr als zwei Mögliche existieren wird gehandelt
-							// Geschwister als Mögliche um die basisZahl ergänzen
+							// Wenn mehr als zwei Mï¿½gliche existieren wird
+							// gehandelt
+							// Geschwister als Mï¿½gliche um die basisZahl
+							// ergï¿½nzen
 							geschwisterZahlen.add(0, new Integer(basisZahl));
 
-							// Die zu löschenden Zahlen vermerken
+							// Die zu lï¿½schenden Zahlen vermerken
 							ZahlenListe loeschZahlen = new ZahlenListe();
-							for (int iBasisZahlFeld = 0; iBasisZahlFeld < basisZahlFelderListe.size(); iBasisZahlFeld++) {
+							for (int iBasisZahlFeld = 0; iBasisZahlFeld < basisZahlFelderListe
+									.size(); iBasisZahlFeld++) {
 								Feld feld = basisZahlFelderListe.get(iBasisZahlFeld);
 								ArrayList<Integer> moeglicheDesFeldes = feld.gibMoegliche();
 								for (Integer moeglicheZahlDesFeldes : moeglicheDesFeldes) {
@@ -121,9 +140,10 @@ class LogikOrtFestN implements Logik__Interface {
 							}
 
 							if (!loeschZahlen.isEmpty()) {
-								Geschwister geschwister = new Geschwister(geschwisterZahlen, new FeldNummerListe(
-										basisZahlFelder), loeschZahlen);
-								// // Diese Geschwisterzahlen einzig als Mögliche stehen lassen in ihren Feldern
+								Geschwister geschwister = new Geschwister(geschwisterZahlen,
+										new FeldNummerListe(basisZahlFelder), loeschZahlen);
+								// // Diese Geschwisterzahlen einzig als
+								// Mï¿½gliche stehen lassen in ihren Feldern
 								// basisZahlFelder.setzeMoegliche(geschwisterZahlen);
 								return geschwister;
 							}
@@ -143,10 +163,16 @@ class LogikOrtFestN implements Logik__Interface {
 		final String textInGruppe;
 
 		/**
-		 * @param mitSpieler Sind diejenigen der Geschwisterlogik - ohne die des solistErgebnis
+		 * @param mitSpieler
+		 *            Sind diejenigen der Geschwisterlogik - ohne die des
+		 *            solistErgebnis
 		 * @param geschwister
-		 * @param textInGruppe beschreibt die Gruppe in der die Geschwister gefunden wurden
-		 * @param solistErgebnis null oder ein über die Geschwister-Felder gefundener Solist mit dessen Gruppe
+		 * @param textInGruppe
+		 *            beschreibt die Gruppe in der die Geschwister gefunden
+		 *            wurden
+		 * @param solistErgebnis
+		 *            null oder ein ï¿½ber die Geschwister-Felder gefundener
+		 *            Solist mit dessen Gruppe
 		 * @param infoSudoku
 		 */
 		private TipInfoOrtFestN(Logik_ID logik, int anzahlZahlen, FeldNummerListe mitSpieler, Geschwister geschwister,
@@ -169,7 +195,7 @@ class LogikOrtFestN implements Logik__Interface {
 			EinTipText tipText1 = new EinTipText(s1, s2);
 			texte.add(tipText1);
 
-			String s3 = "Deshalb werden alle anderen Zahlen hier gelöscht.";
+			String s3 = "Deshalb werden alle anderen Zahlen hier gelï¿½scht.";
 			EinTipText tipText2 = new EinTipText(s3, "");
 			texte.add(tipText2);
 
@@ -225,30 +251,30 @@ class LogikOrtFestN implements Logik__Interface {
 
 	@Override
 	public String gibName() {
-		String s = String.format("Ort ist fest für %d Zahlen", anzahlZahlen);
+		String s = String.format("Ort ist fest fï¿½r %d Zahlen", anzahlZahlen);
 		return s;
 	}
 
 	@Override
 	public String[] gibWo() {
-		return new String[]{"In einer Gruppe (Zeile, Spalte bzw. Kasten)"};
+		return new String[] { "In einer Gruppe (Zeile, Spalte bzw. Kasten)" };
 	}
 
 	@Override
 	public String[] gibSituationAbstrakt() {
-		String s = String.format("Der Ort für %d Zahlen ist festgelegt.", anzahlZahlen);
-		return new String[]{s};
+		String s = String.format("Der Ort fï¿½r %d Zahlen ist festgelegt.", anzahlZahlen);
+		return new String[] { s };
 	}
 
 	@Override
 	public String[] gibSituation() {
-		String s = String.format("%d Zahlen sind nur in %d Feldern möglich.", anzahlZahlen, anzahlZahlen);
-		return new String[]{s};
+		String s = String.format("%d Zahlen sind nur in %d Feldern mï¿½glich.", anzahlZahlen, anzahlZahlen);
+		return new String[] { s };
 	}
 
 	@Override
 	public String gibErgebnis() {
-		String s = String.format("Alle außer diesen %d Zahlen werden aus den möglichen dieser %d Felder gelöscht.",
+		String s = String.format("Alle auï¿½er diesen %d Zahlen werden aus den mï¿½glichen dieser %d Felder gelï¿½scht.",
 				anzahlZahlen, anzahlZahlen);
 		return s;
 	}
@@ -279,7 +305,7 @@ class LogikOrtFestN implements Logik__Interface {
 				Gruppe gruppe = freieGruppen.get(i);
 				gruppenLaeufeListe.add(gruppe.gibTyp());
 
-				// Gibt es n Zahlen, die in genau n Feldern möglich sind?
+				// Gibt es n Zahlen, die in genau n Feldern mï¿½glich sind?
 				Geschwister geschwister = gibMoeglichGeschwister(gruppe, anzahlZahlen);
 				if (geschwister != null) {
 

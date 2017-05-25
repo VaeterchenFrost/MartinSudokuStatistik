@@ -6,16 +6,15 @@ import sudoku.kern.feldmatrix.FeldNummerMitZahl;
 import sudoku.kern.feldmatrix.ZahlenListe;
 import sudoku.logik.KnackerPartner;
 
-public class KB_VersuchePaare extends KB_Eintrag1Zeile{
+public class KB_VersuchePaare extends KB_Eintrag1Zeile {
 	private int anzahlPaare;
 	private boolean istFelderMit2Moeglichen;
 	private boolean istKontrollVersuchErlaubt;
-	
-	public KB_VersuchePaare(ArrayList<KnackerPartner> partnerListe, boolean istKontrollVersuchErlaubt)
-	{
+
+	public KB_VersuchePaare(ArrayList<KnackerPartner> partnerListe, boolean istKontrollVersuchErlaubt) {
 		this.anzahlPaare = partnerListe.size();
 		this.istFelderMit2Moeglichen = false;
-		if (this.anzahlPaare > 0){
+		if (this.anzahlPaare > 0) {
 			KnackerPartner partner = partnerListe.get(0);
 			FeldNummerMitZahl eintrag = partner.gibBasis();
 			ZahlenListe alternativen = partner.gibAlternativen();
@@ -23,19 +22,18 @@ public class KB_VersuchePaare extends KB_Eintrag1Zeile{
 		}
 		this.istKontrollVersuchErlaubt = istKontrollVersuchErlaubt;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "VersuchePaare [anzahlPaare=" + anzahlPaare
-				+ ", felderMit2Moeglichen=" + istFelderMit2Moeglichen
-				+ ", istKontrollVersuchErlaubt=" + istKontrollVersuchErlaubt
-				+ "]";
+		return "VersuchePaare [anzahlPaare=" + anzahlPaare + ", felderMit2Moeglichen=" + istFelderMit2Moeglichen
+				+ ", istKontrollVersuchErlaubt=" + istKontrollVersuchErlaubt + "]";
 	}
 
-	public boolean benutzteFeldPaare(){
-		return ! istFelderMit2Moeglichen;
+	public boolean benutzteFeldPaare() {
+		return !istFelderMit2Moeglichen;
 	}
-	public boolean benutzteKontrollVersuch(){
+
+	public boolean benutzteKontrollVersuch() {
 		return istKontrollVersuchErlaubt;
 	}
 }

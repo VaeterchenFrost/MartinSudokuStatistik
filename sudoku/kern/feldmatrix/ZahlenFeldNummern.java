@@ -6,11 +6,11 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 /**
- * @author heroe
- * Welche (mögliche) Zahl ist in welchen Feldern zu finden, dadurch natürlich auch: wie oft.
- * Dies ist die Auflistung der Felder je mögliche Zahl einer Gruppe.
- * Das ist die andere Variante zu den Feld-Klassen: 
- * Dort handelt es sich um die Auflistung der möglichen Zahlen je Feld.
+ * @author heroe Welche (mï¿½gliche) Zahl ist in welchen Feldern zu finden,
+ *         dadurch natï¿½rlich auch: wie oft. Dies ist die Auflistung der Felder
+ *         je mï¿½gliche Zahl einer Gruppe. Das ist die andere Variante zu den
+ *         Feld-Klassen: Dort handelt es sich um die Auflistung der mï¿½glichen
+ *         Zahlen je Feld.
  */
 public class ZahlenFeldNummern {
 	private Map<Integer, FeldNummerListe> map;
@@ -20,7 +20,8 @@ public class ZahlenFeldNummern {
 	}
 
 	/**
-	 * @param src Hieraus wird eine Kopie erstellt
+	 * @param src
+	 *            Hieraus wird eine Kopie erstellt
 	 */
 	public ZahlenFeldNummern(ZahlenFeldNummern src) {
 		map = new HashMap<Integer, FeldNummerListe>();
@@ -35,7 +36,8 @@ public class ZahlenFeldNummern {
 	}
 
 	/**
-	 * Fügt einen neuen Eintrag hinzu.
+	 * Fï¿½gt einen neuen Eintrag hinzu.
+	 * 
 	 * @param zahl
 	 * @param feldNummer
 	 */
@@ -55,7 +57,8 @@ public class ZahlenFeldNummern {
 	}
 
 	/**
-	 * @return Die Zahlen. Auch null wenn für keine Zahl FeldNummern vermerkt sind.
+	 * @return Die Zahlen. Auch null wenn fï¿½r keine Zahl FeldNummern vermerkt
+	 *         sind.
 	 */
 	public int[] gibZahlen() {
 		Set<Integer> keySet = map.keySet();
@@ -73,7 +76,7 @@ public class ZahlenFeldNummern {
 
 	/**
 	 * @param zahl
-	 * @return Auch null wenn für zahl keine FeldNummern vermerkt sind.
+	 * @return Auch null wenn fï¿½r zahl keine FeldNummern vermerkt sind.
 	 */
 	public FeldNummerListe gibFeldNummern(int zahl) {
 		FeldNummerListe feldNummerListe = map.get(zahl);
@@ -82,17 +85,17 @@ public class ZahlenFeldNummern {
 
 	/**
 	 * @param zahl
-	 * @return Die Anzahl der FeldNummern, die für diese Zahl existieren.
+	 * @return Die Anzahl der FeldNummern, die fï¿½r diese Zahl existieren.
 	 */
-	public int gibFeldNummernAnzahl(int zahl){
+	public int gibFeldNummernAnzahl(int zahl) {
 		int anzahl = 0;
 		FeldNummerListe feldNummern = gibFeldNummern(zahl);
-		if (feldNummern != null){
+		if (feldNummern != null) {
 			anzahl = feldNummern.size();
 		}
 		return anzahl;
 	}
-	
+
 	public boolean istVorhanden(int zahl) {
 		FeldNummerListe feldNummerListe = map.get(zahl);
 		boolean vorhanden = feldNummerListe != null;
@@ -135,7 +138,7 @@ public class ZahlenFeldNummern {
 	public String toStringVorhandeneZahlen() {
 		String s = new String();
 
-		// Für jede nicht vorhandene Zahl schreiben
+		// Fï¿½r jede nicht vorhandene Zahl schreiben
 		for (int zahl = 1; zahl < 10; zahl++) {
 			if (istVorhanden(zahl)) {
 				s += " " + zahl;
@@ -151,7 +154,7 @@ public class ZahlenFeldNummern {
 	public String toStringNichtVorhandeneZahlen() {
 		String s = new String();
 
-		// Für jede nicht vorhandene Zahl schreiben
+		// Fï¿½r jede nicht vorhandene Zahl schreiben
 		for (int zahl = 1; zahl < 10; zahl++) {
 			if (!istVorhanden(zahl)) {
 				s += " " + zahl;
@@ -161,7 +164,6 @@ public class ZahlenFeldNummern {
 		return s;
 	}
 
-	
 	@Override
 	public String toString() {
 		String s = " ";
@@ -169,10 +171,10 @@ public class ZahlenFeldNummern {
 			if (istVorhanden(zahl)) {
 				FeldNummerListe feldNummern = gibFeldNummern(zahl);
 				String s1 = String.format("(%d->%s)", zahl, feldNummern.gibKette("+"));
-				if (s.length() > 1){
-					s+= " + ";
+				if (s.length() > 1) {
+					s += " + ";
 				}
-				s+=s1;
+				s += s1;
 			}
 		}
 

@@ -12,13 +12,14 @@ public class Eintrag {
 	private boolean istEbenenStart;
 	// True wenn dieser Eintrag als TipZahl zustandegekommen ist
 	private boolean istTipZahl;
-	
+
 	public Eintrag() {
 		reset();
 	}
-	
+
 	/**
-	 * @param anderer Von ihm wird eine Kopie erzeugt.
+	 * @param anderer
+	 *            Von ihm wird eine Kopie erzeugt.
 	 */
 	public Eintrag(Eintrag anderer) {
 		super();
@@ -27,7 +28,7 @@ public class Eintrag {
 		this.istEbenenStart = anderer.istEbenenStart;
 		this.istTipZahl = anderer.istTipZahl;
 	}
-	
+
 	public Eintrag(int zahl, int ebene, boolean istEbenenStart, boolean istTip) {
 		this.zahl = zahl;
 		this.ebene = ebene;
@@ -35,21 +36,21 @@ public class Eintrag {
 		this.istTipZahl = istTip;
 	}
 
-	public void reset(){
+	public void reset() {
 		zahl = 0;
-		ebene = EintragsEbenen.gibStandardEbene1() -1;
+		ebene = EintragsEbenen.gibStandardEbene1() - 1;
 		istEbenenStart = false;
 		istTipZahl = false;
 	}
 
-	public boolean istTipZahl(){
+	public boolean istTipZahl() {
 		return istTipZahl;
 	}
-	
-	public void markiereAlsTip(){
+
+	public void markiereAlsTip() {
 		istTipZahl = true;
 	}
-	
+
 	public int gibZahl() {
 		return zahl;
 	}
@@ -61,24 +62,26 @@ public class Eintrag {
 	public boolean istEbenenStart() {
 		return istEbenenStart;
 	}
-	
+
 	public boolean istVersuchsStart() {
 		return istEbenenStart && (ebene > EintragsEbenen.gibStandardEbene1());
 	}
-	
+
 	public boolean istEintrag() {
-		return  (zahl != 0);
+		return (zahl != 0);
 	}
-	
+
 	/**
 	 * Die Ebeneninfo bleibt bestehen
 	 */
-	public void loescheEintrag(){
+	public void loescheEintrag() {
 		zahl = 0;
 		istEbenenStart = false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -92,7 +95,9 @@ public class Eintrag {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -121,6 +126,5 @@ public class Eintrag {
 		}
 		return true;
 	}
-	
 
 }

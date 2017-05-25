@@ -15,16 +15,16 @@ import sudoku.logik.tipinfo.TipInfo;
 import sudoku.logik.tipinfo.TipInfo0;
 
 /**
- * @author heroe
- * Die Logik KastenLinie hat, wie sich zeigte die identische Wirkung wie die Logik Kasten2.
- * Anders gesagt: Sie kommt nie zur Wirkung wenn Logik Kasten2 eingeschalten ist.
- * Das kam mir zwar nicht im Gedanken, aber sehr schön beim Ansehen von entsprechenden Tips.
- * Deshalb ist diese Logik nicht eingeordnet!
+ * @author heroe Die Logik KastenLinie hat, wie sich zeigte die identische
+ *         Wirkung wie die Logik Kasten2. Anders gesagt: Sie kommt nie zur
+ *         Wirkung wenn Logik Kasten2 eingeschalten ist. Das kam mir zwar nicht
+ *         im Gedanken, aber sehr schï¿½n beim Ansehen von entsprechenden Tips.
+ *         Deshalb ist diese Logik nicht eingeordnet!
  */
-class Logik_KastenLinie implements Logik__Interface{
-    
+class Logik_KastenLinie implements Logik__Interface {
+
 	// =========================================================
-	static private FeldNummerListe gibMitspieler(Gruppe linie, Kasten kasten){
+	static private FeldNummerListe gibMitspieler(Gruppe linie, Kasten kasten) {
 		FeldNummerListe mitspieler = new FeldNummerListe(linie);
 		FeldNummerListe kastenMitspieler = new FeldNummerListe(kasten);
 		mitspieler.addAll(kastenMitspieler);
@@ -32,15 +32,15 @@ class Logik_KastenLinie implements Logik__Interface{
 	}
 
 	private class TipInfoKastenLinie extends TipInfo0 {
-		
+
 		final int zahl;
 		final FeldNummerListe zahlFeldNummern;
 		final Gruppe linie;
 		final Kasten kasten;
 		final ZahlenListe loeschZahlen;
 
-		private TipInfoKastenLinie(Logik_ID logik, int zahl, FeldNummerListe zahlFeldNummern, 
-				Gruppe linie, Kasten kasten, ZahlenListe loeschZahlen) {
+		private TipInfoKastenLinie(Logik_ID logik, int zahl, FeldNummerListe zahlFeldNummern, Gruppe linie,
+				Kasten kasten, ZahlenListe loeschZahlen) {
 			super(logik, Logik_KastenLinie.gibMitspieler(linie, kasten));
 			this.zahl = zahl;
 			this.zahlFeldNummern = zahlFeldNummern;
@@ -64,7 +64,8 @@ class Logik_KastenLinie implements Logik__Interface{
 				texte.add(tipText1);
 			}
 			{
-				String s1 = String.format("Deshalb wird die Zahl %d in den anderen Feldern des Kastens gelöscht.", zahl);
+				String s1 = String.format("Deshalb wird die Zahl %d in den anderen Feldern des Kastens gelï¿½scht.",
+						zahl);
 				EinTipText tipText1 = new EinTipText(s1, null);
 				texte.add(tipText1);
 			}
@@ -102,7 +103,7 @@ class Logik_KastenLinie implements Logik__Interface{
 	public Logik_KastenLinie(ArrayList<Kasten> kaesten, ArrayList<Gruppe> zeilen, ArrayList<Gruppe> spalten) {
 		this.kaesten = kaesten;
 		this.linien = null;
-		if (zeilen != null){
+		if (zeilen != null) {
 			this.linien = new ArrayList<>();
 			this.linien.addAll(zeilen);
 			this.linien.addAll(spalten);
@@ -111,7 +112,7 @@ class Logik_KastenLinie implements Logik__Interface{
 
 	@Override
 	public Logik_ID gibLogikID() {
-		return null; //LogikID.KASTENLINIE;
+		return null; // LogikID.KASTENLINIE;
 	}
 
 	@Override
@@ -125,23 +126,25 @@ class Logik_KastenLinie implements Logik__Interface{
 	}
 
 	@Override
-	public String[] gibWo(){
-		return new String[]{"Auf einer Linie eines Kastens"};
+	public String[] gibWo() {
+		return new String[] { "Auf einer Linie eines Kastens" };
 	}
-	
+
 	@Override
-	public String[] gibSituationAbstrakt(){
-		return new String[]{"1 Zahl ist in einer Zeile bzw. Spalte nur auf Feldern innerhald eines Kastens möglich."};
+	public String[] gibSituationAbstrakt() {
+		return new String[] {
+				"1 Zahl ist in einer Zeile bzw. Spalte nur auf Feldern innerhald eines Kastens mï¿½glich." };
 	}
 
 	@Override
 	public String[] gibSituation() {
-		return new String[]{"1 Zahl ist in einer Zeile bzw. Spalte nur auf Feldern innerhald eines Kastens möglich."};
+		return new String[] {
+				"1 Zahl ist in einer Zeile bzw. Spalte nur auf Feldern innerhald eines Kastens mï¿½glich." };
 	}
 
 	@Override
 	public String gibErgebnis() {
-		return "Diese 1 Zahl ist innerhalb des Kastens nirgendwoanders möglich. Auf den anderen Feldern wird die Zahl also gelöscht.";
+		return "Diese 1 Zahl ist innerhalb des Kastens nirgendwoanders mï¿½glich. Auf den anderen Feldern wird die Zahl also gelï¿½scht.";
 	}
 
 	@Override
@@ -153,11 +156,11 @@ class Logik_KastenLinie implements Logik__Interface{
 	 * @param felder
 	 * @return null wenn die felder nicht in einem Kasten liegen
 	 */
-	private KastenIndex gibKastenIndex(FeldListe felder){
+	private KastenIndex gibKastenIndex(FeldListe felder) {
 		KastenIndex kastenIndex = Kasten.gibKastenIndex(felder.get(0).gibFeldNummer());
-		for(Feld feld: felder){
+		for (Feld feld : felder) {
 			KastenIndex kastenIndex2 = Kasten.gibKastenIndex(feld.gibFeldNummer());
-			if ( ! kastenIndex.equals(kastenIndex2)){
+			if (!kastenIndex.equals(kastenIndex2)) {
 				return null;
 			}
 		}
@@ -172,10 +175,10 @@ class Logik_KastenLinie implements Logik__Interface{
 		for (TipInfo tipInfo : ignorierTips) {
 			TipInfoKastenLinie ignorierTip = (TipInfoKastenLinie) tipInfo;
 			boolean gleicheZahlen = ignorierTip.zahl == tipInfoLogik.zahl;
-			if (gleicheZahlen){
+			if (gleicheZahlen) {
 				gleicheZahlen = ignorierTip.zahlFeldNummern.istGleicherInhalt(tipInfoLogik.zahlFeldNummern);
 			}
-			
+
 			if (gleicheZahlen) {
 				return true;
 			}
@@ -184,8 +187,7 @@ class Logik_KastenLinie implements Logik__Interface{
 	}
 
 	@Override
-	public LogikErgebnis laufen(boolean istTip, List<TipInfo> ignorierTips)  throws Exc
-	{
+	public LogikErgebnis laufen(boolean istTip, List<TipInfo> ignorierTips) throws Exc {
 		ArrayList<Gruppe> freieLinien = Gruppe.gibFreieGruppen(linien, 2);
 		if (!freieLinien.isEmpty()) {
 			GruppenLaeufeListe gruppenLaeufeListe = new GruppenLaeufeListe(freieLinien.get(0).gibTyp());
@@ -196,41 +198,45 @@ class Logik_KastenLinie implements Logik__Interface{
 				for (int zahl = 1; zahl < 10; zahl++) {
 					FeldListe felderDerMoeglichenLinienZahl = linie.gibFelderDerMoeglichenZahl(zahl);
 					int anzahlMoeglicherFelderDerLinienZahl = felderDerMoeglichenLinienZahl.size();
-					if ( (anzahlMoeglicherFelderDerLinienZahl == 2) | (anzahlMoeglicherFelderDerLinienZahl == 3)){
+					if ((anzahlMoeglicherFelderDerLinienZahl == 2) | (anzahlMoeglicherFelderDerLinienZahl == 3)) {
 						KastenIndex kastenIndex = gibKastenIndex(felderDerMoeglichenLinienZahl);
-	
-						if (kastenIndex != null){
-							// Alle Felder liegen in einem Kasten: Gibt es zu löschende Zahlen im Kasten
+
+						if (kastenIndex != null) {
+							// Alle Felder liegen in einem Kasten: Gibt es zu
+							// lï¿½schende Zahlen im Kasten
 							Kasten kasten = Kasten.gibKasten(kastenIndex, kaesten);
 							FeldListe felderDerMoeglichenZahlImKasten = kasten.gibFelderDerMoeglichenZahl(zahl);
-	
-							if (anzahlMoeglicherFelderDerLinienZahl < felderDerMoeglichenZahlImKasten.size()){
-								// Es gibt zu löschende Zahlen im Kasten
+
+							if (anzahlMoeglicherFelderDerLinienZahl < felderDerMoeglichenZahlImKasten.size()) {
+								// Es gibt zu lï¿½schende Zahlen im Kasten
 								FeldNummerListe loeschFeldNummern = new FeldNummerListe();
-								for (int iFeldImKasten = 0; iFeldImKasten < felderDerMoeglichenZahlImKasten.size(); iFeldImKasten++) {
+								for (int iFeldImKasten = 0; iFeldImKasten < felderDerMoeglichenZahlImKasten
+										.size(); iFeldImKasten++) {
 									Feld feld = felderDerMoeglichenZahlImKasten.get(iFeldImKasten);
-									if ( ! felderDerMoeglichenLinienZahl.contains(feld)){
+									if (!felderDerMoeglichenLinienZahl.contains(feld)) {
 										loeschFeldNummern.add(feld.gibFeldNummer());
 									}
 								}
-								
+
 								ZahlenListe loeschZahlen = new ZahlenListe(loeschFeldNummern, zahl);
 								boolean ergebnisIgnorieren = false;
 								TipInfoKastenLinie tipInfo = null;
 								if (istTip) {
-									FeldNummerListe feldNummernDerMoeglichenLinienZahl = new FeldNummerListe(felderDerMoeglichenLinienZahl);
-									tipInfo = new TipInfoKastenLinie(this.gibLogikID(), zahl, feldNummernDerMoeglichenLinienZahl,
-											linie, kasten, loeschZahlen);
+									FeldNummerListe feldNummernDerMoeglichenLinienZahl = new FeldNummerListe(
+											felderDerMoeglichenLinienZahl);
+									tipInfo = new TipInfoKastenLinie(this.gibLogikID(), zahl,
+											feldNummernDerMoeglichenLinienZahl, linie, kasten, loeschZahlen);
 									ergebnisIgnorieren = istErgebnisIgnorieren(ignorierTips, tipInfo);
 								}
 
 								if (!ergebnisIgnorieren) {
-									LogikErgebnis ergebnis = new LogikErgebnis(gruppenLaeufeListe, null, loeschZahlen, tipInfo);
+									LogikErgebnis ergebnis = new LogikErgebnis(gruppenLaeufeListe, null, loeschZahlen,
+											tipInfo);
 									return ergebnis;
 								}
 							}
 						}
-					} // if ( (anzahlMoeglicherFelder 
+					} // if ( (anzahlMoeglicherFelder
 				} // for (int zahl
 			} // for (int iLinie
 			return new LogikErgebnis(gruppenLaeufeListe);

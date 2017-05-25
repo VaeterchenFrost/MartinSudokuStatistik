@@ -3,8 +3,7 @@ package sudoku.varianz;
 import sudoku.kern.info.FeldInfo;
 
 /**
- * @author heroe
- * Nummer des Versuchs (auf dieser Ebene) und Feld (nach Start) 
+ * @author heroe Nummer des Versuchs (auf dieser Ebene) und Feld (nach Start)
  */
 public class VersuchStart {
 
@@ -18,7 +17,7 @@ public class VersuchStart {
 
 	private int versuchNr;
 	private FeldInfo feldInfo;
-	
+
 	/**
 	 * @param versuchNr
 	 * @param feldInfo
@@ -29,7 +28,9 @@ public class VersuchStart {
 		this.feldInfo = feldInfo;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -48,7 +49,7 @@ public class VersuchStart {
 		if (this.feldInfo == feldInfoOther) {
 			return true;
 		}
-		if (! this.feldInfo.gibFeldNummer().equals(feldInfoOther.gibFeldNummer())) {
+		if (!this.feldInfo.gibFeldNummer().equals(feldInfoOther.gibFeldNummer())) {
 			return false;
 		}
 		if (this.feldInfo.gibEintrag() != feldInfoOther.gibEintrag()) {

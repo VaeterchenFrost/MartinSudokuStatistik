@@ -4,8 +4,9 @@ import sudoku.kern.exception.Exc;
 import sudoku.kern.feldmatrix.FeldNummer;
 
 /**
- *  Wandelt das Sudoku (dessen Vorgaben) in Text- (Datei-)Form.
- * Setzt das Sudoku aus diesem vereinbarten Text. 
+ * Wandelt das Sudoku (dessen Vorgaben) in Text- (Datei-)Form. Setzt das Sudoku
+ * aus diesem vereinbarten Text.
+ * 
  * @author Hendrick
  */
 public class TextKonverter {
@@ -14,38 +15,39 @@ public class TextKonverter {
 	private static String sCR = String.format("%n");
 	private static String linieAussen = "$$$$$$$$$$$$$$$$$$$";
 	private static String linieInnenDuenn = "$-----$-----$-----$";
-	private static String linieInnenDick= "$=================$";
+	private static String linieInnenDick = "$=================$";
 	private static char cSeparatorAussen = linieAussen.charAt(0);
 	private static char cSeparatorInnen = '|';
-	
+
 	/**
 	 * @param felder
-	 * @return Text-Darstellung der Felder, der zum Speichern in einer Textdatei geeignet ist.
-	 * 		Er enthält auch Zeilenvorschübe, sodass der Text gleich als Sudoku lesbar ist.
+	 * @return Text-Darstellung der Felder, der zum Speichern in einer Textdatei
+	 *         geeignet ist. Er enthï¿½lt auch Zeilenvorschï¿½be, sodass der Text
+	 *         gleich als Sudoku lesbar ist.
 	 */
 	public static String gibText(InfoSudoku vorgaben) {
 		String text = new String(linieAussen);
-		
+
 		text += sCR;
-		
+
 		// Zeilenweise Ablage
 		for (int zeile = 1; zeile <= 9; zeile++) {
 			for (int spalte = 1; spalte <= 9; spalte++) {
 				FeldInfo feldInfo = vorgaben.get(new FeldNummer(spalte, zeile));
 				int vorgabe = 0;
-				if (feldInfo != null){
+				if (feldInfo != null) {
 					vorgabe = feldInfo.gibVorgabe();
 				}
-				
-				if (1 ==spalte){ // Rahmen
+
+				if (1 == spalte) { // Rahmen
 					text += cSeparatorAussen;
 				}
-				if (vorgabe>0){
-					text += vorgabe; 
+				if (vorgabe > 0) {
+					text += vorgabe;
 				} else {
 					text += ' ';
 				}
-				switch (spalte){
+				switch (spalte) {
 				case 1:
 				case 2:
 				case 4:
@@ -62,7 +64,7 @@ public class TextKonverter {
 				}
 				if (9 == spalte) {// Neue Zeile
 					text += sCR;
-					switch (zeile){// linie
+					switch (zeile) {// linie
 					case 1:
 					case 2:
 					case 4:
@@ -84,34 +86,36 @@ public class TextKonverter {
 					}
 				}
 			} // for spalte
-		}//for zeile
+		} // for zeile
 
 		return text;
 	}
 
 	/**
-	 * Löscht aus text alle Zeichen außer den Feldinhalten.
+	 * Lï¿½scht aus text alle Zeichen auï¿½er den Feldinhalten.
+	 * 
 	 * @param text
-	 * @return String der Länge 81, der für jedes Feld dessen Zahl enthält.
-	 * 		Leere Feldinhalte (" ") werden als "0" gesetzt.
-	 * 		Die Felder-Reihenfolge ist von links oben zeilenweise nach rechts unten.
+	 * @return String der Lï¿½nge 81, der fï¿½r jedes Feld dessen Zahl enthï¿½lt.
+	 *         Leere Feldinhalte (" ") werden als "0" gesetzt. Die
+	 *         Felder-Reihenfolge ist von links oben zeilenweise nach rechts
+	 *         unten.
 	 */
-	private static String gibGepackt(String text){
-		// Alle Zeilenvorschübe löschen
+	private static String gibGepackt(String text) {
+		// Alle Zeilenvorschï¿½be lï¿½schen
 		text = text.replace(sCR, "");
-		
-		// Alle Zeichen vor der einleitenden LinieAussen löschen
+
+		// Alle Zeichen vor der einleitenden LinieAussen lï¿½schen
 		int indexLinieAussen = text.indexOf(linieAussen);
-		if (indexLinieAussen >= 0){
+		if (indexLinieAussen >= 0) {
 			text = text.substring(indexLinieAussen + linieAussen.length());
 		}
-		
-		// Alle Zeichen nach der abschließenden LinieAussen löschen
+
+		// Alle Zeichen nach der abschlieï¿½enden LinieAussen lï¿½schen
 		indexLinieAussen = text.indexOf(linieAussen);
-		if (indexLinieAussen > 0){
+		if (indexLinieAussen > 0) {
 			text = text.substring(0, indexLinieAussen);
 		}
-		
+
 		// Alle Leerzeichen durch '0' ersetzen
 		text = text.replace(' ', '0');
 		// Alle Linien ersetzen
@@ -124,35 +128,36 @@ public class TextKonverter {
 		sSeparator = String.valueOf(cSeparatorAussen);
 		text = text.replace(sSeparator, "");
 
-		// Alle Leerzeichen löschen
+		// Alle Leerzeichen lï¿½schen
 		sSeparator = String.valueOf(" ");
 		text = text.replace(sSeparator, "");
-		
+
 		return text;
 	}
 
 	/**
-	 * @param text Vorgaben in vereinbarter Textform
-	 * @return null wenn es sich um einen lesbaren Sudokutext handelt, sonst der Fehler in Textform
+	 * @param text
+	 *            Vorgaben in vereinbarter Textform
+	 * @return null wenn es sich um einen lesbaren Sudokutext handelt, sonst der
+	 *         Fehler in Textform
 	 */
 	private static String istSudokuText(String sudokuText) {
-		if (sudokuText == null){
+		if (sudokuText == null) {
 			return "Keine Daten";
 		}
-		if (sudokuText.isEmpty()){
+		if (sudokuText.isEmpty()) {
 			return "Leere Daten";
 		}
-		
+
 		String text = gibGepackt(sudokuText);
-		if (text.length() != anzahlFelder){
-			String sFehler = String.format("Daten falscher Länge=%d, (erwartet=%d)", 
-					text.length(), anzahlFelder);
+		if (text.length() != anzahlFelder) {
+			String sFehler = String.format("Daten falscher Lï¿½nge=%d, (erwartet=%d)", text.length(), anzahlFelder);
 			return sFehler;
 		}
-		
-		for (int iChar=0; iChar<text.length(); iChar++){
+
+		for (int iChar = 0; iChar < text.length(); iChar++) {
 			char c = text.charAt(iChar);
-			if ((c < '0') || (c > '9')){
+			if ((c < '0') || (c > '9')) {
 				String sFehler = String.format("falsches Zeichen %c", c);
 				return sFehler;
 			}
@@ -160,14 +165,13 @@ public class TextKonverter {
 		return null;
 	}
 
-	public static InfoSudoku gibVorgaben (String text) throws Exc
-	{
+	public static InfoSudoku gibVorgaben(String text) throws Exc {
 		// Alle Kommentare entfernen
 		text = TextKonverter.gibGepackt(text);
 
 		// Kontrollen
 		String fehler = istSudokuText(text);
-		if (fehler != null){
+		if (fehler != null) {
 			throw Exc.ausnahme(fehler);
 		}
 
@@ -176,9 +180,9 @@ public class TextKonverter {
 		for (int zeile = 1; zeile <= 9; zeile++) {
 			for (int spalte = 1; spalte <= 9; spalte++) {
 				FeldNummer feldNummer = new FeldNummer(spalte, zeile);
-				int iText = (zeile-1)*9 + (spalte-1); 
-				int vorgabe = Integer.valueOf(text.substring(iText, iText+1));
-				if (vorgabe > 0){
+				int iText = (zeile - 1) * 9 + (spalte - 1);
+				int vorgabe = Integer.valueOf(text.substring(iText, iText + 1));
+				if (vorgabe > 0) {
 					vorgaben.put(feldNummer, FeldInfo.gibVorgabeInstanz(feldNummer, vorgabe));
 				}
 			}

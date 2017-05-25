@@ -2,7 +2,7 @@ package sudoku.schwer.daten;
 
 import sudoku.schwer.AnzeigeInfo;
 
-public class InfoUnbekannt implements AnzeigeInfo{
+public class InfoUnbekannt implements AnzeigeInfo {
 
 	public InfoUnbekannt() {
 	}

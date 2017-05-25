@@ -33,7 +33,9 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 	}
 
 	/**
-	 * Diese Logik wird nur im TipInfo benötigt. Sie steht deshalb hier, weil die interne Klasse keine statischen Methoden besitzen kann. 
+	 * Diese Logik wird nur im TipInfo benï¿½tigt. Sie steht deshalb hier, weil
+	 * die interne Klasse keine statischen Methoden besitzen kann.
+	 * 
 	 * @param linien
 	 * @param senkrechte
 	 * @return Alle FeldNummern der an der Logik beteiligten Gruppen
@@ -96,10 +98,14 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 	}
 
 	/**
-	 * @param zahl Die Zahl des FeldPaareRinges
-	 * @param senkrechte Die senkrechten Gruppen: Spalten bzw. Zeilen
-	 * @param feldNummern Die FeldNummern des FeldPaareRinges
-	 * @return Die zum Löschen vorgeschlagenen Zahlen oder null wenn es keine solche gibt.
+	 * @param zahl
+	 *            Die Zahl des FeldPaareRinges
+	 * @param senkrechte
+	 *            Die senkrechten Gruppen: Spalten bzw. Zeilen
+	 * @param feldNummern
+	 *            Die FeldNummern des FeldPaareRinges
+	 * @return Die zum Lï¿½schen vorgeschlagenen Zahlen oder null wenn es keine
+	 *         solche gibt.
 	 */
 	static private ZahlenListe gibLoeschZahlen(int zahl, Gruppe[] senkrechte, FeldNummerListe feldNummern) {
 		FeldListe zahlFelder = new FeldListe();
@@ -169,7 +175,9 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 	}
 
 	/**
-	 * @param ringInfo Alle nötigen Infos zum bereits erkannten noch unvollständigen Ring.
+	 * @param ringInfo
+	 *            Alle nï¿½tigen Infos zum bereits erkannten noch unvollstï¿½ndigen
+	 *            Ring.
 	 * @return true wenn es sich um einen Ring handelt.
 	 */
 	static private boolean istRingKomplett(ArrayList<FeldPaar> ringFeldPaare, FeldNummer anfang, FeldNummer ende,
@@ -184,14 +192,16 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 						| (feldNummer1.equals(ende) & feldNummer2.equals(anfang));
 				return istEndeFeldPaar;
 			} else {
-				// Es fehlen noch mehr als ein Feldpaar: Fortsetzung versuchen zu finden
+				// Es fehlen noch mehr als ein Feldpaar: Fortsetzung versuchen
+				// zu finden
 				for (FeldPaar feldPaar : suchFeldPaare) {
 					Gruppe.Typ linienTyp = feldPaar.gruppe.gibTyp();
 					FeldNummer feldNummer1 = feldPaar.feld1.gibFeldNummer();
 					FeldNummer feldNummer2 = feldPaar.feld2.gibFeldNummer();
 
 					boolean istFortsetzung = feldNummer1.equals(anfang);
-					// Auf deutsch: Auf der Senkrechten des Anfang befindet sich FeldNummer1.
+					// Auf deutsch: Auf der Senkrechten des Anfang befindet sich
+					// FeldNummer1.
 					// Also ist der neu Anfang die Senkrechte der FeldNummer2.
 					if (istFortsetzung) {
 						// Fortsetzung am Anfang mit feldNummer2
@@ -236,7 +246,8 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 	}
 
 	/**
-	 * @param feldPaare genau die richtige Anzahl FeldPaare 
+	 * @param feldPaare
+	 *            genau die richtige Anzahl FeldPaare
 	 * @return true wenn es sich um einen FeldPaare-Ring handelt.
 	 */
 	static private boolean istRing(FeldPaar[] feldPaare) {
@@ -256,7 +267,7 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 			suchFeldPaare.add(feldPaare[i]);
 		}
 
-		// Der Ring besteht jetzt zunächst nur aus dem Basis-FeldPaar
+		// Der Ring besteht jetzt zunï¿½chst nur aus dem Basis-FeldPaar
 		boolean istRingKomplett = istRingKomplett(ringFeldPaare, anfang, ende, suchFeldPaare);
 		return istRingKomplett;
 	}
@@ -264,8 +275,9 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 	/**
 	 * @param feldPaare
 	 * @param anzahlRingFeldPaare
-	 * @return Alle möglichen Kombinationen der FeldPaare, die einen Ring bilden könnten.
-	 * 				Jede Kombination besitzt genau anzahlFeldPaare FeldPaare. 
+	 * @return Alle mï¿½glichen Kombinationen der FeldPaare, die einen Ring bilden
+	 *         kï¿½nnten. Jede Kombination besitzt genau anzahlFeldPaare
+	 *         FeldPaare.
 	 */
 	static private ArrayList<FeldPaar[]> gibMoeglicheRinge(ArrayList<FeldPaar> feldPaare, int anzahlRingFeldPaare) {
 		int[] teilnehmer = new int[feldPaare.size()];
@@ -310,21 +322,21 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 		public EinTipText[] gibTip() {
 			ArrayList<EinTipText> texte = new ArrayList<>();
 			{
-				String s1 = String.format("Die mögliche Zahl %d muss %s", zahl, Gruppe.gibInText(linien, false));
-				String s2 = "in einem der beiden jeweils möglichen Felder stehen.";
+				String s1 = String.format("Die mï¿½gliche Zahl %d muss %s", zahl, Gruppe.gibInText(linien, false));
+				String s2 = "in einem der beiden jeweils mï¿½glichen Felder stehen.";
 				EinTipText tipText1 = new EinTipText(s1, s2);
 				texte.add(tipText1);
-				s1 = "Die genannten Linien sind über ihre Senkrechten miteinander verbunden.";
+				s1 = "Die genannten Linien sind ï¿½ber ihre Senkrechten miteinander verbunden.";
 				tipText1 = new EinTipText(s1, null);
 				texte.add(tipText1);
-				s1 = String.format("Daher muss die mögliche Zahl %d auch in den Senkrechten ", zahl);
+				s1 = String.format("Daher muss die mï¿½gliche Zahl %d auch in den Senkrechten ", zahl);
 				s2 = "in genau einem von beiden Feldern stehen.";
 				tipText1 = new EinTipText(s1, s2);
 				texte.add(tipText1);
 			}
 			{
 				String s1 = String.format("Deshalb wird die Zahl %d ansonsten ", zahl);
-				String s2 = String.format("%s gelöscht.", Gruppe.gibInText(senkrechte, false));
+				String s2 = String.format("%s gelï¿½scht.", Gruppe.gibInText(senkrechte, false));
 				EinTipText tipText1 = new EinTipText(s1, s2);
 				texte.add(tipText1);
 			}
@@ -368,27 +380,27 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 
 	@Override
 	public String[] gibWo() {
-		String s = String
-				.format("Auf %d parallelen Zeilen. (Alles gesagte gilt auch für %d parallele Spalten und Zeilen als Senkrechte.)",
-						anzahlRingFeldPaare, anzahlRingFeldPaare);
-		return new String[]{s};
+		String s = String.format(
+				"Auf %d parallelen Zeilen. (Alles gesagte gilt auch fï¿½r %d parallele Spalten und Zeilen als Senkrechte.)",
+				anzahlRingFeldPaare, anzahlRingFeldPaare);
+		return new String[] { s };
 	}
 
 	@Override
 	public String[] gibSituationAbstrakt() {
-		return new String[]{"1 Zahl ist nur an 2 Orten je Linie möglich.", 
-				"Die Linien sind über gleiche Orte der Zahlen über ihre Senkrechten verbunden."};
+		return new String[] { "1 Zahl ist nur an 2 Orten je Linie mï¿½glich.",
+				"Die Linien sind ï¿½ber gleiche Orte der Zahlen ï¿½ber ihre Senkrechten verbunden." };
 	}
 
 	@Override
 	public String[] gibSituation() {
-		return new String[]{"1 Zahl ist nur auf 2 Feldern je Zeile möglich.",
-				"Je zwei der Felder der relevanten Zeilen befinden sich auf den gleichen Spalten."};
+		return new String[] { "1 Zahl ist nur auf 2 Feldern je Zeile mï¿½glich.",
+				"Je zwei der Felder der relevanten Zeilen befinden sich auf den gleichen Spalten." };
 	}
 
 	@Override
 	public String gibErgebnis() {
-		return "Außer in den betrachteten Feldern kann die mögliche Zahl in den betreffenden Spalten gelöscht werden.";
+		return "Auï¿½er in den betrachteten Feldern kann die mï¿½gliche Zahl in den betreffenden Spalten gelï¿½scht werden.";
 	}
 
 	private void systemOut(String s) {
@@ -398,10 +410,16 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 	}
 
 	/**
-	 * @param gruppenLaeufeListe Die ist mitzuschreiben (für die Zeitermittlung)
-	 * @param linien Die Zeilen bzw. Spalten, die auf FeldPaare (Genau 2 Felder mit 1 möglichen Zahl in der Gruppe) zu testen sind
-	 * @param senkrechte Die Spalten bzw. Zeilen, die die Senkrechten zu den Linien sind.
-	 * @param ignorierTips falls != null soll die TipInfo eventuell ignoriert werden.
+	 * @param gruppenLaeufeListe
+	 *            Die ist mitzuschreiben (fï¿½r die Zeitermittlung)
+	 * @param linien
+	 *            Die Zeilen bzw. Spalten, die auf FeldPaare (Genau 2 Felder mit
+	 *            1 mï¿½glichen Zahl in der Gruppe) zu testen sind
+	 * @param senkrechte
+	 *            Die Spalten bzw. Zeilen, die die Senkrechten zu den Linien
+	 *            sind.
+	 * @param ignorierTips
+	 *            falls != null soll die TipInfo eventuell ignoriert werden.
 	 * @return null oder TipInfo falls die Logik erfolgreich war
 	 */
 	private TipInfo gibInfo(GruppenLaeufeListe gruppenLaeufeListe, ArrayList<Gruppe> linien,
@@ -421,9 +439,9 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 			if (zahlFeldPaare.size() >= anzahlRingFeldPaare) {
 
 				ArrayList<FeldPaar[]> moeglicheRinge = gibMoeglicheRinge(zahlFeldPaare, anzahlRingFeldPaare);
-				systemOut(String
-						.format("Für die Zahl %d: Notwendige Anzahl FeldPaare = %d. Anzahl FeldPaare = %d. Anzahl möglicher Ringe = %d",
-								zahl, anzahlRingFeldPaare, zahlFeldPaare.size(), moeglicheRinge.size()));
+				systemOut(String.format(
+						"Fï¿½r die Zahl %d: Notwendige Anzahl FeldPaare = %d. Anzahl FeldPaare = %d. Anzahl mï¿½glicher Ringe = %d",
+						zahl, anzahlRingFeldPaare, zahlFeldPaare.size(), moeglicheRinge.size()));
 
 				for (FeldPaar[] moeglicherRing : moeglicheRinge) {
 					if (istRing(moeglicherRing)) {
@@ -436,7 +454,7 @@ abstract class LogikFeldPaareRing implements Logik__Interface {
 						ZahlenListe loeschZahlen = gibLoeschZahlen(zahl, senkrechteArray, ringFeldNummern);
 						if (loeschZahlen != null) {
 							// Logik war erfolgreich!
-							systemOut(String.format("Die Zahl %d wird gelöscht: %s", zahl, loeschZahlen));
+							systemOut(String.format("Die Zahl %d wird gelï¿½scht: %s", zahl, loeschZahlen));
 							TipInfoRingFeldPaare tipInfo = new TipInfoRingFeldPaare(this.gibLogikID(), zahl,
 									ringFeldNummern, linienArray, senkrechteArray, loeschZahlen);
 							boolean ergebnisIgnorieren = istErgebnisIgnorieren(ignorierTips, tipInfo);

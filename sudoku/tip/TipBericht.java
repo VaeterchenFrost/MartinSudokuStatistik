@@ -14,64 +14,65 @@ import sudoku.logik.tipinfo.TipKurier;
  * @author heroe
  *
  */
-public class TipBericht implements TipKurier{
+public class TipBericht implements TipKurier {
 	private ArrayList<TipInfo> infos;
 	private ArrayList<TipInfo> ignorierTips;
-	
+
 	public TipBericht() {
 		init(null);
 	}
 
-	public TipBericht(ArrayList<TipInfo> ignorierTips){
+	public TipBericht(ArrayList<TipInfo> ignorierTips) {
 		init(ignorierTips);
 	}
 
-	public void add(TipInfo info){
+	public void add(TipInfo info) {
 		this.infos.add(info);
 	}
 
-	private void init(ArrayList<TipInfo> ignorierTips){
+	private void init(ArrayList<TipInfo> ignorierTips) {
 		this.infos = new ArrayList<>();
 		this.ignorierTips = ignorierTips;
 	}
-	
-	public ArrayList<TipInfo> gibInfos(){
+
+	public ArrayList<TipInfo> gibInfos() {
 		return infos;
 	}
 
-	public FeldNummerListe gibMitSpieler(){
+	public FeldNummerListe gibMitSpieler() {
 		FeldNummerListe mitSpieler = new FeldNummerListe();
-		for(TipInfo tipInfo: infos){
+		for (TipInfo tipInfo : infos) {
 			FeldNummerListe mitSpieler1 = tipInfo.gibMitSpieler();
-			if (mitSpieler1 != null){
+			if (mitSpieler1 != null) {
 				mitSpieler.addAll(mitSpieler1);
 			}
 		}
 		return mitSpieler;
 	}
-	
+
 	/**
-	 * @return Das Feld mit der (ersten) erkannten Zahl oder null wenn keine Tip-Zahl gefunden wurde.
-	 * Da der letzte Tip nur die Zusammenfassung darstellt, wird er nicht berücksichtigt!
+	 * @return Das Feld mit der (ersten) erkannten Zahl oder null wenn keine
+	 *         Tip-Zahl gefunden wurde. Da der letzte Tip nur die
+	 *         Zusammenfassung darstellt, wird er nicht berï¿½cksichtigt!
 	 */
-	public FeldNummerMitZahl gibZahlFeld(){
-		for (int iTip = 0; iTip < infos.size()-1; iTip++) {
+	public FeldNummerMitZahl gibZahlFeld() {
+		for (int iTip = 0; iTip < infos.size() - 1; iTip++) {
 			TipInfo tipInfo = infos.get(iTip);
 			FeldNummerMitZahl zahlFeld = tipInfo.gibZahlFeld();
-			if (zahlFeld != null){
+			if (zahlFeld != null) {
 				return zahlFeld;
 			}
 		}
 		return null;
 	}
 
-	public ArrayList<InfoSudoku> gibSudokus(){
+	public ArrayList<InfoSudoku> gibSudokus() {
 		ArrayList<InfoSudoku> infoSudokus = new ArrayList<InfoSudoku>();
 		int sudokuNummer = 0;
 		for (int iTip = 0; iTip < infos.size(); iTip++) {
 			TipInfo tipInfo = infos.get(iTip);
 			InfoSudoku infoSudoku = tipInfo.gibSudoku();
-			if (infoSudoku != null){
+			if (infoSudoku != null) {
 				String sNummer = new Integer(sudokuNummer).toString();
 				infoSudoku.setzeTitel(sNummer);
 				sudokuNummer++;
@@ -82,74 +83,75 @@ public class TipBericht implements TipKurier{
 	}
 
 	/**
-	 * @return Alle für die Komprimierung interessanten TipInfos. 
-	 * Ausser dem letzten "echten" Tip, denn dieser ist nötig für den Tip und dem Tip mit TipZahl.
-	 * Der letzte Tip ist kein "echter" Tip, denn er stellt ja nur die Zusammenfassung dar!
+	 * @return Alle fï¿½r die Komprimierung interessanten TipInfos. Ausser dem
+	 *         letzten "echten" Tip, denn dieser ist nï¿½tig fï¿½r den Tip und dem
+	 *         Tip mit TipZahl. Der letzte Tip ist kein "echter" Tip, denn er
+	 *         stellt ja nur die Zusammenfassung dar!
 	 */
-	TipInfo[] gibKontrollInfos(){
+	TipInfo[] gibKontrollInfos() {
 		ArrayList<TipInfo> kontrollInfos = new ArrayList<>();
 
-		for (int iTip = 0; iTip < infos.size()-2; iTip++) {
+		for (int iTip = 0; iTip < infos.size() - 2; iTip++) {
 			TipInfo tipInfo = infos.get(iTip);
 			FeldNummerMitZahl zahlFeld = tipInfo.gibZahlFeld();
-			if (zahlFeld == null){
-				// Dann bezeichnet dieser Tip Löschzahlen 
+			if (zahlFeld == null) {
+				// Dann bezeichnet dieser Tip Lï¿½schzahlen
 				kontrollInfos.add(tipInfo);
 			}
 		}
-		
+
 		TipInfo[] infoArray = new TipInfo[kontrollInfos.size()];
 		kontrollInfos.toArray(infoArray);
 		return infoArray;
 	}
 
-	private boolean existiertZahl(){
-		for(TipInfo tipInfo: infos){
-			if(tipInfo.istZahl()){
+	private boolean existiertZahl() {
+		for (TipInfo tipInfo : infos) {
+			if (tipInfo.istZahl()) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	boolean istKomprimierbar(){
-		if (this.infos.isEmpty()){
+	boolean istKomprimierbar() {
+		if (this.infos.isEmpty()) {
 			return false;
 		}
-		if (this.infos.size() < 3){
+		if (this.infos.size() < 3) {
 			// StartSudoku + 1 Tip ist Minimum
 			return false;
 		}
-		if (! this.existiertZahl()){
+		if (!this.existiertZahl()) {
 			// Erfolgloser Tip
 			return false;
 		}
 		return true;
 	}
 
-	boolean istKomprimiertZu(TipBericht basisBericht){
-		if ( ! basisBericht.istKomprimierbar()){
+	boolean istKomprimiertZu(TipBericht basisBericht) {
+		if (!basisBericht.istKomprimierbar()) {
 			return false;
 		}
 		FeldNummerMitZahl basisZahl = basisBericht.gibZahlFeld();
 		FeldNummerMitZahl dieseZahl = this.gibZahlFeld();
-		if ( ! basisZahl.equals(dieseZahl)){
+		if (!basisZahl.equals(dieseZahl)) {
 			return false;
 		}
-		if (this.infos.size() >= basisBericht.infos.size()){
+		if (this.infos.size() >= basisBericht.infos.size()) {
 			return false;
 		}
 		return true;
 	}
 
-	public List<TipInfo> gibIgnorierTips(Logik_ID logikID){
-		if (ignorierTips == null){
+	public List<TipInfo> gibIgnorierTips(Logik_ID logikID) {
+		if (ignorierTips == null) {
 			return null;
 		}
 
 		List<TipInfo> ignorierTipsDerLogik = new ArrayList<>();
-		for(TipInfo tipInfo: ignorierTips){
-			if (tipInfo.gibLogik() == logikID){
+		for (TipInfo tipInfo : ignorierTips) {
+			if (tipInfo.gibLogik() == logikID) {
 				ignorierTipsDerLogik.add(tipInfo);
 			}
 		}

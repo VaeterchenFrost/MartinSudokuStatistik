@@ -7,43 +7,43 @@ import java.util.Comparator;
 import sudoku.kern.exception.Exc;
 
 /**
- * @author heroe
- * Tool für die Verzeichnis-Arbeit
+ * @author heroe Tool fï¿½r die Verzeichnis-Arbeit
  */
 public class Verzeichnis {
 	/**
-	 * @return Für das laufende Programm sein "current directory" 
+	 * @return Fï¿½r das laufende Programm sein "current directory"
 	 */
-	public static String gibAktuellesVerzeichnis(){
-		File f0 = new File( ".");
+	public static String gibAktuellesVerzeichnis() {
+		File f0 = new File(".");
 		String p0 = f0.getAbsolutePath();
-		String pfadName = p0.substring(0, p0.length()-1);
+		String pfadName = p0.substring(0, p0.length() - 1);
 		return pfadName;
 	}
-	
+
 	/**
 	 * Garantiert das erstellte und optional leere Unterverzeichnis zum Pfad
+	 * 
 	 * @param unterVerzeichnis
-	 * @return kompletter Pfadname des vorhandenen Unterverzeichnis wenn alles geklappt hat
-	 * @throws Exc 
+	 * @return kompletter Pfadname des vorhandenen Unterverzeichnis wenn alles
+	 *         geklappt hat
+	 * @throws Exc
 	 */
-	public static String gibUnterverzeichnis(String pfad, String unterVerzeichnis, boolean leer) throws Exc{
+	public static String gibUnterverzeichnis(String pfad, String unterVerzeichnis, boolean leer) throws Exc {
 		String pfadName = pfad + unterVerzeichnis;
 		File f = new File(pfadName);
-		if (f.exists()){
-			if (leer){
+		if (f.exists()) {
+			if (leer) {
 				File[] fArray = f.listFiles();
 				for (int i = 0; i < fArray.length; i++) {
 					boolean r = fArray[i].delete();
-					if (r == false){
+					if (r == false) {
 						throw Exc.verzeichnisLeeren(pfadName);
 					}
 				}
 			}
-		}
-		else{
+		} else {
 			boolean r = f.mkdir();
-			if (r == false){
+			if (r == false) {
 				throw Exc.verzeichnisErstellen(pfadName);
 			}
 		}
@@ -51,44 +51,46 @@ public class Verzeichnis {
 	}
 
 	/**
-	 * @param path vollständiger Pfad
-	 * @return Letztes (rechtes) Unterverzeichnis 
+	 * @param path
+	 *            vollstï¿½ndiger Pfad
+	 * @return Letztes (rechtes) Unterverzeichnis
 	 */
-	static public String gibLetztesUnterverzeichnis(String path){
+	static public String gibLetztesUnterverzeichnis(String path) {
 		int iLast = path.lastIndexOf("\\");
 		String str1 = path.substring(0, iLast);
 		iLast = str1.lastIndexOf("\\");
-		String ergebnis = str1.substring(iLast+1, str1.length());
+		String ergebnis = str1.substring(iLast + 1, str1.length());
 		return ergebnis;
 	}
-	
+
 	/**
-	 * @param path vollständiger Pfad
+	 * @param path
+	 *            vollstï¿½ndiger Pfad
 	 * @return Dateiname ohne Verzeichnis
 	 */
-	static public String gibDateiname(String path){
+	static public String gibDateiname(String path) {
 		int iLast = path.lastIndexOf("\\");
-		String ergebnis = path.substring(iLast+1, path.length());
+		String ergebnis = path.substring(iLast + 1, path.length());
 		return ergebnis;
 	}
-	
+
 	/**
-	 * @param path vollständiger Pfad
+	 * @param path
+	 *            vollstï¿½ndiger Pfad
 	 * @return Verzechnisname ohne Dateinamen
 	 */
-	static public String gibVerzeichnis(String path){
+	static public String gibVerzeichnis(String path) {
 		String dateiname = gibDateiname(path);
 		String verzeichnis = path.substring(0, path.length() - dateiname.length());
 		return verzeichnis;
 	}
 
-	static public boolean istSudoku(String dateiName){
+	static public boolean istSudoku(String dateiName) {
 		SudokuFilter sudokuFilter = new Verzeichnis().new SudokuFilter();
 		boolean istSudoku = sudokuFilter.accept(null, dateiName);
 		return istSudoku;
 	}
-	
-	
+
 	private class SudokuFilter implements FilenameFilter {
 		public boolean accept(File dir, String name) {
 			return name.endsWith(".sdk");
@@ -96,10 +98,11 @@ public class Verzeichnis {
 	}
 
 	/**
-	 * @param verzeichnisName Vollständiger Pfad
+	 * @param verzeichnisName
+	 *            Vollstï¿½ndiger Pfad
 	 * @return Alle Dateinamen "*.sdk"
 	 */
-	static public String[] gibSudokuNamen(String verzeichnisName){
+	static public String[] gibSudokuNamen(String verzeichnisName) {
 		String[] dateiNamen = null;
 		File dir = new File(verzeichnisName);
 		dateiNamen = dir.list(new Verzeichnis().new SudokuFilter());
@@ -107,30 +110,28 @@ public class Verzeichnis {
 	}
 
 	/**
-	 * @param name Dateiname schon ohne Pfad
-	 * @return Die Lösungszeit, die Bestandteil des Dateinamens ist
+	 * @param name
+	 *            Dateiname schon ohne Pfad
+	 * @return Die Lï¿½sungszeit, die Bestandteil des Dateinamens ist
 	 */
-	static public int gibSudokuLoesungsZeit(String name){
+	static public int gibSudokuLoesungsZeit(String name) {
 		int indexLeerzeichen = name.indexOf(" ");
-		
+
 		String zeitString = null;
-		if (indexLeerzeichen > 0){
+		if (indexLeerzeichen > 0) {
 			zeitString = name.substring(0, indexLeerzeichen);
-		}
-		else{
+		} else {
 			// Zeit steht komplett vor der Datei-Erweiterung
 			int indexPunkt = name.indexOf(".");
-			zeitString = name.substring(0,indexPunkt);
+			zeitString = name.substring(0, indexPunkt);
 		}
-		
+
 		int zeit = Integer.valueOf(zeitString);
 		return zeit;
 	}
 
-	
 	/**
-	 * @author heroe
-	 * Vergleicht die Lösungszeit die im Dateinamen angegeben ist
+	 * @author heroe Vergleicht die Lï¿½sungszeit die im Dateinamen angegeben ist
 	 */
 	private class DateiNameKomparator implements Comparator<String> {
 		@Override
@@ -146,7 +147,7 @@ public class Verzeichnis {
 		}
 	}
 
-	static public void sortiereNachLoesungsZeit(String[] sudokuNamen){
+	static public void sortiereNachLoesungsZeit(String[] sudokuNamen) {
 		java.util.Arrays.sort(sudokuNamen, new Verzeichnis().new DateiNameKomparator());
 	}
 }

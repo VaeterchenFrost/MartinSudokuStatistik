@@ -8,7 +8,7 @@ public class ToolTip {
 	 */
 	public static String gibToolTip(String[] texte) {
 		String tip = "<html>" + texte[0];
-		for (int i = 1 ; i < texte.length; i++) {
+		for (int i = 1; i < texte.length; i++) {
 			tip += "<br>" + texte[i];
 		}
 		tip += "</html>";

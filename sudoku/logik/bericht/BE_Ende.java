@@ -15,14 +15,15 @@ public class BE_Ende {
 		return eintrag;
 	}
 
-	
 	public BE_Ende(Problem problem, FeldNummerMitZahl eintrag) {
 		super();
 		this.problem = problem;
 		this.eintrag = eintrag;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

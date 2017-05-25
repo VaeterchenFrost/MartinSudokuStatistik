@@ -2,8 +2,9 @@ package sudoku.schwer.daten;
 
 import sudoku.schwer.AnzeigeInfo;
 
-public class InfoUnbestimmt implements AnzeigeInfo{
+public class InfoUnbestimmt implements AnzeigeInfo {
 	int nVorgaben;
+
 	public InfoUnbestimmt(int nVorgaben) {
 		this.nVorgaben = nVorgaben;
 	}
@@ -16,11 +17,11 @@ public class InfoUnbestimmt implements AnzeigeInfo{
 	@Override
 	public String gibToolTip() {
 		String sNur = "";
-		if (nVorgaben < 24){
+		if (nVorgaben < 24) {
 			sNur = "nur ";
 		}
 		String s1 = String.format("Das Sudoku ist sehr unbestimmt. Es besitzt %s%d Vorgaben.", sNur, this.nVorgaben);
-		String s   = String.format("<html>%s</html>", s1);
+		String s = String.format("<html>%s</html>", s1);
 		return s;
 	}
 }

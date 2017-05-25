@@ -12,36 +12,37 @@ public class GruppenLaeufeListe {
 		gruppenLaeufeListe.add(new GruppenLaeufe(gruppenTyp, 0));
 	}
 
-	public int gibLaeufeAnzahlSumme(){
+	public int gibLaeufeAnzahlSumme() {
 		int summe = 0;
-		for (GruppenLaeufe gruppenLaeufe: gruppenLaeufeListe){
+		for (GruppenLaeufe gruppenLaeufe : gruppenLaeufeListe) {
 			summe += gruppenLaeufe.gibAnzahlLaeufe();
 		}
 		return summe;
 	}
-	
+
 	/**
-	 * @param gruppenTyp Wenn der gruppenTyp dem letzten eingetragenen entspricht, 
-	 * 					wird der letzte Eintrag um 1 erhöht. Falls nicht wird ein neuer Eintrag erstellt.
+	 * @param gruppenTyp
+	 *            Wenn der gruppenTyp dem letzten eingetragenen entspricht, wird
+	 *            der letzte Eintrag um 1 erhï¿½ht. Falls nicht wird ein neuer
+	 *            Eintrag erstellt.
 	 */
-	public void add(Gruppe.Typ gruppenTyp){
-		GruppenLaeufe letzterLauf = gruppenLaeufeListe.get(gruppenLaeufeListe.size()-1);
+	public void add(Gruppe.Typ gruppenTyp) {
+		GruppenLaeufe letzterLauf = gruppenLaeufeListe.get(gruppenLaeufeListe.size() - 1);
 		Gruppe.Typ letzterTyp = letzterLauf.gruppenTyp;
-			
-		if (letzterTyp == gruppenTyp){
+
+		if (letzterTyp == gruppenTyp) {
 			letzterLauf.plus1();
-		}
-		else{
+		} else {
 			GruppenLaeufe neuerLauf = new GruppenLaeufe(gruppenTyp, 1);
 			gruppenLaeufeListe.add(neuerLauf);
 		}
 	}
 
-	public Gruppe.Typ gibLetztenTyp(){
-		if (gruppenLaeufeListe.isEmpty()){
+	public Gruppe.Typ gibLetztenTyp() {
+		if (gruppenLaeufeListe.isEmpty()) {
 			return null;
 		}
-		return gruppenLaeufeListe.get(gruppenLaeufeListe.size()-1).gruppenTyp;
+		return gruppenLaeufeListe.get(gruppenLaeufeListe.size() - 1).gruppenTyp;
 	}
 
 	private String gibInhaltKurz() {
@@ -53,16 +54,16 @@ public class GruppenLaeufeListe {
 		}
 		return "[" + s + "]";
 	}
-	
-	public String gibKurzText(){
-		String s = "Läufe: " + gibInhaltKurz();
+
+	public String gibKurzText() {
+		String s = "Lï¿½ufe: " + gibInhaltKurz();
 		return s;
 	}
 
 	@Override
 	public String toString() {
 		String s = "GruppenLaeufeListe " + gibInhaltKurz();
-		return s; 
+		return s;
 	}
-	
+
 }

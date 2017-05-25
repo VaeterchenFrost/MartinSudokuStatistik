@@ -9,21 +9,21 @@ import sudoku.kern.feldmatrix.FeldNummer;
 import sudoku.kern.feldmatrix.FeldNummerMitZahl;
 import sudoku.kern.feldmatrix.ZahlenFeldNummern;
 
-// Ist gedacht zum Geben der Informationen zu einem Feld nach außen
+// Ist gedacht zum Geben der Informationen zu einem Feld nach auï¿½en
 /**
  * @author Hendrick
  *
  */
 public class FeldInfo {
-	
-	public static FeldInfo gibVorgabeInstanz (FeldNummer feldNummer, int vorgabe){
+
+	public static FeldInfo gibVorgabeInstanz(FeldNummer feldNummer, int vorgabe) {
 		return new FeldInfo(feldNummer, vorgabe);
 	}
-	
+
 	private FeldNummer feldNummer;
 	// 0 == keine
 	private int vorgabe;
-	// die durch reset gesetzte Vorgabe 
+	// die durch reset gesetzte Vorgabe
 	private Integer resetVorgabe;
 	// null == keiner
 	private Eintrag eintrag;
@@ -32,9 +32,9 @@ public class FeldInfo {
 	private Boolean markierung;
 
 	private ZahlenFeldNummern feldPartner;
-	
+
 	public FeldInfo(Feld feld) {
-		kopiereInhalt(feld, true); //mitFeldPaaren);
+		kopiereInhalt(feld, true); // mitFeldPaaren);
 	}
 
 	public FeldInfo(Feld feld, boolean mitFeldPaaren) {
@@ -47,7 +47,7 @@ public class FeldInfo {
 		this.vorgabe = vorgabe;
 		this.resetVorgabe = vorgabe;
 		this.eintrag = null;
-		moegliche = null; //new ArrayList<Integer>();
+		moegliche = null; // new ArrayList<Integer>();
 		markierung = null;
 		feldPartner = null;
 	}
@@ -55,105 +55,109 @@ public class FeldInfo {
 	private void kopiereInhalt(Feld feld, boolean mitFeldPaaren) {
 		feldNummer = new FeldNummer(feld.gibFeldNummer());
 		vorgabe = feld.gibVorgabe();
-		this.resetVorgabe = feld.gibResetVorgabe(); 
+		this.resetVorgabe = feld.gibResetVorgabe();
 		eintrag = null;
-		
+
 		int feldEintrag = feld.gibEintrag();
-		if (feldEintrag > 0){
-			eintrag = new Eintrag(feldEintrag, feld.gibEintragEbene(), feld.istEintragEbenenStart(), feld.istEintragAlsTip());
+		if (feldEintrag > 0) {
+			eintrag = new Eintrag(feldEintrag, feld.gibEintragEbene(), feld.istEintragEbenenStart(),
+					feld.istEintragAlsTip());
 		}
-		
+
 		moegliche = new ArrayList<MoeglicheZahl>();
 		ArrayList<Integer> zahlen = feld.gibMoegliche();
-		if (zahlen != null){
-			for(Integer zahl: zahlen){
+		if (zahlen != null) {
+			for (Integer zahl : zahlen) {
 				moegliche.add(new MoeglicheZahl(zahl.intValue()));
 			}
 		}
 
 		feldPartner = null;
-		if (mitFeldPaaren){
+		if (mitFeldPaaren) {
 			ZahlenFeldNummern originalPaare = feld.gibFeldPartner();
-			if (originalPaare != null){
-				feldPartner =  new ZahlenFeldNummern(originalPaare);
+			if (originalPaare != null) {
+				feldPartner = new ZahlenFeldNummern(originalPaare);
 			}
 		}
 
 		this.markierung = feld.gibMarkierung();
 	}
 
-	public FeldNummer gibFeldNummer(){
+	public FeldNummer gibFeldNummer() {
 		return feldNummer;
 	}
-	
-	public int gibZeile(){
+
+	public int gibZeile() {
 		return feldNummer.zeile;
 	}
-	public int gibSpalte(){
+
+	public int gibSpalte() {
 		return feldNummer.spalte;
 	}
-	public int gibVorgabe(){
+
+	public int gibVorgabe() {
 		return vorgabe;
 	}
-	public Integer gibResetVorgabe(){
+
+	public Integer gibResetVorgabe() {
 		return resetVorgabe;
 	}
-	public int gibEintrag(){
-		if (eintrag == null){
+
+	public int gibEintrag() {
+		if (eintrag == null) {
 			return 0;
 		}
 		return eintrag.gibZahl();
 	}
-	
-	public int gibEintragEbene(){
-		if (eintrag == null){
+
+	public int gibEintragEbene() {
+		if (eintrag == null) {
 			return 0;
 		}
 		return eintrag.gibEbene();
 	}
-	
-	public Eintrag gibEintragObjekt(){
+
+	public Eintrag gibEintragObjekt() {
 		return eintrag;
 	}
-	
-	public ZahlenFeldNummern gibFeldParter(){
+
+	public ZahlenFeldNummern gibFeldParter() {
 		return feldPartner;
 	}
-	
-	
-	public boolean istEintragEbenenStart(){
-		if (eintrag == null){
+
+	public boolean istEintragEbenenStart() {
+		if (eintrag == null) {
 			return false;
 		}
 		return eintrag.istEbenenStart();
 	}
-	
-	public  ArrayList<Integer> gibMoegliche(){
+
+	public ArrayList<Integer> gibMoegliche() {
 		ArrayList<Integer> zahlen = new ArrayList<Integer>();
-		if (moegliche == null){
+		if (moegliche == null) {
 			return zahlen;
 		}
-		for(MoeglicheZahl moeglicheZahl: moegliche){
+		for (MoeglicheZahl moeglicheZahl : moegliche) {
 			zahlen.add(new Integer(moeglicheZahl.gibZahl()));
 		}
 		return zahlen;
 	}
-	
-	public  ArrayList<MoeglicheZahl> gibMoeglicheZahlen(){
-		if (moegliche == null){
+
+	public ArrayList<MoeglicheZahl> gibMoeglicheZahlen() {
+		if (moegliche == null) {
 			return new ArrayList<MoeglicheZahl>();
 		}
 		return moegliche;
 	}
 
 	/**
-	 * @return null oder die eine mögliche Zahl
+	 * @return null oder die eine mï¿½gliche Zahl
 	 */
 	public FeldNummerMitZahl gibKlareZahl() {
 		FeldNummerMitZahl ergebnis = null;
 		ArrayList<Integer> moegliche = this.gibMoegliche();
-		if ( ! moegliche.isEmpty()){
-			if (moegliche.size() == 1){
+		if (!moegliche.isEmpty()) {
+			if (moegliche.size() == 1) {
 				int zahl = moegliche.get(0);
 				ergebnis = new FeldNummerMitZahl(feldNummer, zahl);
 			}
@@ -161,67 +165,69 @@ public class FeldInfo {
 		return ergebnis;
 	}
 
-	public boolean existiertMarkierungMoeglicherZahl(){
-		if (istVorgabe()){
+	public boolean existiertMarkierungMoeglicherZahl() {
+		if (istVorgabe()) {
 			return false;
 		}
-		if(istEintrag()){
+		if (istEintrag()) {
 			return false;
 		}
-		for(MoeglicheZahl moeglicheZahl: moegliche){
-			if (moeglicheZahl.istMarkiert()){
+		for (MoeglicheZahl moeglicheZahl : moegliche) {
+			if (moeglicheZahl.istMarkiert()) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
-	public  Boolean gibMarkierung(){
+
+	public Boolean gibMarkierung() {
 		return markierung;
 	}
-	
-	public boolean istVorgabe(){
+
+	public boolean istVorgabe() {
 		return vorgabe > 0;
 	}
-	
-	public boolean istEintrag(){
+
+	public boolean istEintrag() {
 		return eintrag != null;
 	}
-	public boolean istEintragAlsTipZahl(){
-		if (eintrag == null){
+
+	public boolean istEintragAlsTipZahl() {
+		if (eintrag == null) {
 			return false;
-		}
-		else {
+		} else {
 			return eintrag.istTipZahl();
 		}
 	}
-	
-	public boolean istFrei(){
+
+	public boolean istFrei() {
 		return (vorgabe == 0) && (eintrag == null);
 	}
 
-	public boolean istFeldPaar(){
+	public boolean istFeldPaar() {
 		return (istFrei() && (feldPartner != null));
 	}
-	
-	public boolean istMoeglich(int zahl){
+
+	public boolean istMoeglich(int zahl) {
 		ArrayList<Integer> mZahlen = gibMoegliche();
 		return (istFrei() && mZahlen.contains(new Integer(zahl)));
 	}
 
-	public boolean istNur1Moeglich(){
+	public boolean istNur1Moeglich() {
 		return (istFrei() && (moegliche.size() == 1));
 	}
-	
+
 	/**
 	 * Hier erfolgen keinerlei Kontrollen.
-	 * @param zahl wird unbedingt gesetzt und diese aus den Möglichen entfernt
+	 * 
+	 * @param zahl
+	 *            wird unbedingt gesetzt und diese aus den Mï¿½glichen entfernt
 	 */
-	public void setzeEintrag(int zahl){
+	public void setzeEintrag(int zahl) {
 		eintrag = new Eintrag(zahl, 0, false, false);
 		for (int i = 0; i < this.moegliche.size(); i++) {
 			MoeglicheZahl moeglich = this.moegliche.get(i);
-			if (moeglich.gibZahl() == zahl){
+			if (moeglich.gibZahl() == zahl) {
 				this.moegliche.remove(i);
 			}
 		}
@@ -229,12 +235,13 @@ public class FeldInfo {
 
 	/**
 	 * Hier erfolgen keinerlei Kontrollen.
+	 * 
 	 * @param unmoeglicheZahl
-	 * @return true wenn eine Zahl gelöscht wurde
+	 * @return true wenn eine Zahl gelï¿½scht wurde
 	 */
 	public boolean loescheUnmoeglicheZahl(int unmoeglicheZahl) {
-		for (int i=0; i<moegliche.size(); i++){
-			if (moegliche.get(i).gibZahl() == unmoeglicheZahl){
+		for (int i = 0; i < moegliche.size(); i++) {
+			if (moegliche.get(i).gibZahl() == unmoeglicheZahl) {
 				moegliche.remove(i);
 				return true;
 			}
@@ -242,36 +249,36 @@ public class FeldInfo {
 		return false;
 	}
 
-	public void setzeMarkierung(boolean setzen){
+	public void setzeMarkierung(boolean setzen) {
 		markierung = new Boolean(setzen);
 	}
 
-	public void loescheMarkierung(){
+	public void loescheMarkierung() {
 		markierung = null;
 	}
 
-	public void markiereMoeglicheZahl(int zahl){
-		if (moegliche == null){
+	public void markiereMoeglicheZahl(int zahl) {
+		if (moegliche == null) {
 			throw new FehlendeMoeglicheZahl(new FeldNummerMitZahl(new FeldNummer(feldNummer), zahl));
 		}
 		MoeglicheZahl moeglicheZahl = null;
-		for (MoeglicheZahl moeZahl: moegliche){
-			if (moeZahl.gibZahl() == zahl){
+		for (MoeglicheZahl moeZahl : moegliche) {
+			if (moeZahl.gibZahl() == zahl) {
 				moeglicheZahl = moeZahl;
 			}
 		}
-		if (moeglicheZahl == null){
+		if (moeglicheZahl == null) {
 			throw new FehlendeMoeglicheZahl(new FeldNummerMitZahl(new FeldNummer(feldNummer), zahl));
 		}
 		moeglicheZahl.setzeMarkiert();
 	}
 
-	public boolean istGleicherEintrag(FeldInfo info2){
-//		if (eintrag == null){return false;}
-		if (info2 == null){
+	public boolean istGleicherEintrag(FeldInfo info2) {
+		// if (eintrag == null){return false;}
+		if (info2 == null) {
 			return false;
 		}
-		if (! info2.istEintrag()){
+		if (!info2.istEintrag()) {
 			return false;
 		}
 		int eintrag = gibEintrag();
@@ -279,13 +286,13 @@ public class FeldInfo {
 		return eintrag == eintrag2;
 	}
 
-	public String[] gibFeldPartnerTexte(){
-		if ( ! this.istFeldPaar()){
+	public String[] gibFeldPartnerTexte() {
+		if (!this.istFeldPaar()) {
 			return null;
 		}
 		String[] sArray = FeldPartnerTexte.gibPaareTexte(this.feldNummer, this.feldPartner);
 
 		return sArray;
 	}
-	
+
 }

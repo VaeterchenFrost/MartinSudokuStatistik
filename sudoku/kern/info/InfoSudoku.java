@@ -17,16 +17,16 @@ import sudoku.kern.feldmatrix.ZahlenListe;
 import sudoku.tools.TextDatei;
 
 /**
- * @author heroe
- * Beinhaltet die FeldInfos zu bekannten Feldern des Sudokus. 
- * Wenn für einen FeldNummer keine FeldInfo existiert handelt es sich sicher um ein leeres Feld.
- * Das Sudoku kann einen Titel besitzen.
+ * @author heroe Beinhaltet die FeldInfos zu bekannten Feldern des Sudokus. Wenn
+ *         fï¿½r einen FeldNummer keine FeldInfo existiert handelt es sich sicher
+ *         um ein leeres Feld. Das Sudoku kann einen Titel besitzen.
  */
 @SuppressWarnings("serial")
 public class InfoSudoku extends HashMap<FeldNummer, FeldInfo> {
 	/**
 	 * @param dateiName
-	 * @return dateiName sicher mit der Standard-Datei-Erweiterung für ein gespeichertes Sudoku
+	 * @return dateiName sicher mit der Standard-Datei-Erweiterung fï¿½r ein
+	 *         gespeichertes Sudoku
 	 */
 	static public String dateiEndungSichern(String dateiName) {
 		String s = dateiName;
@@ -62,19 +62,19 @@ public class InfoSudoku extends HashMap<FeldNummer, FeldInfo> {
 
 	// ==========================================================================
 	/**
-	 * @author heroe
-	 * Sortiert InfoSudokus nach ihrem Titel2, der die Lösungs-Zeit ist
+	 * @author heroe Sortiert InfoSudokus nach ihrem Titel2, der die
+	 *         Lï¿½sungs-Zeit ist
 	 */
-	static private class ComparatorTitel2Zeit implements Comparator<InfoSudoku>{
+	static private class ComparatorTitel2Zeit implements Comparator<InfoSudoku> {
 
 		public ComparatorTitel2Zeit() {
 		}
 
-		private static int gibCompareResult(int me, int other){
-			if (me > other){
+		private static int gibCompareResult(int me, int other) {
+			if (me > other) {
 				return 1;
 			}
-			if (me < other){
+			if (me < other) {
 				return -1;
 			}
 			return 0;
@@ -117,6 +117,7 @@ public class InfoSudoku extends HashMap<FeldNummer, FeldInfo> {
 
 	/**
 	 * Erstellt das Info-Sudoku mit allen Infos zum aktuellen Stand der Felder
+	 * 
 	 * @param felder
 	 */
 	public InfoSudoku(FeldListe felder) {
@@ -130,7 +131,9 @@ public class InfoSudoku extends HashMap<FeldNummer, FeldInfo> {
 	}
 
 	/**
-	 * 	Info-Sudoku mit den Vorgaben der infos: Felder ohne Vorgabe kommen mit Vorgabe=0 zurück.
+	 * Info-Sudoku mit den Vorgaben der infos: Felder ohne Vorgabe kommen mit
+	 * Vorgabe=0 zurï¿½ck.
+	 * 
 	 * @param infos
 	 */
 	public InfoSudoku(FeldInfoListe infos) {
@@ -201,7 +204,8 @@ public class InfoSudoku extends HashMap<FeldNummer, FeldInfo> {
 
 	/**
 	 * @param aktiveFelder
-	 * aktiven Feldern wird eine ev. vorhandene Markierung gelöscht, den anderen eine passive Markierung gesetzt.
+	 *            aktiven Feldern wird eine ev. vorhandene Markierung gelï¿½scht,
+	 *            den anderen eine passive Markierung gesetzt.
 	 */
 	public void markiereAllePassivAusser(FeldNummerListe aktiveFelder) {
 		for (Map.Entry<FeldNummer, FeldInfo> entry : this.entrySet()) {
@@ -254,7 +258,7 @@ public class InfoSudoku extends HashMap<FeldNummer, FeldInfo> {
 
 	@Override
 	public String toString() {
-		// So jedenfalls benötigt es die Benutzung von InfoSudokuIcon
+		// So jedenfalls benï¿½tigt es die Benutzung von InfoSudokuIcon
 		return "";
 	}
 

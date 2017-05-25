@@ -8,8 +8,8 @@ public class BE_Start {
 	private int nFreieZeilen;
 	private int nFreieSpalten;
 	private int nFreieKaesten;
-	
-	public BE_Start(Klugheit klugheit, 	int nFreieFelder, int nFreieZeilen, int nFreieSpalten, int nFreieKaesten) {
+
+	public BE_Start(Klugheit klugheit, int nFreieFelder, int nFreieZeilen, int nFreieSpalten, int nFreieKaesten) {
 		super();
 		this.klugheit = klugheit;
 		this.nFreieFelder = nFreieFelder;
@@ -47,19 +47,20 @@ public class BE_Start {
 	}
 
 	/**
-	 * @return Anzahl freier Kästen
+	 * @return Anzahl freier Kï¿½sten
 	 */
 	public int gibAnzahlFreieKaesten() {
 		return nFreieKaesten;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "BE_Start ["
-				+ " klugheit=" + klugheit 
-				+ " freie Felder=" + nFreieFelder + " freie Zeilen=" + nFreieZeilen + " freie Spalten=" + nFreieSpalten + " freie Kästen=" + nFreieKaesten + "]";
+		return "BE_Start [" + " klugheit=" + klugheit + " freie Felder=" + nFreieFelder + " freie Zeilen="
+				+ nFreieZeilen + " freie Spalten=" + nFreieSpalten + " freie Kï¿½sten=" + nFreieKaesten + "]";
 	}
 }

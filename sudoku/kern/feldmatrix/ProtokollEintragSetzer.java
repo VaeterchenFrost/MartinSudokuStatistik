@@ -2,11 +2,10 @@ package sudoku.kern.feldmatrix;
 
 import sudoku.kern.exception.Exc;
 
-
 /**
- * @author Hendrick
- * Ermöglicht das Verändern des Feld.eintrag von extern (für Protokoll).
- * Aber nur innerhalb des Packkages "feldmatrix" ist diese Klasse instanziierbar.
+ * @author Hendrick Ermï¿½glicht das Verï¿½ndern des Feld.eintrag von extern (fï¿½r
+ *         Protokoll). Aber nur innerhalb des Packkages "feldmatrix" ist diese
+ *         Klasse instanziierbar.
  */
 public class ProtokollEintragSetzer {
 	private FeldMatrix feldMatrix;
@@ -15,9 +14,9 @@ public class ProtokollEintragSetzer {
 		this.feldMatrix = feldMatrix;
 	}
 
-	public void setzeEintrag(FeldNummer feldNummer, Eintrag eintrag) throws Exc{
+	public void setzeEintrag(FeldNummer feldNummer, Eintrag eintrag) throws Exc {
 		Feld feld = feldMatrix.gibFeld(feldNummer);
-		
+
 		feld.setzeEintragUnbedingt(eintrag);
 	}
 }

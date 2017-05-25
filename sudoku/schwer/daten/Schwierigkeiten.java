@@ -21,21 +21,22 @@ import sudoku.tools.TextDatei;
 import sudoku.tools.Verzeichnis;
 
 /**
- * @author heroe
- * Dient einzig und allein dem Auflisten aller Sudokus eines Verzeichnisses mit ihrer Schwierigkeit.
- * In der Form von System.out.
+ * @author heroe Dient einzig und allein dem Auflisten aller Sudokus eines
+ *         Verzeichnisses mit ihrer Schwierigkeit. In der Form von System.out.
  */
 public class Schwierigkeiten implements LangerProzess {
 	/**
-	 * @return Name der Datei, die geladen wird, um diese Logik zu starten
-	 * Er muss als erstes eine Zahl beinhalten für die Dateinamen-Sortierung nach der Zeit!
+	 * @return Name der Datei, die geladen wird, um diese Logik zu starten Er
+	 *         muss als erstes eine Zahl beinhalten fï¿½r die
+	 *         Dateinamen-Sortierung nach der Zeit!
 	 */
 	public static String gibStartDateiName() {
 		return "99999999.txt"; // SchwierigkeitAllerSudokusImVerzeichnis.txt";
 	}
 
 	/**
-	 * @param dateiName vollständiger Dateiname
+	 * @param dateiName
+	 *            vollstï¿½ndiger Dateiname
 	 * @return Schwierigkeit oder null
 	 */
 	private static int gibVorgabenAnzahl(String dateiName) {
@@ -49,7 +50,8 @@ public class Schwierigkeiten implements LangerProzess {
 	}
 
 	/**
-	 * @param dateiName vollständiger Dateiname
+	 * @param dateiName
+	 *            vollstï¿½ndiger Dateiname
 	 * @return Schwierigkeit oder null
 	 */
 	private static SudokuSchwierigkeit gibSchwierigkeit(String dateiName) {
@@ -64,7 +66,8 @@ public class Schwierigkeiten implements LangerProzess {
 
 	/**
 	 * @param nameDatei
-	 * @param schwierigkeit wird angezeigt
+	 * @param schwierigkeit
+	 *            wird angezeigt
 	 * @return Schwierigkeiten-Info-Text zur Datei
 	 */
 	private static String zeige(String nameDatei, int anzahlVorgaben, SudokuSchwierigkeit schwierigkeit,
@@ -76,7 +79,8 @@ public class Schwierigkeiten implements LangerProzess {
 		String infoText = null;
 		{ // Zusammenfassung
 			String infoVorgaben = String.format("%2d Vorgaben", anzahlVorgaben);
-//			String infoZeit = String.format("%2d", Verzeichnis.gibSudokuLoesungsZeit(nameDatei));
+			// String infoZeit = String.format("%2d",
+			// Verzeichnis.gibSudokuLoesungsZeit(nameDatei));
 			String infoSumme = "";
 			if (versucheSumme != null) {
 				infoSumme += versucheSumme.gibAnzeigeText() + ":  ";
@@ -84,7 +88,7 @@ public class Schwierigkeiten implements LangerProzess {
 				infoSumme += klareZeit.gibAnzeigeText() + ": ";
 			}
 			infoText = infoVorgaben + "; WieSchwer=" + infoSumme + " " + logikAnzahlen + " Dateiname=" + nameDatei;
-//			System.out.println(infoText);
+			// System.out.println(infoText);
 		}
 
 		if (mitDetails) {
@@ -129,7 +133,7 @@ public class Schwierigkeiten implements LangerProzess {
 		} // for
 
 		if ((!mitDetails) & (!infoTexte.isEmpty())) {
-			// Schwierigkeiten-Übersicht in der Datei ablegen
+			// Schwierigkeiten-ï¿½bersicht in der Datei ablegen
 			String speicherDateiName = nameVerzeichnis + gibStartDateiName();
 			try {
 				TextDatei.erstelle(speicherDateiName, infoTexte);
@@ -137,7 +141,7 @@ public class Schwierigkeiten implements LangerProzess {
 				Starter.execProgramUnterWindows(speicherDateiName);
 			} catch (Exception e) {
 				e.printStackTrace();
-				String msg = String.format("Die Datei %s konnte nicht ordungsgemäß erstellt werden", speicherDateiName);
+				String msg = String.format("Die Datei %s konnte nicht ordungsgemï¿½ï¿½ erstellt werden", speicherDateiName);
 				JOptionPane.showMessageDialog(null, msg, "Schwierigkeiten-Erstellung", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -145,7 +149,9 @@ public class Schwierigkeiten implements LangerProzess {
 	}
 
 	/**
-	 * Listet alle Dateien des Verzeichnisses auf. Als langer Prozess unter einer Fortschrittsanzeige
+	 * Listet alle Dateien des Verzeichnisses auf. Als langer Prozess unter
+	 * einer Fortschrittsanzeige
+	 * 
 	 * @param nameVerzeichnis
 	 */
 	public static void schreibe(String nameVerzeichnis, FortschrittAnzeige fortschrittAnzeige) {
@@ -176,11 +182,18 @@ public class Schwierigkeiten implements LangerProzess {
 
 	@Override
 	public void prozess(FortschrittZeiger fortschrittZeiger) {
-//		System.out.println(Schwierigkeiten.class.getName());
+		// System.out.println(Schwierigkeiten.class.getName());
 		String[] dateiNamen = Verzeichnis.gibSudokuNamen(this.verzeichnisName);
 		// System.out.println("list(): " + Arrays.toString(files));
 		Verzeichnis.sortiereNachLoesungsZeit(dateiNamen);
-		schreibeZeiten(this.verzeichnisName, dateiNamen, false, fortschrittZeiger); // true); Wirklich nur wenn es unbedingt gewollt ist.
+		schreibeZeiten(this.verzeichnisName, dateiNamen, false, fortschrittZeiger); // true);
+																					// Wirklich
+																					// nur
+																					// wenn
+																					// es
+																					// unbedingt
+																					// gewollt
+																					// ist.
 	}
 
 }

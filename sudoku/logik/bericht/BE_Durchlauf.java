@@ -2,7 +2,7 @@ package sudoku.logik.bericht;
 
 public class BE_Durchlauf {
 	int durchLauf;
-	
+
 	public BE_Durchlauf(int durchLauf) {
 		super();
 		this.durchLauf = durchLauf;
@@ -15,12 +15,14 @@ public class BE_Durchlauf {
 		return durchLauf;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "BE_Duchlauf[ durchLauf=" + durchLauf  + "]";
+		return "BE_Duchlauf[ durchLauf=" + durchLauf + "]";
 	}
 
 }

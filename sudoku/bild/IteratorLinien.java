@@ -7,48 +7,45 @@ import sudoku.bild.LinienStriche.StricheEinerLinie;
 
 // ===================================================
 /**
- * @author heroe
- * iteriert über jeden Eintrag der Liste von StricheEinerLinie
+ * @author heroe iteriert ï¿½ber jeden Eintrag der Liste von StricheEinerLinie
  */
-public class IteratorLinien implements Iterator<StricheEinerLinie>{
+public class IteratorLinien implements Iterator<StricheEinerLinie> {
 	final ArrayList<StricheEinerLinie> linien;
 	final int indexEnde;
 	final boolean istRueckwaerts;
 	private int currentIndex;
-	
-	IteratorLinien(ArrayList<StricheEinerLinie> linien,int indexStart, int indexEnde){
+
+	IteratorLinien(ArrayList<StricheEinerLinie> linien, int indexStart, int indexEnde) {
 		this.linien = linien;
 		this.indexEnde = indexEnde;
 		this.istRueckwaerts = indexStart > indexEnde;
-		this.currentIndex = istRueckwaerts ? indexStart+1 : indexStart-1;
+		this.currentIndex = istRueckwaerts ? indexStart + 1 : indexStart - 1;
 	}
 
 	/**
 	 * @return Der aktuelle Index (nach next())
 	 */
-	int gibIndex(){
+	int gibIndex() {
 		return currentIndex;
 	}
-	
+
 	@Override
 	public boolean hasNext() {
-		if (linien.size() == 0){
+		if (linien.size() == 0) {
 			return false;
 		}
-		if (istRueckwaerts){
+		if (istRueckwaerts) {
 			return currentIndex > indexEnde;
-		}
-		else{
+		} else {
 			return currentIndex < indexEnde;
 		}
 	}
 
 	@Override
 	public StricheEinerLinie next() {
-		if (istRueckwaerts){
+		if (istRueckwaerts) {
 			currentIndex--;
-		}
-		else{
+		} else {
 			currentIndex++;
 		}
 		return linien.get(currentIndex);

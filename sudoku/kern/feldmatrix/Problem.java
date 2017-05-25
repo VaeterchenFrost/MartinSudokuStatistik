@@ -1,17 +1,16 @@
 package sudoku.kern.feldmatrix;
 
 /**
- * @author Hendrick
- * Zeigt ein Problem innerhalb des Sudoku an.
+ * @author Hendrick Zeigt ein Problem innerhalb des Sudoku an.
  */
-public class Problem{
+public class Problem {
 	private String problem;
 
 	@Override
 	public String toString() {
 		return problem;
 	}
-	
+
 	public Problem(String text) {
 		problem = text;
 	}
@@ -20,47 +19,43 @@ public class Problem{
 		return problem;
 	}
 
-//	public static Problem sudokuException(Exc e){
-//		String text = String.format("Sudoku-Exception %s", e.getMessage()); 
-//
-//		return new Problem(text);
-//	}
-	
-	public static Problem nichtAlleZahlenInDerGruppe(String gruppeInText, ZahlenFeldNummern vorhandeneZahlen){
-		String text = String.format("%s fehlt die Zahl %s", 
-				gruppeInText, vorhandeneZahlen.toStringNichtVorhandeneZahlen());
+	// public static Problem sudokuException(Exc e){
+	// String text = String.format("Sudoku-Exception %s", e.getMessage());
+	//
+	// return new Problem(text);
+	// }
 
-		return new Problem(text);
-	}
-	
-	public static Problem freiesFeldOhneMoegliche(FeldNummer feldNummer){
-		String text = String.format("Das freie Feld %s besitzt keine möglichen Zahlen", feldNummer);
+	public static Problem nichtAlleZahlenInDerGruppe(String gruppeInText, ZahlenFeldNummern vorhandeneZahlen) {
+		String text = String.format("%s fehlt die Zahl %s", gruppeInText,
+				vorhandeneZahlen.toStringNichtVorhandeneZahlen());
 
 		return new Problem(text);
 	}
 
-	public static Problem zuwenigMoeglicheInFreienFeldern(
-			String gruppeInText,
-			int zahl,
-			int anzahlFelder,
-			int anzahlMoeglicheZahlen)
-	{
-		String text = String.format("%s: In den %d Feldern mit Zahl %d gibt es nur %d Mögliche", gruppeInText, anzahlFelder, zahl, anzahlMoeglicheZahlen);
-		
-		return new Problem(text);
-	}	
-	
-	public static Problem gruppeOhneZahl(
-			String gruppeInText,
-			ZahlenFeldNummern alleVorhandeneZahlen)
-	{
-		String text = String.format("%s besitzt nur %d Zahlen: %s", 
-				gruppeInText, alleVorhandeneZahlen.gibAnzahlVorhandene(), alleVorhandeneZahlen.toStringVorhandeneZahlen());
-		
+	public static Problem freiesFeldOhneMoegliche(FeldNummer feldNummer) {
+		String text = String.format("Das freie Feld %s besitzt keine mï¿½glichen Zahlen", feldNummer);
+
 		return new Problem(text);
 	}
 
-	/* (non-Javadoc)
+	public static Problem zuwenigMoeglicheInFreienFeldern(String gruppeInText, int zahl, int anzahlFelder,
+			int anzahlMoeglicheZahlen) {
+		String text = String.format("%s: In den %d Feldern mit Zahl %d gibt es nur %d Mï¿½gliche", gruppeInText,
+				anzahlFelder, zahl, anzahlMoeglicheZahlen);
+
+		return new Problem(text);
+	}
+
+	public static Problem gruppeOhneZahl(String gruppeInText, ZahlenFeldNummern alleVorhandeneZahlen) {
+		String text = String.format("%s besitzt nur %d Zahlen: %s", gruppeInText,
+				alleVorhandeneZahlen.gibAnzahlVorhandene(), alleVorhandeneZahlen.toStringVorhandeneZahlen());
+
+		return new Problem(text);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -71,7 +66,9 @@ public class Problem{
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -94,7 +91,6 @@ public class Problem{
 			return false;
 		}
 		return true;
-	}	
-	
-	
+	}
+
 }

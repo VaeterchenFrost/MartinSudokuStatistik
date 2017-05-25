@@ -8,11 +8,11 @@ import sudoku.kern.feldmatrix.FeldListe;
 import sudoku.kern.feldmatrix.FeldNummerListe;
 import sudoku.logik.Kasten.LinienListe;
 
-class Logik_Kasten1 extends LogikKastenN{
+class Logik_Kasten1 extends LogikKastenN {
 	public Logik_Kasten1(ArrayList<Kasten> kaesten) {
-		super (kaesten);
+		super(kaesten);
 	}
-	
+
 	@Override
 	public Logik_ID gibLogikID() {
 		return Logik_ID.KASTEN1;
@@ -22,32 +22,32 @@ class Logik_Kasten1 extends LogikKastenN{
 	public String gibKurzName() {
 		char c = Kasten.gibTypZeichen(Gruppe.Typ.KASTEN);
 		String s = String.format("%c1", c);
-		return  s;
+		return s;
 	}
 
 	@Override
 	public String gibName() {
-		return "Kasten 1";	
+		return "Kasten 1";
 	}
 
 	@Override
-	public String[] gibWo(){
-		return new String[]{"Im Kasten bezogen auf 1 Nachbar-Kasten"};
+	public String[] gibWo() {
+		return new String[] { "Im Kasten bezogen auf 1 Nachbar-Kasten" };
 	}
-	
+
 	@Override
-	public String[] gibSituationAbstrakt(){
-		return new String[]{"Auf 1 gemeinsamen Linie ist im Nachbar-Kasten 1 Zahl festgelegt."};
+	public String[] gibSituationAbstrakt() {
+		return new String[] { "Auf 1 gemeinsamen Linie ist im Nachbar-Kasten 1 Zahl festgelegt." };
 	}
 
 	@Override
 	public String[] gibSituation() {
-		return new String[]{"Auf 1 gemeinsamen Linie (Spalte bzw. Zeile) ist im Nachbar-Kasten 1 Zahl festgelegt."};
+		return new String[] { "Auf 1 gemeinsamen Linie (Spalte bzw. Zeile) ist im Nachbar-Kasten 1 Zahl festgelegt." };
 	}
 
 	@Override
 	public String gibErgebnis() {
-		return "Im Kasten wird die Zahl auf dieser 1 Linie aus den möglichen dieser Felder gelöscht.";
+		return "Im Kasten wird die Zahl auf dieser 1 Linie aus den mï¿½glichen dieser Felder gelï¿½scht.";
 	}
 
 	@Override
@@ -56,70 +56,70 @@ class Logik_Kasten1 extends LogikKastenN{
 	}
 
 	/**
-	 * Wenn hier im Kasten eine mögliche Zahl auf mehreren Spalten / Zeilen steht:
-	 * Bezug auf die möglichen Zahlen jeweils eines Nachbar-Kastens: 
-	 * Erkenne mögliche Zahl auf nur einer seiner Zeile bzw. Spalte: 
-	 * Im Kasten wird diese Zahl hier gelöscht.
-	 * @return null oder die gelöschten Zahlen mit ihren Feldern und ...
+	 * Wenn hier im Kasten eine mï¿½gliche Zahl auf mehreren Spalten / Zeilen
+	 * steht: Bezug auf die mï¿½glichen Zahlen jeweils eines Nachbar-Kastens:
+	 * Erkenne mï¿½gliche Zahl auf nur einer seiner Zeile bzw. Spalte: Im Kasten
+	 * wird diese Zahl hier gelï¿½scht.
+	 * 
+	 * @return null oder die gelï¿½schten Zahlen mit ihren Feldern und ...
 	 * @throws Exc
 	 */
 	private KastenErgebnis beachteNachbarn(Kasten kasten, boolean istSpalte, int zahl) throws Exc {
 		ArrayList<LinienListe> linienDerNachbarn = kasten.gibNachbarLinienArray(istSpalte);
-		LinienListe meineLinien = kasten.gibMeineLinien(istSpalte); 
-			
+		LinienListe meineLinien = kasten.gibMeineLinien(istSpalte);
+
 		// Mit allen (beiden) Nachbarn
-		for (int iNachbar=0; iNachbar < linienDerNachbarn.size(); iNachbar++){
+		for (int iNachbar = 0; iNachbar < linienDerNachbarn.size(); iNachbar++) {
 			LinienListe nachbarLinien = linienDerNachbarn.get(iNachbar);
-			
-			// Wenn die Zahl bei mir auf 2 oder 3 Linien verteilt ist 
+
+			// Wenn die Zahl bei mir auf 2 oder 3 Linien verteilt ist
 			ArrayListInt iMeineLinienDerZahl = Kasten.gibLinienDerZahl(zahl, meineLinien);
 			int nMeineLinien = iMeineLinienDerZahl.size();
-			if ( nMeineLinien > 1){
+			if (nMeineLinien > 1) {
 				// Suche Nachbar-Solo-Linie
 				ArrayListInt iNachbarLinienDerZahl = Kasten.gibLinienDerZahl(zahl, nachbarLinien);
-				if (1 == iNachbarLinienDerZahl.size()){
+				if (1 == iNachbarLinienDerZahl.size()) {
 					// Dann ist diese Zahl auf meiner Linie verboten
 					int iLinieVerboten = iNachbarLinienDerZahl.get(0);
 					FeldListe linie = meineLinien.get(iLinieVerboten);
 					FeldListe kannLoeschenIn = linie.gibFelderDerMoeglichenZahl(zahl);
-					// In jeder Logik, die mögliche Zahlen löscht, kann der Fall eintreten, 
-					// dass dies Feld nach dem Löschen nur noch eine mögliche Zahl hat.
-					// Aber diese mögliche Solo-Zahl muss schon wirklich eine andere Logik erkennen!
-					
-					if ( ! kannLoeschenIn.isEmpty()){
-						// Es gibt LöschZahlen: Diese Logik war aktiv
+					// In jeder Logik, die mï¿½gliche Zahlen lï¿½scht, kann der Fall
+					// eintreten,
+					// dass dies Feld nach dem Lï¿½schen nur noch eine mï¿½gliche
+					// Zahl hat.
+					// Aber diese mï¿½gliche Solo-Zahl muss schon wirklich eine
+					// andere Logik erkennen!
+
+					if (!kannLoeschenIn.isEmpty()) {
+						// Es gibt Lï¿½schZahlen: Diese Logik war aktiv
 						FeldNummerListe nachbarUrsacheFelder = new FeldNummerListe(nachbarLinien.get(iLinieVerboten));
-						
-						KastenErgebnis ergebnis1 = new KastenErgebnis(
-							istSpalte, zahl, 
-							new FeldNummerListe(kannLoeschenIn), 
-							nachbarUrsacheFelder);
+
+						KastenErgebnis ergebnis1 = new KastenErgebnis(istSpalte, zahl,
+								new FeldNummerListe(kannLoeschenIn), nachbarUrsacheFelder);
 						return ergebnis1;
 					}
 				}
 			}
-		} //for (int iNachbar
-		
+		} // for (int iNachbar
+
 		return null;
 	}
 
 	@Override
-	protected KastenErgebnis laufen(Kasten kasten) throws Exc
-	{
-			for (int zahl=1; zahl<10; zahl++){
-				// Spalten-Kontrolle 
-				KastenErgebnis ergebnisSpalten = beachteNachbarn(kasten, true, zahl);
-				if (ergebnisSpalten != null){
-					return ergebnisSpalten;
-				}
-				// Zeilen-Kontrolle 
-				KastenErgebnis ergebnisZeilen = beachteNachbarn(kasten, false, zahl);
-				if (ergebnisZeilen != null){
-					return ergebnisZeilen;
-				}
+	protected KastenErgebnis laufen(Kasten kasten) throws Exc {
+		for (int zahl = 1; zahl < 10; zahl++) {
+			// Spalten-Kontrolle
+			KastenErgebnis ergebnisSpalten = beachteNachbarn(kasten, true, zahl);
+			if (ergebnisSpalten != null) {
+				return ergebnisSpalten;
 			}
-			return null;
+			// Zeilen-Kontrolle
+			KastenErgebnis ergebnisZeilen = beachteNachbarn(kasten, false, zahl);
+			if (ergebnisZeilen != null) {
+				return ergebnisZeilen;
+			}
+		}
+		return null;
 	}
-	
-	
+
 }

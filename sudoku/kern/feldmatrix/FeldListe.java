@@ -14,63 +14,67 @@ public class FeldListe extends ArrayList<Feld> {
 	}
 
 	/**
-	 * Eine schnellere Variante, von der FeldNummer zum Feld zu kommen, 
-	 * sind FeldMatrix.gibFeld() oder SudokuLogik.gibLogikFeld.
+	 * Eine schnellere Variante, von der FeldNummer zum Feld zu kommen, sind
+	 * FeldMatrix.gibFeld() oder SudokuLogik.gibLogikFeld.
+	 * 
 	 * @param feldNummer
-	 * @return Das entsprechende Feld oder null falls eines mit dem FeldNummer nicht existiert
+	 * @return Das entsprechende Feld oder null falls eines mit dem FeldNummer
+	 *         nicht existiert
 	 */
-	public Feld gibFeld_SehrLahm(FeldNummer feldNummer){
+	public Feld gibFeld_SehrLahm(FeldNummer feldNummer) {
 		for (int i = 0; i < this.size(); i++) {
-			Feld feld =  this.get(i);
-			FeldNummer iFeld = feld.gibFeldNummer(); 
+			Feld feld = this.get(i);
+			FeldNummer iFeld = feld.gibFeldNummer();
 			if (feldNummer.equals(iFeld)) {
 				return feld;
 			}
 		}
 		return null;
 	}
-	
-//	/**
-//	 * @return Eine Zeilen-Nummer zurück wenn alle Felder in derselben Zeile liegen, sonst 0
-//	 */
-//	public int gibZeilenNummer() {
-//		if (this.size() == 0) {
-//			return 0;
-//		}
-//		int zeile = this.get(0).gibZeile();
-//		for (int i = 1; i < this.size(); i++) {
-//			if (this.get(i).gibZeile() != zeile) {
-//				return 0;
-//			}
-//		}
-//		return zeile;
-//	}
-//
-//	/**
-//	 * @return Eine Spalten-Nummer zurück wenn alle Felder in derselben Spalte liegen, sonst 0
-//	 */
-//	public int gibSpaltenNummer() {
-//		if (this.size() == 0) {
-//			return 0;
-//		}
-//		int spalte = this.get(0).gibSpalte();
-//		for (int i = 1; i < this.size(); i++) {
-//			if (this.get(i).gibSpalte() != spalte) {
-//				return 0;
-//			}
-//		}
-//		return spalte;
-//	}
+
+	// /**
+	// * @return Eine Zeilen-Nummer zurï¿½ck wenn alle Felder in derselben Zeile
+	// liegen, sonst 0
+	// */
+	// public int gibZeilenNummer() {
+	// if (this.size() == 0) {
+	// return 0;
+	// }
+	// int zeile = this.get(0).gibZeile();
+	// for (int i = 1; i < this.size(); i++) {
+	// if (this.get(i).gibZeile() != zeile) {
+	// return 0;
+	// }
+	// }
+	// return zeile;
+	// }
+	//
+	// /**
+	// * @return Eine Spalten-Nummer zurï¿½ck wenn alle Felder in derselben Spalte
+	// liegen, sonst 0
+	// */
+	// public int gibSpaltenNummer() {
+	// if (this.size() == 0) {
+	// return 0;
+	// }
+	// int spalte = this.get(0).gibSpalte();
+	// for (int i = 1; i < this.size(); i++) {
+	// if (this.get(i).gibSpalte() != spalte) {
+	// return 0;
+	// }
+	// }
+	// return spalte;
+	// }
 
 	/**
-	 * @param zahl 1 bis 9
-	 * @return  wenn in meinen Feldern zahl als Eintrag (noch) möglich ist
+	 * @param zahl
+	 *            1 bis 9
+	 * @return wenn in meinen Feldern zahl als Eintrag (noch) mï¿½glich ist
 	 */
 	public boolean istMoeglich(int zahl) {
 		for (int i = 0; i < this.size(); i++) {
 			Feld feld = this.get(i);
-			if ((zahl == feld.gibVorgabe())
-					|| (zahl == feld.gibEintrag())) {
+			if ((zahl == feld.gibVorgabe()) || (zahl == feld.gibEintrag())) {
 				return false;
 			}
 		}
@@ -78,7 +82,7 @@ public class FeldListe extends ArrayList<Feld> {
 	}
 
 	/**
-	 * @return Die Anzahl der gesetzten Einträge
+	 * @return Die Anzahl der gesetzten Eintrï¿½ge
 	 * @throws Exc
 	 */
 	public int setzeEintragAufKlare() throws Exc {
@@ -132,60 +136,61 @@ public class FeldListe extends ArrayList<Feld> {
 		return false;
 	}
 
-//	/**
-//	 * Dies sollte niemals relevant sein !!!
-//	 * @return Die Anzahl freier Felder mit (nur) einer möglichen Zahl
-//	 */
-//	public int gibAnzahlKlare() {
-//		int n = 0;
-//		for (int i = 0; i < this.size(); i++) {
-//			Feld feld = this.get(i);
-//			if (feld.istKlar()) {
-//				n++;
-//			}
-//		}
-//		return n;
-//
-//	}
-//
-//	/**
-//	 * @return null oder das erste (beste) freie Feld mit (nur) 1 möglichen Zahl
-//	 */
-//	public FeldInfo gibErstesFreiesKlaresFeld(){
-//		for (int i = 0; i < this.size(); i++) {
-//			Feld feld = this.get(i);
-//			if (feld.istKlar()) {
-//				return new FeldInfo(feld);
-//			}
-//		}
-//		
-//		return null;
-//	}
-	
+	// /**
+	// * Dies sollte niemals relevant sein !!!
+	// * @return Die Anzahl freier Felder mit (nur) einer mï¿½glichen Zahl
+	// */
+	// public int gibAnzahlKlare() {
+	// int n = 0;
+	// for (int i = 0; i < this.size(); i++) {
+	// Feld feld = this.get(i);
+	// if (feld.istKlar()) {
+	// n++;
+	// }
+	// }
+	// return n;
+	//
+	// }
+	//
+	// /**
+	// * @return null oder das erste (beste) freie Feld mit (nur) 1 mï¿½glichen
+	// Zahl
+	// */
+	// public FeldInfo gibErstesFreiesKlaresFeld(){
+	// for (int i = 0; i < this.size(); i++) {
+	// Feld feld = this.get(i);
+	// if (feld.istKlar()) {
+	// return new FeldInfo(feld);
+	// }
+	// }
+	//
+	// return null;
+	// }
+
 	/**
-	 * @author Hendrick
-	 * Ergebnis von @see gibAnzahlEintraege
+	 * @author Hendrick Ergebnis von @see gibAnzahlEintraege
 	 */
-	public class AnzahlEintraege{
+	public class AnzahlEintraege {
 		public int anzahlGesamt;
 		public int nummerEbene;
 		public int anzahlEbene;
-		public AnzahlEintraege(int anzahlGesamt, int nummerEbene,
-				int anzahlEbene) {
+
+		public AnzahlEintraege(int anzahlGesamt, int nummerEbene, int anzahlEbene) {
 			super();
 			this.anzahlGesamt = anzahlGesamt;
 			this.nummerEbene = nummerEbene;
 			this.anzahlEbene = anzahlEbene;
 		}
 	}
-	
+
 	/**
-	 * @param ebene Nummer der angefragten Ebene
-	 * @return Die Anzahl der Einträge gesamt und die der angefragten Ebene
+	 * @param ebene
+	 *            Nummer der angefragten Ebene
+	 * @return Die Anzahl der Eintrï¿½ge gesamt und die der angefragten Ebene
 	 */
 	public AnzahlEintraege gibAnzahlEintraege(int ebene) {
-		int nG = 0; // alle Einträge
-		int nE = 0; // Einträge der Ebene
+		int nG = 0; // alle Eintrï¿½ge
+		int nE = 0; // Eintrï¿½ge der Ebene
 		for (int i = 0; i < this.size(); i++) {
 			Feld feld = this.get(i);
 			if (feld.istEintrag()) {
@@ -200,26 +205,25 @@ public class FeldListe extends ArrayList<Feld> {
 	}
 
 	/**
-	 * @return Die Anzahl der Einträge
+	 * @return Die Anzahl der Eintrï¿½ge
 	 */
 	public int gibAnzahlEintraege() {
 		AnzahlEintraege anzahlEintraege = gibAnzahlEintraege(1);
 		return anzahlEintraege.anzahlGesamt;
 	}
 
-		
 	/**
 	 * @param ebene
-	 * @return Die Anzahl der Einträge der Ebene
+	 * @return Die Anzahl der Eintrï¿½ge der Ebene
 	 */
 	public int gibAnzahlEbenenEintraege(int ebene) {
 		AnzahlEintraege anzahlEintraege = gibAnzahlEintraege(ebene);
 		return anzahlEintraege.anzahlEbene;
 	}
-	
+
 	/**
 	 * @param ebene
-	 * @return Die Einträge der Ebene. Die Liste kann leer sein. 
+	 * @return Die Eintrï¿½ge der Ebene. Die Liste kann leer sein.
 	 */
 	public FeldListe gibEbenenEintraege(int ebene) {
 		FeldListe feldList = new FeldListe();
@@ -236,11 +240,12 @@ public class FeldListe extends ArrayList<Feld> {
 	}
 
 	/**
-	 * @param moegliche Die neuen möglichen Zahlen
-	 * @return Anzahl der gelöschten Möglichen
-	 * @throws Exc 
+	 * @param moegliche
+	 *            Die neuen mï¿½glichen Zahlen
+	 * @return Anzahl der gelï¿½schten Mï¿½glichen
+	 * @throws Exc
 	 */
-	public int setzeMoegliche(ArrayList<Integer> moegliche) throws Exc{
+	public int setzeMoegliche(ArrayList<Integer> moegliche) throws Exc {
 		int nGeloescht = 0;
 		for (int iFeld = 0; iFeld < this.size(); iFeld++) {
 			Feld feld = this.get(iFeld);
@@ -250,9 +255,9 @@ public class FeldListe extends ArrayList<Feld> {
 		}
 		return nGeloescht;
 	}
-	
+
 	/**
-	 * @return Die in meinen Feldern (noch) möglichen Zahlen
+	 * @return Die in meinen Feldern (noch) mï¿½glichen Zahlen
 	 */
 	public ZahlenFeldNummern gibMoeglicheZahlen() {
 		ZahlenFeldNummern vorhandeneZahlen = new ZahlenFeldNummern();
@@ -268,16 +273,16 @@ public class FeldListe extends ArrayList<Feld> {
 	}
 
 	/**
-	 * @return Gibt die Felder mit genau 2 möglichen Zahlen zurück. 
+	 * @return Gibt die Felder mit genau 2 mï¿½glichen Zahlen zurï¿½ck.
 	 */
-	public FeldListe gibFreieFelderMit2Moeglichen (){
+	public FeldListe gibFreieFelderMit2Moeglichen() {
 		FeldListe zweier = new FeldListe();
-		
-		for (int iFeld=0;iFeld < this.size();iFeld++){
+
+		for (int iFeld = 0; iFeld < this.size(); iFeld++) {
 			Feld feld = this.get(iFeld);
-			if (feld.istFrei()){
+			if (feld.istFrei()) {
 				ArrayList<Integer> moegliche = feld.gibMoegliche();
-				if (2 == moegliche.size()){
+				if (2 == moegliche.size()) {
 					zweier.add(feld);
 				}
 			}
@@ -287,28 +292,29 @@ public class FeldListe extends ArrayList<Feld> {
 
 	/**
 	 * @param zahl
-	 * @return Die Felder, die diese Zahl als mögliche enthalten. 
-	 * Achtung: Die Rückgabeliste kann leer sein.
+	 * @return Die Felder, die diese Zahl als mï¿½gliche enthalten. Achtung: Die
+	 *         Rï¿½ckgabeliste kann leer sein.
 	 */
 	public FeldListe gibFelderDerMoeglichenZahl(int zahl) {
 		FeldListe feldListe = gibFelderDerMoeglichenZahl(zahl, 1);
 		return feldListe;
 	}
-	
+
 	/**
 	 * @param zahl
-	 * @param minAnzahlMoeglicheImFeld soviel mögliche Zahlen 
-	 * 						müssen sich mindestens in einem genannten Feld befinden.
-	 * @return Die Felder, die diese Zahl als mögliche enthalten. 
-	 * Achtung: Die Rückgabeliste kann leer sein.
+	 * @param minAnzahlMoeglicheImFeld
+	 *            soviel mï¿½gliche Zahlen mï¿½ssen sich mindestens in einem
+	 *            genannten Feld befinden.
+	 * @return Die Felder, die diese Zahl als mï¿½gliche enthalten. Achtung: Die
+	 *         Rï¿½ckgabeliste kann leer sein.
 	 */
 	private FeldListe gibFelderDerMoeglichenZahl(int zahl, int minAnzahlMoeglicheImFeld) {
 		FeldListe zahlenFelder = new FeldListe();
 
-		// Für diese Zahl die möglichen Felder auflisten
+		// Fï¿½r diese Zahl die mï¿½glichen Felder auflisten
 		for (int i = 0; i < this.size(); i++) {
 			Feld feld = this.get(i);
-			if (feld.istMoeglich(zahl) & (feld.gibMoeglicheAnzahl() >= minAnzahlMoeglicheImFeld) ) {
+			if (feld.istMoeglich(zahl) & (feld.gibMoeglicheAnzahl() >= minAnzahlMoeglicheImFeld)) {
 				zahlenFelder.add(feld);
 			}
 		}
@@ -316,18 +322,19 @@ public class FeldListe extends ArrayList<Feld> {
 	}
 
 	/**
-	 * @param minAnzahlMoeglicheImFeld soviel mögliche Zahlen 
-	 * 						müssen sich mindestens in einem genannten Feld befinden.
-	 * @return Die möglichen Felder je Zahl (1 bis 9).
+	 * @param minAnzahlMoeglicheImFeld
+	 *            soviel mï¿½gliche Zahlen mï¿½ssen sich mindestens in einem
+	 *            genannten Feld befinden.
+	 * @return Die mï¿½glichen Felder je Zahl (1 bis 9).
 	 */
 	public ZahlenFeldNummern gibFelderJeMoeglicheZahl(int minAnzahlMoeglicheImFeld) {
 		ZahlenFeldNummern zahlenFeldNummern = new ZahlenFeldNummern();
 
-		// Für jede Zahl die möglichen Felder auflisten
+		// Fï¿½r jede Zahl die mï¿½glichen Felder auflisten
 		for (int zahl = 1; zahl < 10; zahl++) {
 			FeldListe zahlenFelder = this.gibFelderDerMoeglichenZahl(zahl, minAnzahlMoeglicheImFeld);
 			FeldNummerListe feldNummerListe = new FeldNummerListe(zahlenFelder);
-			for(FeldNummer feldNummer: feldNummerListe){
+			for (FeldNummer feldNummer : feldNummerListe) {
 				zahlenFeldNummern.add(zahl, feldNummer);
 			}
 		}
@@ -336,43 +343,43 @@ public class FeldListe extends ArrayList<Feld> {
 	}
 
 	/**
-	 * @return Die größte Anzahl Mögliche eines der Felder
+	 * @return Die grï¿½ï¿½te Anzahl Mï¿½gliche eines der Felder
 	 */
-	public int gibMoeglicheAnzahlMax(){
+	public int gibMoeglicheAnzahlMax() {
 		int n = 99;
 		for (int iFeld = 0; iFeld < this.size(); iFeld++) {
 			Feld feld = this.get(iFeld);
 			if (feld.istFrei()) {
 				int n1 = feld.gibMoeglicheAnzahl();
-				if (n1 < n){
+				if (n1 < n) {
 					n = n1;
 				}
 			}
 		}
 		return n;
 	}
-	
+
 	/**
 	 * @param nMaxMoegliche
 	 * @return Alle Felder, die nMoegliche besitzen
 	 */
-	public FeldListe gibMoeglicheN(int nMoegliche){
+	public FeldListe gibMoeglicheN(int nMoegliche) {
 		FeldListe feldListe = new FeldListe();
 		for (int iFeld = 0; iFeld < this.size(); iFeld++) {
 			Feld feld = this.get(iFeld);
 			if (feld.istFrei()) {
 				int n1 = feld.gibMoeglicheAnzahl();
-				if (n1 == nMoegliche){
+				if (n1 == nMoegliche) {
 					feldListe.add(feld);
 				}
 			}
 		}
 		return feldListe;
 	}
-	
-	
+
 	/**
-	 * @return Alle in meinen Feldern vorhandenen Zahlen (Vorgaben, Einträge, Mögliche)
+	 * @return Alle in meinen Feldern vorhandenen Zahlen (Vorgaben, Eintrï¿½ge,
+	 *         Mï¿½gliche)
 	 */
 	public ZahlenFeldNummern gibVorhandeneZahlen() {
 		ZahlenFeldNummern vorhandeneZahlen = gibMoeglicheZahlen();
@@ -390,7 +397,7 @@ public class FeldListe extends ArrayList<Feld> {
 	}
 
 	/**
-	 * @return Alle in meinen Feldern vorhandenen Vorgaben und Einträge
+	 * @return Alle in meinen Feldern vorhandenen Vorgaben und Eintrï¿½ge
 	 */
 	public ZahlenFeldNummern gibVorgabenUndEintraege() {
 		ZahlenFeldNummern vorhandeneZahlen = new ZahlenFeldNummern();
@@ -408,45 +415,45 @@ public class FeldListe extends ArrayList<Feld> {
 	}
 
 	/**
-	 * @return Gibt die freien Felder zurück. 
+	 * @return Gibt die freien Felder zurï¿½ck.
 	 */
-	public FeldListe gibFreieFelder(){
+	public FeldListe gibFreieFelder() {
 		FeldListe freie = new FeldListe();
-		
-		for (int iFeld=0;iFeld < this.size();iFeld++){
+
+		for (int iFeld = 0; iFeld < this.size(); iFeld++) {
 			Feld feld = this.get(iFeld);
-			if (feld.istFrei()){
+			if (feld.istFrei()) {
 				freie.add(feld);
 			}
 		}
 		return freie;
 	}
 
-	
-	public FeldNummerListe gibFelderVersuchStart(){
+	public FeldNummerListe gibFelderVersuchStart() {
 		FeldNummerListe versuchStarts = new FeldNummerListe();
-		for(Feld feld: this){
-			if (feld.istEintragVersuchStart()){
+		for (Feld feld : this) {
+			if (feld.istEintragVersuchStart()) {
 				versuchStarts.add(feld.gibFeldNummer());
 			}
 		}
 		return versuchStarts;
 	}
-	
+
 	/**
-	 * @return Gibt (freie) Felder zurück, die ein Feld eines Feldpaares sind.
-	 * Feldpaare: In einer Gruppe gibt es genau zwei freie Felder mit derselben Zahl. 
+	 * @return Gibt (freie) Felder zurï¿½ck, die ein Feld eines Feldpaares sind.
+	 *         Feldpaare: In einer Gruppe gibt es genau zwei freie Felder mit
+	 *         derselben Zahl.
 	 */
-	public FeldListe gibFreieFelderPaare(){
+	public FeldListe gibFreieFelderPaare() {
 		FeldListe paare = new FeldListe();
-		
-		for (int iFeld=0;iFeld < this.size();iFeld++){
+
+		for (int iFeld = 0; iFeld < this.size(); iFeld++) {
 			Feld feld = this.get(iFeld);
-			if (feld.istFrei() && feld.istFeldPaar()){
+			if (feld.istFrei() && feld.istFeldPaar()) {
 				paare.add(feld);
 			}
 		}
 		return paare;
 	}
-	
+
 }

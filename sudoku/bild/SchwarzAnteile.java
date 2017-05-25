@@ -10,11 +10,11 @@ import sudoku.kern.animator.Animator;
 import sudoku.kern.feldmatrix.FeldNummer;
 
 @SuppressWarnings("serial")
-class SchwarzAnteile extends HashMap<FeldNummer, Float> implements ZahlBildInfo{
-	
-	SchwarzAnteile(BufferedImage image, ZahlBereiche bereiche){
-		Set <Entry<FeldNummer, Rectangle>> eintraege = bereiche.entrySet();
-		for(Entry<FeldNummer, Rectangle> eintrag: eintraege){
+class SchwarzAnteile extends HashMap<FeldNummer, Float> implements ZahlBildInfo {
+
+	SchwarzAnteile(BufferedImage image, ZahlBereiche bereiche) {
+		Set<Entry<FeldNummer, Rectangle>> eintraege = bereiche.entrySet();
+		for (Entry<FeldNummer, Rectangle> eintrag : eintraege) {
 			Rectangle r = eintrag.getValue();
 			LinienWeiss linienWeiss = new LinienWeiss(image, r);
 			float schwarzAnteil = linienWeiss.gibSchwarzAnteil();
@@ -22,8 +22,9 @@ class SchwarzAnteile extends HashMap<FeldNummer, Float> implements ZahlBildInfo{
 		}
 	}
 
-	void systemOut(FeldNummer bildFeldNummer){
-		System.out.println(String.format("BildFeld %s Schwarzanteile", bildFeldNummer)); //, getClass().getName()));
+	void systemOut(FeldNummer bildFeldNummer) {
+		System.out.println(String.format("BildFeld %s Schwarzanteile", bildFeldNummer)); // ,
+																							// getClass().getName()));
 		for (int zeile = 1; zeile <= ZahlBildInfo.nLinien; zeile++) {
 			for (int spalte = 1; spalte <= ZahlBildInfo.nLinien; spalte++) {
 				FeldNummer feldNummer = new FeldNummer(spalte, zeile);
@@ -40,18 +41,17 @@ class SchwarzAnteile extends HashMap<FeldNummer, Float> implements ZahlBildInfo{
 		return f;
 	}
 
-	public void drehen(Animator animator){
+	public void drehen(Animator animator) {
 		Set<Entry<FeldNummer, Float>> schwarzAnteile = this.entrySet();
-		
+
 		HashMap<FeldNummer, Float> gedrehte = new HashMap<>();
-		for(Entry<FeldNummer, Float> schwarzAnteil: schwarzAnteile){
+		for (Entry<FeldNummer, Float> schwarzAnteil : schwarzAnteile) {
 			FeldNummer neueFeldNummer = animator.gibFeldNummer(schwarzAnteil.getKey(), ZahlBildInfo.nLinien);
 			gedrehte.put(neueFeldNummer, new Float(schwarzAnteil.getValue()));
 		}
-		
+
 		this.clear();
 		this.putAll(gedrehte);
 	}
-	
-}
 
+}

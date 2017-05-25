@@ -11,13 +11,11 @@ import sudoku.knacker.bericht.BerichtKnacker;
 import sudoku.logik.Klugheit;
 import sudoku.logik.SudokuLogik;
 
-
 /**
- * @author heroe
- * Analysiert die Schwierigkeit eines Sudoku
+ * @author heroe Analysiert die Schwierigkeit eines Sudoku
  */
 public class Analysator {
-	
+
 	private Klugheit klugheit;
 	private EintragsEbenen ebenen;
 	private SudokuLogik feldmatrix;
@@ -25,29 +23,30 @@ public class Analysator {
 	private Knacker knacker;
 
 	/**
-	 * @param vorgaben Definiert die Vorgaben des Sudoku
-	 * @param knackerBericht, der soeben erstellt wurde für das Sudoku oder null
+	 * @param vorgaben
+	 *            Definiert die Vorgaben des Sudoku
+	 * @param knackerBericht,
+	 *            der soeben erstellt wurde fï¿½r das Sudoku oder null
 	 * @return Schwierigkeit des Sudoku
 	 * @throws Exc
 	 */
-	public static SudokuSchwierigkeit gibSchwierigkeit(InfoSudoku vorgaben, 	BerichtKnacker knackerBericht) throws Exc{
-		// Bei trivialer Nutzung der max. Klugheit ist es durchaus typisch, dass eine falsche (zu große)
+	public static SudokuSchwierigkeit gibSchwierigkeit(InfoSudoku vorgaben, BerichtKnacker knackerBericht) throws Exc {
+		// Bei trivialer Nutzung der max. Klugheit ist es durchaus typisch, dass
+		// eine falsche (zu groï¿½e)
 		// Schwierigkeit erkannt wird.
 		Analysator analisator = new Analysator();
-		if (knackerBericht == null){
-			knackerBericht 	= analisator.erstelleKnackerBericht(vorgaben);
+		if (knackerBericht == null) {
+			knackerBericht = analisator.erstelleKnackerBericht(vorgaben);
 		}
-		if (knackerBericht.isEmpty()){
+		if (knackerBericht.isEmpty()) {
 			return SudokuSchwierigkeit.unbestimmt(vorgaben.size());
-		} 
-		else 
-		{
+		} else {
 			SudokuSchwierigkeit schwierigkeit = null;
-			if (knackerBericht.istVersuch()){
+			if (knackerBericht.istVersuch()) {
 				schwierigkeit = new SudokuSchwierigkeit(knackerBericht);
-			}
-			else{
-				// Dann lohnt es sich, die Klare-Logik-Schwierigkeit richtig (als Minimum) zu erstellen!
+			} else {
+				// Dann lohnt es sich, die Klare-Logik-Schwierigkeit richtig
+				// (als Minimum) zu erstellen!
 				BerichtKnacker berichtKlare = analisator.erstelleKnackerBerichtKlare(vorgaben);
 				schwierigkeit = new SudokuSchwierigkeit(berichtKlare);
 			}
@@ -56,14 +55,15 @@ public class Analysator {
 	}
 
 	/**
-	 * @param vorgaben Definiert die Vorgaben des Sudoku
+	 * @param vorgaben
+	 *            Definiert die Vorgaben des Sudoku
 	 * @return Schwierigkeit des Sudoku
 	 * @throws Exc
 	 */
-	public static SudokuSchwierigkeit gibSchwierigkeit(InfoSudoku vorgaben) throws Exc{
-		return gibSchwierigkeit(vorgaben, 	null);
+	public static SudokuSchwierigkeit gibSchwierigkeit(InfoSudoku vorgaben) throws Exc {
+		return gibSchwierigkeit(vorgaben, null);
 	}
-	
+
 	protected Analysator() {
 		klugheit = new Klugheit(true);
 		ebenen = new EintragsEbenen();
@@ -77,45 +77,48 @@ public class Analysator {
 	 * @return bericht, kann leer sein
 	 * @throws Exc
 	 */
-	private BerichtKnacker erstelleKnackerBericht (InfoSudoku vorgaben) throws Exc{
+	private BerichtKnacker erstelleKnackerBericht(InfoSudoku vorgaben) throws Exc {
 		feldmatrix.reset(vorgaben);
 		klugheit.setzeExtrem(true);
-		
-		// Die Schwierigkeitsermittlung erfolgt für normale Sudoku: Deshalb nur VersuchsEbenen.EINE.
-		// Unbestimmte werden als solche benannt: Nämlich wenn sie hier nicht lösbar sind.
-		// Mit "Knacke" können (typisch) auch diese Sudoku gelöst werden.
+
+		// Die Schwierigkeitsermittlung erfolgt fï¿½r normale Sudoku: Deshalb nur
+		// VersuchsEbenen.EINE.
+		// Unbestimmte werden als solche benannt: Nï¿½mlich wenn sie hier nicht
+		// lï¿½sbar sind.
+		// Mit "Knacke" kï¿½nnen (typisch) auch diese Sudoku gelï¿½st werden.
 		VersuchsEbenen versuchsEbenen = VersuchsEbenen.EINE;
-		
+
 		Ergebnis ergebnis = knacker.loese(versuchsEbenen, "Schwierigkeitsermittlung");
 		if (ergebnis.gibArt() != Ergebnis.Art.FERTIG) {
-			return new BerichtKnacker(); 
+			return new BerichtKnacker();
 		}
 		BerichtKnacker bericht = knacker.gibBericht();
 		return bericht;
 	}
 
 	/**
-	 *	Diese Schwierigkeitsermittlung erfolgt für logisch lösbare Sudokus: Deshalb nur VersuchsEbenen.KEINE.
-	 * Es wird die kleinste erfolgreiche Klugheit ermittelt.
+	 * Diese Schwierigkeitsermittlung erfolgt fï¿½r logisch lï¿½sbare Sudokus:
+	 * Deshalb nur VersuchsEbenen.KEINE. Es wird die kleinste erfolgreiche
+	 * Klugheit ermittelt.
+	 * 
 	 * @param vorgaben
 	 * @return bericht, kann leer sein
 	 * @throws Exc
 	 */
-	private BerichtKnacker erstelleKnackerBerichtKlare (InfoSudoku vorgaben) throws Exc{
+	private BerichtKnacker erstelleKnackerBerichtKlare(InfoSudoku vorgaben) throws Exc {
 		feldmatrix.reset(vorgaben);
 		klugheit.setzeExtrem(false);
-		
-		do
-		{
-			Ergebnis ergebnis = knacker.loese(VersuchsEbenen.KEINE, "Schwierigkeitsermittlung Ohne Versuch Klugheit " + klugheit);
+
+		do {
+			Ergebnis ergebnis = knacker.loese(VersuchsEbenen.KEINE,
+					"Schwierigkeitsermittlung Ohne Versuch Klugheit " + klugheit);
 			if (ergebnis.gibArt() == Ergebnis.Art.FERTIG) {
 				return knacker.gibBericht();
 			}
 		} while (klugheit.erhoehe());
-		
-		return new BerichtKnacker(); 
-	}
 
+		return new BerichtKnacker();
+	}
 
 	protected Klugheit gibKlugheit() {
 		return klugheit;

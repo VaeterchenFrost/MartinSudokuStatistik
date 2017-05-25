@@ -2,7 +2,7 @@ package sudoku.neu.pool;
 
 import java.io.File;
 
-class FileMitZeit implements Comparable<FileMitZeit>{
+class FileMitZeit implements Comparable<FileMitZeit> {
 	File file;
 	int zeit;
 
@@ -23,13 +23,13 @@ class FileMitZeit implements Comparable<FileMitZeit>{
 		if (getClass() != other.getClass()) {
 			return 1;
 		}
-		if (this.zeit < other.zeit){
+		if (this.zeit < other.zeit) {
 			return -1;
 		}
-		if (this.zeit > other.zeit){
+		if (this.zeit > other.zeit) {
 			return 1;
 		}
 		return 0;
 	}
-	
+
 }

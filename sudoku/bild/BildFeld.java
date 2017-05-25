@@ -18,17 +18,18 @@ import sudoku.kern.feldmatrix.FeldNummer;
  *
  */
 class BildFeld {
-	static private boolean istTestAnzeige = false; //true;
-	static public boolean istTestAnzeige(){
+	static private boolean istTestAnzeige = false; // true;
+
+	static public boolean istTestAnzeige() {
 		return istTestAnzeige;
 	}
 
-	static private void maleRechteck(BufferedImage image, Rectangle r, int vergroesserung){
+	static private void maleRechteck(BufferedImage image, Rectangle r, int vergroesserung) {
 		Graphics2D g = image.createGraphics();
-		
+
 		r = vergroessern(r, vergroesserung);
 
-//		g.setXORMode(Color.WHITE);
+		// g.setXORMode(Color.WHITE);
 		g.setColor(Color.BLACK);
 		g.drawRect(r.x, r.y, r.width, r.height);
 
@@ -41,117 +42,128 @@ class BildFeld {
 
 	/**
 	 * @param rechteck
-	 * @param vergroesserung jeden Randes. Ein negativer Wert verkleinert.
-	 * @return Das neue zu Rechteck zentrisch liegende größere bzw. kleinere Rechteck 
-	 * 				Wenn das gewollte Rechteck eine negative Länge bekäme, so wird null zurückgegeben.
+	 * @param vergroesserung
+	 *            jeden Randes. Ein negativer Wert verkleinert.
+	 * @return Das neue zu Rechteck zentrisch liegende grï¿½ï¿½ere bzw. kleinere
+	 *         Rechteck Wenn das gewollte Rechteck eine negative Lï¿½nge bekï¿½me,
+	 *         so wird null zurï¿½ckgegeben.
 	 */
-	static private Rectangle vergroessern(Rectangle rechteck, int vergroesserung){
-		int neueBreite = rechteck.width + 2*vergroesserung;
-		int neueHoehe = rechteck.height + 2*vergroesserung;
-		
-		if ((neueBreite < 0) | (neueHoehe < 0)){
+	static private Rectangle vergroessern(Rectangle rechteck, int vergroesserung) {
+		int neueBreite = rechteck.width + 2 * vergroesserung;
+		int neueHoehe = rechteck.height + 2 * vergroesserung;
+
+		if ((neueBreite < 0) | (neueHoehe < 0)) {
 			return null;
 		}
 		neueHoehe = Math.max(1, neueHoehe);
-		Rectangle r = new Rectangle(rechteck.x - vergroesserung, rechteck.y - vergroesserung, 
-				 neueBreite, neueHoehe);
+		Rectangle r = new Rectangle(rechteck.x - vergroesserung, rechteck.y - vergroesserung, neueBreite, neueHoehe);
 		return r;
 	}
-	
+
 	/**
 	 * @param rechteck
-	 * @param vergroesserungProzent jeden Randes. Ein negativer Wert verkleinert.
-	 * @return Das neue zu Rechteck zentrisch liegende größere bzw. kleinere Rechteck 
+	 * @param vergroesserungProzent
+	 *            jeden Randes. Ein negativer Wert verkleinert.
+	 * @return Das neue zu Rechteck zentrisch liegende grï¿½ï¿½ere bzw. kleinere
+	 *         Rechteck
 	 */
-	static private Rectangle vergroessernProzent(Rectangle rechteck, int vergroesserungProzent){
-		int vergroesserungX = 	Math.round((rechteck.width * vergroesserungProzent) / 100.0f);
+	static private Rectangle vergroessernProzent(Rectangle rechteck, int vergroesserungProzent) {
+		int vergroesserungX = Math.round((rechteck.width * vergroesserungProzent) / 100.0f);
 		int vergroesserungY = Math.round((rechteck.height * vergroesserungProzent) / 100.0f);
-		Rectangle r = new Rectangle(rechteck.x - vergroesserungX, rechteck.y - vergroesserungY, 
-				rechteck.width + 2*vergroesserungX , rechteck.height + 2*vergroesserungY);
+		Rectangle r = new Rectangle(rechteck.x - vergroesserungX, rechteck.y - vergroesserungY,
+				rechteck.width + 2 * vergroesserungX, rechteck.height + 2 * vergroesserungY);
 		return r;
 	}
-	
+
 	/**
-	 * @return Das Zentrum, dass sicher weit genug vom schwarzen Feldrand eintfernt liegt.
+	 * @return Das Zentrum, dass sicher weit genug vom schwarzen Feldrand
+	 *         eintfernt liegt.
 	 */
-	static private Rectangle gibZentrum(Rectangle r){
+	static private Rectangle gibZentrum(Rectangle r) {
 		int randX = r.width / 4;
 		int randY = r.height / 4;
 		int rand = -1 * Math.min(randX, randY);
 		r = vergroessern(r, rand);
 		return r;
 	}
-	
+
 	/**
 	 * @param image
-	 * @return Anteil der weissen Pixel im Zentrum des feldRechteck in Prozent 
-	 * 			Dieses Zentrum ist der Bereich des feldRechtecks, in dem eine Zahl stehen könnte.
+	 * @return Anteil der weissen Pixel im Zentrum des feldRechteck in Prozent
+	 *         Dieses Zentrum ist der Bereich des feldRechtecks, in dem eine
+	 *         Zahl stehen kï¿½nnte.
 	 */
-	static private int gibZentrumWeissAnteil(BufferedImage image, Rectangle rBasis){
+	static private int gibZentrumWeissAnteil(BufferedImage image, Rectangle rBasis) {
 		Rectangle r = gibZentrum(rBasis);
-//		if (istTestAnzeige){
-//			maleRechteck(image, r);
-//		}
-		
+		// if (istTestAnzeige){
+		// maleRechteck(image, r);
+		// }
+
 		LinienWeiss linienWeiss = new LinienWeiss(image, r);
 		int weissAnteil = linienWeiss.gibWeissAnteil();
 		return weissAnteil;
 	}
 
 	/**
-	 * @param linien Jede Linie sortiert nach Strichlänge: Auf Index0 der längste Strich
-	 * @param linienLaenge Länge einer jeden Linie
-	 * @param linienIndexStart Ab der Linie mit diesem Index (in ihr) beginnt das FeldRechteck
-	 * @param linienIndexEnde Bis zu der Linie mit diesem Index (in ihr) endet das FeldRechteck
-	 * @return Index-Bereich der Zahl im Bild oder null:
-	 * 		Oben ist die Linie mit Array-Index=0
-	 * 		Links ist der Index des Strich-Starts 
+	 * @param linien
+	 *            Jede Linie sortiert nach Strichlï¿½nge: Auf Index0 der lï¿½ngste
+	 *            Strich
+	 * @param linienLaenge
+	 *            Lï¿½nge einer jeden Linie
+	 * @param linienIndexStart
+	 *            Ab der Linie mit diesem Index (in ihr) beginnt das
+	 *            FeldRechteck
+	 * @param linienIndexEnde
+	 *            Bis zu der Linie mit diesem Index (in ihr) endet das
+	 *            FeldRechteck
+	 * @return Index-Bereich der Zahl im Bild oder null: Oben ist die Linie mit
+	 *         Array-Index=0 Links ist der Index des Strich-Starts
 	 */
-	static private Kanten gibZahlBereich(ArrayList<StricheEinerLinie> linien, 
-			int linienLaenge){
-		final int langerStrichLaengeMinProzent = 20; 
+	static private Kanten gibZahlBereich(ArrayList<StricheEinerLinie> linien, int linienLaenge) {
+		final int langerStrichLaengeMinProzent = 20;
 
-//		if (istTestAnzeige){
-//			String name = "";
-//			if ( ! linien.isEmpty()){
-//				name = linien.get(0).linienName;
-//			}
-//			System.out.println(String.format("gibZahlBereich %s: nLinien=%d Linien-Länge=%d", 
-//					name,	linien.size(), linienLaenge));
-//		}
-		IteratorLinien iterator = new IteratorLinien(linien, 0, linien.size()-1);
+		// if (istTestAnzeige){
+		// String name = "";
+		// if ( ! linien.isEmpty()){
+		// name = linien.get(0).linienName;
+		// }
+		// System.out.println(String.format("gibZahlBereich %s: nLinien=%d
+		// Linien-Lï¿½nge=%d",
+		// name, linien.size(), linienLaenge));
+		// }
+		IteratorLinien iterator = new IteratorLinien(linien, 0, linien.size() - 1);
 		final int langerStrichLaengeMin = Math.round((linienLaenge * langerStrichLaengeMinProzent) / 100.0f);
 		Kanten kanten = null;
 
-		while(iterator.hasNext()){
+		while (iterator.hasNext()) {
 			StricheEinerLinie stricheEinerLinie = iterator.next();
-			if ( ! stricheEinerLinie.isEmpty()){
+			if (!stricheEinerLinie.isEmpty()) {
 				LinienStriche.Strich strich0 = stricheEinerLinie.get(0);
-				if (strich0.laenge >= langerStrichLaengeMin){
+				if (strich0.laenge >= langerStrichLaengeMin) {
 					int links = strich0.startIndex;
 					int oben = stricheEinerLinie.iLinie;
 					int rechts = strich0.gibEndeIndex();
 					int unten = stricheEinerLinie.iLinie;
-					if (kanten == null){
+					if (kanten == null) {
 						kanten = new Kanten(links, oben, rechts, unten);
-					}
-					else{
+					} else {
 						kanten.erweitere(links, oben, rechts, unten);
 					}
 				} // if (strich0.laenge
 			} // if ( ! stricheEinerLinie.isEmpty()
 		} // while
-		
-		if (kanten == null){
-			if (istTestAnzeige){
-				System.out.println("gibZahlBereich: Kanten = null"); 
+
+		if (kanten == null) {
+			if (istTestAnzeige) {
+				System.out.println("gibZahlBereich: Kanten = null");
 			}
 			return null;
 		}
-		
-//		if (istTestAnzeige){
-//			System.out.println(String.format("gibZahlBereich: Linien-Länge=%d %s", linienLaenge, kanten));
-//		}
+
+		// if (istTestAnzeige){
+		// System.out.println(String.format("gibZahlBereich: Linien-Lï¿½nge=%d
+		// %s", linienLaenge, kanten));
+		// }
 		return kanten;
 	}
 
@@ -161,163 +173,171 @@ class BildFeld {
 	private Rectangle zahlRechteck;
 	private SchwarzAnteile schwarzAnteile;
 	/**
-	 * Die Bereiche, in die das ZahlRechteck für die Decodierung aufgeteilt ist.
+	 * Die Bereiche, in die das ZahlRechteck fï¿½r die Decodierung aufgeteilt ist.
 	 */
 	private ZahlBereiche zahlBereiche;
 	/**
-	 * Die Wahrscheinlichkeit für jede der Zahlen 1 bis 9 in Prozent.
-	 * Auf Index 0 steht die Zahl mit der größten Wahrscheinlichkeit, auch null. 
+	 * Die Wahrscheinlichkeit fï¿½r jede der Zahlen 1 bis 9 in Prozent. Auf Index
+	 * 0 steht die Zahl mit der grï¿½ï¿½ten Wahrscheinlichkeit, auch null.
 	 */
-	private ArrayList<ZahlLeser.ZahlErgebnis> zahlWahrscheinlichkeiten; 
+	private ArrayList<ZahlLeser.ZahlErgebnis> zahlWahrscheinlichkeiten;
 	private Integer zahl;
 
-	public BildFeld(FeldNummer feldNummer, Strich spaltenStrich0, Strich spaltenStrich1, Strich zeilenStrich0, Strich zeilenStrich1) {
+	public BildFeld(FeldNummer feldNummer, Strich spaltenStrich0, Strich spaltenStrich1, Strich zeilenStrich0,
+			Strich zeilenStrich1) {
 		this.feldNummer = feldNummer;
-		int x = spaltenStrich0.nach.gibVonIndex()+1;
+		int x = spaltenStrich0.nach.gibVonIndex() + 1;
 		int xLast = spaltenStrich1.von.gibVonIndex();
 		int breite = xLast - x + 1;
-		
-		int y = zeilenStrich0.nach.gibVonIndex()+1;
+
+		int y = zeilenStrich0.nach.gibVonIndex() + 1;
 		int yLast = zeilenStrich1.von.gibVonIndex();
-		int hoehe = yLast - y + 1; 
-				
+		int hoehe = yLast - y + 1;
+
 		this.feldRechteck = new Rectangle(x, y, breite, hoehe);
 		this.zahlRechteck = null;
 		this.schwarzAnteile = null;
 		this.zahl = null;
 	}
 
-	public FeldNummer gibFeldNummer(){
+	public FeldNummer gibFeldNummer() {
 		return new FeldNummer(feldNummer);
 	}
 
-	public Integer gibZahl(){
-		if (zahl == null){
+	public Integer gibZahl() {
+		if (zahl == null) {
 			return null;
 		}
 		return new Integer(zahl.intValue());
 	}
-	
-	public Rectangle gibFeldRechteck(){
+
+	public Rectangle gibFeldRechteck() {
 		return new Rectangle(feldRechteck);
 	}
 
-	public Rectangle gibZahlRechteck(){
+	public Rectangle gibZahlRechteck() {
 		return new Rectangle(zahlRechteck);
 	}
 
 	/**
 	 * @param image
-	 * @return Anteil der weissen Pixel im Zentrum des feldRechteck in Prozent 
-	 * 			Dieses Zentrum ist der Bereich des feldRechtecks, in dem eine Zahl stehen könnte.
+	 * @return Anteil der weissen Pixel im Zentrum des feldRechteck in Prozent
+	 *         Dieses Zentrum ist der Bereich des feldRechtecks, in dem eine
+	 *         Zahl stehen kï¿½nnte.
 	 */
-	public int gibZentrumWeissAnteil(BufferedImage image){
+	public int gibZentrumWeissAnteil(BufferedImage image) {
 		int weissAnteil = gibZentrumWeissAnteil(image, feldRechteck);
 		return weissAnteil;
 	}
-	
+
 	/**
-	 * Setzt auf der Basis des Feldrechtecks das Zahlenrechteck. Außerdem die ZahlBereiche und SchwarzAnteile.
+	 * Setzt auf der Basis des Feldrechtecks das Zahlenrechteck. Auï¿½erdem die
+	 * ZahlBereiche und SchwarzAnteile.
+	 * 
 	 * @param image
 	 * @return null oder das Zahlenrechteck
 	 */
-	public Rectangle setzeZahlenRechteck(BufferedImage image){ 
+	public Rectangle setzeZahlenRechteck(BufferedImage image) {
 
 		// FeldRechteck um den Rand verkleinern => Test-Rechteck
 		final int randLaengeProzent = 7;
-		Rectangle testRechteck = vergroessernProzent(feldRechteck, -1*randLaengeProzent);
-		if (istTestAnzeige){
-			System.out.println(String.format("%s.setzeZahlenRechteck() %s", getClass().getSimpleName(), feldNummer)); 
-			System.out.println(String.format("Feld-Rechteck %s", feldRechteck)); 
-			System.out.println(String.format("Test-Rechteck %s", testRechteck)); 
+		Rectangle testRechteck = vergroessernProzent(feldRechteck, -1 * randLaengeProzent);
+		if (istTestAnzeige) {
+			System.out.println(String.format("%s.setzeZahlenRechteck() %s", getClass().getSimpleName(), feldNummer));
+			System.out.println(String.format("Feld-Rechteck %s", feldRechteck));
+			System.out.println(String.format("Test-Rechteck %s", testRechteck));
 		}
 
 		LinienStriche linienStriche = new LinienStriche(image, testRechteck);
-		
-//		if (istTestAnzeige){
-//			linienStriche.systemOutLaengen(feldRechteck.getSize());
-//		}
+
+		// if (istTestAnzeige){
+		// linienStriche.systemOutLaengen(feldRechteck.getSize());
+		// }
 
 		linienStriche.sortierenNachLaenge();
 		Kanten kantenX = gibZahlBereich(linienStriche.zeilenStriche, testRechteck.width);
 		Kanten kantenY = gibZahlBereich(linienStriche.spaltenStriche, testRechteck.height);
-		
-//		if (istTestAnzeige){
-//			System.out.println(String.format("setzeZahlenRechteck KantenX %s", kantenX)); 
-//			System.out.println(String.format("setzeZahlenRechteck KantenY %s", kantenY)); 
-//		}
 
-		if (kantenY != null){
+		// if (istTestAnzeige){
+		// System.out.println(String.format("setzeZahlenRechteck KantenX %s",
+		// kantenX));
+		// System.out.println(String.format("setzeZahlenRechteck KantenY %s",
+		// kantenY));
+		// }
+
+		if (kantenY != null) {
 			kantenY.rechtsDrehen();
-//			if (istTestAnzeige){
-//				System.out.println(String.format("setzeZahlenRechteck KantenY %s gedreht", kantenY)); 
-//			}
+			// if (istTestAnzeige){
+			// System.out.println(String.format("setzeZahlenRechteck KantenY %s
+			// gedreht", kantenY));
+			// }
 		}
-		
+
 		Kanten kanten = kantenX;
-		if (kanten == null){
+		if (kanten == null) {
 			kanten = kantenY;
-		}
-		else{
+		} else {
 			kanten = kanten.gibMaximum(kantenY);
-//			if (istTestAnzeige){
-//				System.out.println(String.format("setzeZahlenRechteck Kanten_ %s", kanten)); 
-//			}
+			// if (istTestAnzeige){
+			// System.out.println(String.format("setzeZahlenRechteck Kanten_
+			// %s", kanten));
+			// }
 		}
-		
-		if ( kanten != null){
+
+		if (kanten != null) {
 			zahlRechteck = kanten.gibRechteck();
 		}
 
-		if (istTestAnzeige){
-			if (zahlRechteck == null){
+		if (istTestAnzeige) {
+			if (zahlRechteck == null) {
 				System.out.println("Zahl-Rechteck == null");
-			} 
-			else{
+			} else {
 				System.out.println(String.format("Zahl-Rechteck %s", zahlRechteck));
 			}
 		}
-		
-		if (zahlRechteck != null){
+
+		if (zahlRechteck != null) {
 			zahlBereiche = new ZahlBereiche(zahlRechteck);
 			schwarzAnteile = new SchwarzAnteile(image, zahlBereiche);
 		}
-		
+
 		return zahlRechteck;
 	}
 
 	/**
-	 * Dreht die FeldNummer, die Schwarzanteile, feldRechteck, zahlRechteck, zahlBereiche
+	 * Dreht die FeldNummer, die Schwarzanteile, feldRechteck, zahlRechteck,
+	 * zahlBereiche
 	 */
-	public void drehe90GradRechts(Dimension bildDimension){
+	public void drehe90GradRechts(Dimension bildDimension) {
 		Animator_DrehenRechts animator = new Animator_DrehenRechts();
 		FeldNummer neueFeldNummer = animator.gibFeldNummer(feldNummer, FeldMatrix.feldNummerMax);
 		feldNummer = neueFeldNummer;
-		if (schwarzAnteile != null){
+		if (schwarzAnteile != null) {
 			schwarzAnteile.drehen(animator);
 		}
 		feldRechteck = Bild.rotiere90Grad(bildDimension, feldRechteck);
-		zahlRechteck= Bild.rotiere90Grad(bildDimension, zahlRechteck);
-		if (zahlBereiche != null){
+		zahlRechteck = Bild.rotiere90Grad(bildDimension, zahlRechteck);
+		if (zahlBereiche != null) {
 			zahlBereiche.rotiere90Grad(bildDimension);
 		}
 	}
-	
+
 	/**
 	 * Setzt die Zahl auf Basis der SchwarzAnteile
 	 */
-	public Integer setzeZahl(){
+	public Integer setzeZahl() {
 		this.zahl = null;
-//		if (BildFeld.istTestAnzeige()){
-//			System.out.println(String.format("BildFeld %s setzeZahl() auf der Basis der Schwarzanteile", feldNummer));
-//		}
-		if (schwarzAnteile != null){
+		// if (BildFeld.istTestAnzeige()){
+		// System.out.println(String.format("BildFeld %s setzeZahl() auf der
+		// Basis der Schwarzanteile", feldNummer));
+		// }
+		if (schwarzAnteile != null) {
 			// Zahl-Erkennung per Bild-Info
 			this.zahlWahrscheinlichkeiten = ZahlLeser.gibZahlWahrscheinlichkeiten(schwarzAnteile);
 			this.zahl = zahlWahrscheinlichkeiten.get(0).zahl;
 
-			if (zahl != null){
-				if (ZahlLeser.istSystemOutZahl(zahl)){
+			if (zahl != null) {
+				if (ZahlLeser.istSystemOutZahl(zahl)) {
 					schwarzAnteile.systemOut(feldNummer);
 				}
 			}
@@ -327,44 +347,44 @@ class BildFeld {
 	}
 
 	/**
-	 * Setzt die Zahl auf Basis der Ausgänge
+	 * Setzt die Zahl auf Basis der Ausgï¿½nge
 	 */
-	public void setzeZahl(BufferedImage image){
-		if (this.zahl == null){
+	public void setzeZahl(BufferedImage image) {
+		if (this.zahl == null) {
 			boolean istHierSystemOut = false;
-//			istHierSystemOut = feldNummer.equals(new FeldNummer(4, 5));
+			// istHierSystemOut = feldNummer.equals(new FeldNummer(4, 5));
 
-			if (istHierSystemOut){
-				System.out.println(String.format("BildFeld %s setzeZahl() auf der Basis der Ausgänge", feldNummer));
+			if (istHierSystemOut) {
+				System.out.println(String.format("BildFeld %s setzeZahl() auf der Basis der Ausgï¿½nge", feldNummer));
 			}
 			this.zahl = ZahlLeser.gibZahl(image, zahlRechteck, istHierSystemOut);
 		}
 	}
 
-	public void systemOutErgebnis(BufferedImage image){
+	public void systemOutErgebnis(BufferedImage image) {
 		String sWahrscheinlichkeiten = ZahlLeser.gibErgebnisString(zahlWahrscheinlichkeiten);
-		float w1 = zahlWahrscheinlichkeiten.get(1).erfuellungsGrad; 
-		float w0 = zahlWahrscheinlichkeiten.get(0).erfuellungsGrad; 
-		float vorsprung = w0 - w1; 
+		float w1 = zahlWahrscheinlichkeiten.get(1).erfuellungsGrad;
+		float w0 = zahlWahrscheinlichkeiten.get(0).erfuellungsGrad;
+		float vorsprung = w0 - w1;
 		String sVorsprung = "";
-		if (vorsprung > 0){
+		if (vorsprung > 0) {
 			sVorsprung = String.format("Vorsprung=%5.1f%%", vorsprung);
 		}
-		System.out.println(String.format("%s %s=%s %s (%s)", 
-				getClass().getSimpleName(), feldNummer, zahl, sVorsprung, sWahrscheinlichkeiten));
-		
-//		if (zahlBereiche != null){
-//			if (istTestAnzeige | ZahlLeser.istSystemOut()){
-//				zahlBereiche.male(image);
-//			}
-//		}
-//
-//		if (istTestAnzeige & (zahlRechteck != null)){
-//			maleRechteck(image, zahlRechteck, 2);
-//		}
+		System.out.println(String.format("%s %s=%s %s (%s)", getClass().getSimpleName(), feldNummer, zahl, sVorsprung,
+				sWahrscheinlichkeiten));
+
+		// if (zahlBereiche != null){
+		// if (istTestAnzeige | ZahlLeser.istSystemOut()){
+		// zahlBereiche.male(image);
+		// }
+		// }
+		//
+		// if (istTestAnzeige & (zahlRechteck != null)){
+		// maleRechteck(image, zahlRechteck, 2);
+		// }
 
 		zahlBereiche.male(image);
 		maleRechteck(image, zahlRechteck, 2);
 	}
-	
+
 }

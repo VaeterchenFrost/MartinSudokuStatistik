@@ -19,7 +19,7 @@ class LogikAnzahlenSpeicher {
 			Logik_ID logik = logiken[iLogik];
 			int n = logikAnzahlen.gibAnzahl(logik);
 
-			s += " §" + n + "=" + logik.name() + "$ " + sCR;
+			s += " ï¿½" + n + "=" + logik.name() + "$ " + sCR;
 		}
 		return s;
 	}
@@ -29,7 +29,7 @@ class LogikAnzahlenSpeicher {
 
 		while (text.length() > 3) {
 			text = text.trim();
-			int indexStart = text.indexOf("§");
+			int indexStart = text.indexOf("ï¿½");
 			if (indexStart < 0) {
 				break;
 			}
@@ -47,7 +47,8 @@ class LogikAnzahlenSpeicher {
 			String sLogik = text.substring(0, indexEnde);
 			text = text.substring(indexEnde + 1);
 
-			// Wenn eine Logik rausgeschmissen wurde in einer neuen Programmversion kann LogikID.valueOf() keine ID liefern
+			// Wenn eine Logik rausgeschmissen wurde in einer neuen
+			// Programmversion kann LogikID.valueOf() keine ID liefern
 			// und meldet dies per Exception!
 			try {
 				Logik_ID logik = Logik_ID.valueOf(sLogik);
@@ -81,12 +82,12 @@ class LogikAnzahlenSpeicher {
 		final String dateiNameBak = "Logiken.bak";
 
 		// Pfad zum Speichern
-//		File f0 = new File(".");
-//		String p0 = f0.getAbsolutePath();
-//		String pfadName = p0.substring(0, p0.length() - 1);
+		// File f0 = new File(".");
+		// String p0 = f0.getAbsolutePath();
+		// String pfadName = p0.substring(0, p0.length() - 1);
 		String pfadName = Verzeichnis.gibAktuellesVerzeichnis();
 
-		// Bak-Datei löschen
+		// Bak-Datei lï¿½schen
 		String fileNameBak = pfadName + dateiNameBak;
 		File fileBak = new File(fileNameBak);
 		fileBak.delete();

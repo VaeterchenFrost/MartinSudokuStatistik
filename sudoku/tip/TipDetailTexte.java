@@ -5,53 +5,55 @@ import sudoku.logik.tipinfo.EinTipText;
 public class TipDetailTexte {
 	public String ueberschrift;
 	public EinTipText[] tipTexte;
-	
-	public TipDetailTexte(String ueberschrift, 	EinTipText[] tipTexte) {
+
+	public TipDetailTexte(String ueberschrift, EinTipText[] tipTexte) {
 		this.ueberschrift = ueberschrift;
 		this.tipTexte = tipTexte;
 	}
 
 	/**
-	 * @return Alle Texte möglichst schmal als ein String mit Zeilenvorschüben zwischen ihnen.
+	 * @return Alle Texte mï¿½glichst schmal als ein String mit Zeilenvorschï¿½ben
+	 *         zwischen ihnen.
 	 */
-	public String gibTexteSchmal(){
+	public String gibTexteSchmal() {
 		String text = new String();
 		String einschub = "     ";
-		text +=ueberschrift;
+		text += ueberschrift;
 		for (int i = 0; i < tipTexte.length; i++) {
 			EinTipText tipTexte1 = tipTexte[i];
 			text += "\n";
 			text += tipTexte1.s1;
-			if (tipTexte1.s2 != null){
+			if (tipTexte1.s2 != null) {
 				text += "\n";
 				text += einschub;
 				text += tipTexte1.s2;
 			}
 		}
 		return text;
-	}		
+	}
 
 	/**
-	 * @return Alle Texte als möglichst wenige Zeilen als ein String mit Zeilenvorschüben zwischen ihnen.
+	 * @return Alle Texte als mï¿½glichst wenige Zeilen als ein String mit
+	 *         Zeilenvorschï¿½ben zwischen ihnen.
 	 */
-	public String gibTexteInWenigenZeilen(){
+	public String gibTexteInWenigenZeilen() {
 		String text = new String();
 		String einschub = "     ";
-		text +=ueberschrift;
+		text += ueberschrift;
 		for (int i = 0; i < tipTexte.length; i++) {
 			EinTipText tipTexte1 = tipTexte[i];
 			text += "\n";
 			text += einschub;
 			text += tipTexte1.s1;
-			if (tipTexte1.s2 != null){
+			if (tipTexte1.s2 != null) {
 				text += " ";
 				text += tipTexte1.s2;
 			}
 		}
 		return text;
-	}		
+	}
 
-	public int gibTexteAnzahl(){
-		return tipTexte.length + 1; // Überschrift
+	public int gibTexteAnzahl() {
+		return tipTexte.length + 1; // ï¿½berschrift
 	}
 }

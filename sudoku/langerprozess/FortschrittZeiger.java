@@ -2,14 +2,20 @@ package sudoku.langerprozess;
 
 public interface FortschrittZeiger {
 	/**
-	 * @param fortschritt Zeigt den Fortschritt an (z.B. in der Form eines Fortschritt-Balkens). 
+	 * @param fortschritt
+	 *            Zeigt den Fortschritt an (z.B. in der Form eines
+	 *            Fortschritt-Balkens).
 	 */
 	public void zeigeFortschritt(int fortschritt);
+
 	/**
-	 * @param info Zeigt die Information an.
-	 * Das könnte statt einer AnZEIGE selbstverständlich auch in der Form z.B. einer Sprachausgabe passieren. 
+	 * @param info
+	 *            Zeigt die Information an. Das kï¿½nnte statt einer AnZEIGE
+	 *            selbstverstï¿½ndlich auch in der Form z.B. einer Sprachausgabe
+	 *            passieren.
 	 */
 	public void zeigeInfo(String info);
+
 	/**
 	 * @return true wenn Abbruch gefordert wurde.
 	 */

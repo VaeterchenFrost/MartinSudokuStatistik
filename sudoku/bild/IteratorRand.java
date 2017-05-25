@@ -6,72 +6,71 @@ import java.util.Iterator;
 
 /**
  * @author heroe
- * Iterator über den Teil eines Bildes. 
- * Er gibt die Anzahl Weiss-Pixel eines angeforderten Bereichs einer Bildlinie in Prozent zurück.  
+ * Iterator ï¿½ber den Teil eines Bildes. 
+ * Er gibt die Anzahl Weiss-Pixel eines angeforderten Bereichs einer Bildlinie in Prozent zurï¿½ck.  
  */
 /**
  * @author heroe
  *
  */
-abstract class IteratorRand  implements Iterator<Integer> {
+abstract class IteratorRand implements Iterator<Integer> {
 	protected BufferedImage image;
 	protected boolean istRichtungIndex0;
 	protected int linienIndexMin;
 	protected int linienLaenge;
-	
+
 	protected int ersterIndex;
 	protected int letzterIndex;
 	protected int currentIndex;
 
 	/**
-	 * @param image Auf dies bezieht sich r
-	 * @param r 
-	 * 			In X-Richtung wird iteriert. 
-	 * 			Y: Die Lage der zu kontrollierenden Spalten-Linien sind durch r.y und r.hight benannt.
+	 * @param image
+	 *            Auf dies bezieht sich r
+	 * @param r
+	 *            In X-Richtung wird iteriert. Y: Die Lage der zu
+	 *            kontrollierenden Spalten-Linien sind durch r.y und r.hight
+	 *            benannt.
 	 * @param istRichtungIndex0
-	 * @param testRand max. Ausmass des X-Randes in Pixeln
+	 * @param testRand
+	 *            max. Ausmass des X-Randes in Pixeln
 	 */
-	IteratorRand(BufferedImage image, Rectangle r, boolean istRichtungIndex0, int testRand){
+	IteratorRand(BufferedImage image, Rectangle r, boolean istRichtungIndex0, int testRand) {
 		this.image = image;
 		init(r, istRichtungIndex0, testRand);
 	}
 
 	abstract void init(Rectangle r, boolean istRichtungIndex0, int testRand);
-	
+
 	int gibVorigenIndex() {
-		if (istRichtungIndex0){
-			return Math.min(ersterIndex, currentIndex+1);
-		}
-		else{
-			return Math.max(ersterIndex, currentIndex-1);
+		if (istRichtungIndex0) {
+			return Math.min(ersterIndex, currentIndex + 1);
+		} else {
+			return Math.max(ersterIndex, currentIndex - 1);
 		}
 	}
 
-	
 	@Override
 	public boolean hasNext() {
-		if (istRichtungIndex0){
+		if (istRichtungIndex0) {
 			return currentIndex > letzterIndex;
-		}
-		else{
+		} else {
 			return currentIndex < letzterIndex;
 		}
 	}
 
 	abstract Rectangle gibLinienRechteck();
-	
+
 	@Override
 	public Integer next() {
-		if (istRichtungIndex0){
+		if (istRichtungIndex0) {
 			currentIndex--;
-		}
-		else{
+		} else {
 			currentIndex++;
 		}
-		
+
 		Rectangle rLinie = gibLinienRechteck();
 		LinienWeiss linienWeiss = new LinienWeiss(image, rLinie);
-		
+
 		return linienWeiss.gibWeissAnteil();
 	}
 

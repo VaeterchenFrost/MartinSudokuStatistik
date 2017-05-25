@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import sudoku.kern.feldmatrix.FeldListe;
 
 @SuppressWarnings("serial")
-public class FeldInfoListe  extends ArrayList<FeldInfo>{
+public class FeldInfoListe extends ArrayList<FeldInfo> {
 
 	public FeldInfoListe() {
 	}

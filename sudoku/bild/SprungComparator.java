@@ -3,18 +3,21 @@ package sudoku.bild;
 import java.util.Comparator;
 
 /**
- * @author heroe
- * Vergleicht zwei Sprünge miteinander. Die Vergleichsart ist vorgebbar.
+ * @author heroe Vergleicht zwei Sprï¿½nge miteinander. Die Vergleichsart ist
+ *         vorgebbar.
  */
 class SprungComparator implements Comparator<Sprung> {
 	public enum Art {
-		/** Vergleich nach Index 
+		/**
+		 * Vergleich nach Index
 		 */
-		INDEX, 
-		/** Vergleich nach der vorhandenen Sprunghöhe
+		INDEX,
+		/**
+		 * Vergleich nach der vorhandenen Sprunghï¿½he
 		 */
-		HOEHE, 
-		/** Vergleich nach dem Absolutwert der Sprunghöhe
+		HOEHE,
+		/**
+		 * Vergleich nach dem Absolutwert der Sprunghï¿½he
 		 */
 		HOEHE_ABSOLUT
 	};

@@ -2,11 +2,10 @@ package sudoku.schwer.daten;
 
 import sudoku.schwer.AnzeigeInfo;
 
-public class InfoVersuche implements AnzeigeInfo{
+public class InfoVersuche implements AnzeigeInfo {
 	// Anzahl Versuchs-Starts
 	private int nStarts;
 	private boolean istFelderMit2Moeglichen;
-	
 
 	public InfoVersuche(int nStarts, boolean istFelderMit2Moeglichen) {
 		super();
@@ -16,16 +15,15 @@ public class InfoVersuche implements AnzeigeInfo{
 
 	@Override
 	public String gibAnzeigeText() {
-		String sArt = "1 Feld"; 
-				
-		if (! this.istFelderMit2Moeglichen){
+		String sArt = "1 Feld";
+
+		if (!this.istFelderMit2Moeglichen) {
 			sArt = "FeldPaar";
 		}
 
-		if (nStarts == 1){
+		if (nStarts == 1) {
 			return String.format("1 Versuchstart (%s)", sArt);
-		}
-		else{
+		} else {
 			return String.format("%d Versuchstarts (%s)", nStarts, sArt);
 		}
 	}

@@ -16,7 +16,7 @@ public class MoeglicheZahl {
 
 	private int zahl;
 	private boolean istMarkiert;
-	
+
 	public MoeglicheZahl(int zahl) {
 		this.zahl = zahl;
 		istMarkiert = false;

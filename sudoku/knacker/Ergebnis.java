@@ -7,7 +7,7 @@ public class Ergebnis {
 	public enum Art {
 		FERTIG, UNGELOEST, PROBLEM
 	};
-	
+
 	private Art art;
 	private Problem problem;
 
@@ -26,7 +26,7 @@ public class Ergebnis {
 		return ergebnis;
 	}
 
-	public static Ergebnis problem (Problem problem) {
+	public static Ergebnis problem(Problem problem) {
 		Ergebnis ergebnis = new Ergebnis(Art.PROBLEM, problem);
 		return ergebnis;
 	}
@@ -42,9 +42,9 @@ public class Ergebnis {
 	@Override
 	public String toString() {
 		String s = "[" + art;
-		if (problem != null){
-			s+= "; problem=";
-			s+= problem; 
+		if (problem != null) {
+			s += "; problem=";
+			s += problem;
 		}
 		s += "]";
 		return s;

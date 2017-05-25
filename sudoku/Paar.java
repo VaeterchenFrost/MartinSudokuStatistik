@@ -1,9 +1,9 @@
 package sudoku;
 
-public class Paar<K, V > {
+public class Paar<K, V> {
 	final private K key;
 	final private V value;
-	
+
 	public Paar(K key, V value) {
 		this.key = key;
 		this.value = value;

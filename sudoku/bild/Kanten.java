@@ -3,8 +3,7 @@ package sudoku.bild;
 import java.awt.Rectangle;
 
 /**
- * @author heroe
- * Die 4 Kanten eines Rechtecks
+ * @author heroe Die 4 Kanten eines Rechtecks
  */
 class Kanten {
 	private int links;
@@ -26,7 +25,6 @@ class Kanten {
 		this.unten = unten;
 	}
 
-
 	@Override
 	public String toString() {
 		return "Kanten [links=" + links + ", oben=" + oben + ", rechts=" + rechts + ", unten=" + unten + "]";
@@ -39,24 +37,29 @@ class Kanten {
 	 * @param unten
 	 */
 	void erweitere(int links, int oben, int rechts, int unten) {
-		if (links < this.links) this.links = links;
-		if (oben < this.oben) this.oben = oben;
-		if (rechts > this.rechts) this.rechts = rechts;
-		if (unten > this.unten) this.unten = unten;
+		if (links < this.links)
+			this.links = links;
+		if (oben < this.oben)
+			this.oben = oben;
+		if (rechts > this.rechts)
+			this.rechts = rechts;
+		if (unten > this.unten)
+			this.unten = unten;
 	}
-	
+
 	Rectangle gibRechteck() {
-		int breite = rechts - links +1;
-		int hoehe = unten - oben +1;
+		int breite = rechts - links + 1;
+		int hoehe = unten - oben + 1;
 		Rectangle r = new Rectangle(links, oben, breite, hoehe);
-		
+
 		return r;
 	}
 
 	/**
-	 * Dreht das Rechteck 90° nach rechts, also wird z.B. rechts zu oben, unten zu rechts...
+	 * Dreht das Rechteck 90ï¿½ nach rechts, also wird z.B. rechts zu oben, unten
+	 * zu rechts...
 	 */
-	void rechtsDrehen(){
+	void rechtsDrehen() {
 		int altesLinks = links;
 		links = oben;
 		oben = altesLinks;
@@ -69,11 +72,11 @@ class Kanten {
 	 * @param kanten2
 	 * @return Das Maximum der beiden Rechtecke
 	 */
-	Kanten gibMaximum(Kanten kanten2){
-		if (kanten2 == null){
+	Kanten gibMaximum(Kanten kanten2) {
+		if (kanten2 == null) {
 			return this;
 		}
-		
+
 		erweitere(kanten2.links, kanten2.oben, kanten2.rechts, kanten2.unten);
 		return this;
 	}

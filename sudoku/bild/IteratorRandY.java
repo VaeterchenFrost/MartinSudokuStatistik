@@ -5,23 +5,26 @@ import java.awt.image.BufferedImage;
 
 /**
  * @author heroe
- * Iterator über den Teil eines Bildes. 
- * Er gibt die Anzahl Weiss-Pixel eines angeforderten Bereichs einer Bildlinie in Prozent zurück.  
+ * Iterator ï¿½ber den Teil eines Bildes. 
+ * Er gibt die Anzahl Weiss-Pixel eines angeforderten Bereichs einer Bildlinie in Prozent zurï¿½ck.  
  */
 /**
  * @author heroe
  *
  */
-class IteratorRandY  extends IteratorRand {
+class IteratorRandY extends IteratorRand {
 	/**
-	 * @param image Auf dies bezieht sich r
-	 * @param r 
-	 * 			In Y-Richtung wird iteriert. 
-	 * 			X: Die Lage der zu kontrollierenden Zeilen-Linien sind durch r.x und r.width benannt.
+	 * @param image
+	 *            Auf dies bezieht sich r
+	 * @param r
+	 *            In Y-Richtung wird iteriert. X: Die Lage der zu
+	 *            kontrollierenden Zeilen-Linien sind durch r.x und r.width
+	 *            benannt.
 	 * @param istRichtungIndex0
-	 * @param testRand max. Ausmass des Y-Randes in Pixeln
+	 * @param testRand
+	 *            max. Ausmass des Y-Randes in Pixeln
 	 */
-	IteratorRandY(BufferedImage image, Rectangle r, boolean istRichtungIndex0, int testRand){
+	IteratorRandY(BufferedImage image, Rectangle r, boolean istRichtungIndex0, int testRand) {
 		super(image, r, istRichtungIndex0, testRand);
 	}
 
@@ -30,16 +33,15 @@ class IteratorRandY  extends IteratorRand {
 		this.linienIndexMin = r.x;
 		this.linienLaenge = r.width;
 		this.istRichtungIndex0 = istRichtungIndex0;
-		if (istRichtungIndex0){
+		if (istRichtungIndex0) {
 			this.letzterIndex = r.y + r.height - testRand;
 			currentIndex = r.y + r.height;
-			this.ersterIndex = currentIndex -1; 
-		}
-		else{
+			this.ersterIndex = currentIndex - 1;
+		} else {
 			// Richtung Ende
 			this.letzterIndex = r.y + testRand;
-			currentIndex = r.y -1;
-			this.ersterIndex = currentIndex +1;
+			currentIndex = r.y - 1;
+			this.ersterIndex = currentIndex + 1;
 		}
 	}
 

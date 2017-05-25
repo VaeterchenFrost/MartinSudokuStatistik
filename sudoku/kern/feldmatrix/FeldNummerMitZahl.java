@@ -1,19 +1,20 @@
 package sudoku.kern.feldmatrix;
 
-public class FeldNummerMitZahl implements Comparable<FeldNummerMitZahl>{
+public class FeldNummerMitZahl implements Comparable<FeldNummerMitZahl> {
 	private FeldNummer feldNummer;
 	private int zahl;
-	
+
 	public FeldNummerMitZahl(FeldNummer aFeldNummer, int aZahl) {
-		feldNummer = aFeldNummer ;
+		feldNummer = aFeldNummer;
 		zahl = aZahl;
 	}
 
 	/**
-	 * @param aZahl erstellt intern Kopien
+	 * @param aZahl
+	 *            erstellt intern Kopien
 	 */
 	public FeldNummerMitZahl(FeldNummerMitZahl aZahl) {
-		this.feldNummer = new FeldNummer(aZahl.feldNummer.spalte, aZahl.feldNummer.zeile) ;
+		this.feldNummer = new FeldNummer(aZahl.feldNummer.spalte, aZahl.feldNummer.zeile);
 		zahl = aZahl.zahl;
 	}
 
@@ -30,7 +31,7 @@ public class FeldNummerMitZahl implements Comparable<FeldNummerMitZahl>{
 		String s = String.format("%d in %s", this.zahl, this.feldNummer);
 		return s;
 	}
-	
+
 	public String gibBeschreibung() {
 		String s = String.format("Zahl %d in Feld %s", this.zahl, this.feldNummer.gibBeschreibung());
 		return s;
@@ -82,17 +83,16 @@ public class FeldNummerMitZahl implements Comparable<FeldNummerMitZahl>{
 			return 1;
 		}
 		int feldNummernErgebnis = this.feldNummer.compareTo(other.feldNummer);
-		if (feldNummernErgebnis != 0){
+		if (feldNummernErgebnis != 0) {
 			return feldNummernErgebnis;
 		}
-		if (this.zahl < other.zahl){
+		if (this.zahl < other.zahl) {
 			return -1;
 		}
-		if (this.zahl > other.zahl){
+		if (this.zahl > other.zahl) {
 			return 1;
 		}
 		return 0;
 	}
-	
-	
+
 }

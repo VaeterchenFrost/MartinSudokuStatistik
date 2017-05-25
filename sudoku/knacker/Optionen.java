@@ -7,13 +7,13 @@ public class Optionen {
 	 * Die maximal erlaubte VersuchsEbene
 	 */
 	private VersuchsEbenen maxErlaubteVersuchsEbene;
-	
+
 	/**
-	 * Bei true reicht das Setzen eines einzigen Eintrags aus:
-	 * Für gibTip nämlich.
+	 * Bei true reicht das Setzen eines einzigen Eintrags aus: Fï¿½r gibTip
+	 * nï¿½mlich.
 	 */
 	private boolean istGibTip;
-	
+
 	public Optionen() {
 		super();
 		this.maxErlaubteVersuchsEbene = VersuchsEbenen.EINE;
@@ -28,20 +28,19 @@ public class Optionen {
 		return istGibTip;
 	}
 
-	public void setzeOptionenGibTip(){
+	public void setzeOptionenGibTip() {
 		this.maxErlaubteVersuchsEbene = VersuchsEbenen.UNBEGRENZT;
 		this.istGibTip = true;
 	}
 
-	public void setzeOptionenKnacke(){
+	public void setzeOptionenKnacke() {
 		this.maxErlaubteVersuchsEbene = VersuchsEbenen.UNBEGRENZT;
 		this.istGibTip = false;
 	}
-	
-	public void setzeOptionenLoese(VersuchsEbenen versuchsEbenen){
+
+	public void setzeOptionenLoese(VersuchsEbenen versuchsEbenen) {
 		this.maxErlaubteVersuchsEbene = versuchsEbenen;
 		this.istGibTip = false;
 	}
-	
-	
+
 }

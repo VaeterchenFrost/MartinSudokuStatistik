@@ -6,94 +6,97 @@ import sudoku.kern.exception.Exc;
 import sudoku.kern.feldmatrix.Feld;
 
 /**
- * @author Hendrick
- * Die Klasse verwaltet Eintragsebenen.
- * Jeder Eintrag befindet sich auf einer Eintragsebene.
- * Das ist nötig für das Zeigen und Rückgängigmachen von Versuchen.
- * Ein Versuch startet (eine neue Ebene) wenn ein Feld mit mehreren Möglichen einen Eintrag erhält.
- * Der erste Eintrag überhaupt startet unbedingt eine Ebene, auch wenn dies Feld eines mit nur 1 möglichen Zahl ist.
- * Eine Ebene verschwindet mit dem Löschen des letzten Eintrags auf dieser Ebene 
- * oder wenn sie ausdrücklich als Gesamtheit gelöscht wird.
+ * @author Hendrick Die Klasse verwaltet Eintragsebenen. Jeder Eintrag befindet
+ *         sich auf einer Eintragsebene. Das ist nï¿½tig fï¿½r das Zeigen und
+ *         Rï¿½ckgï¿½ngigmachen von Versuchen. Ein Versuch startet (eine neue Ebene)
+ *         wenn ein Feld mit mehreren Mï¿½glichen einen Eintrag erhï¿½lt. Der erste
+ *         Eintrag ï¿½berhaupt startet unbedingt eine Ebene, auch wenn dies Feld
+ *         eines mit nur 1 mï¿½glichen Zahl ist. Eine Ebene verschwindet mit dem
+ *         Lï¿½schen des letzten Eintrags auf dieser Ebene oder wenn sie
+ *         ausdrï¿½cklich als Gesamtheit gelï¿½scht wird.
  *
- * Die Ebene Nr. 1 ist den Einträgen in freien Feldern mit nur 1 möglichen Zahl vorbehalten.
- * Versuche laufen auf den Ebenen ab Nr. 2.
+ *         Die Ebene Nr. 1 ist den Eintrï¿½gen in freien Feldern mit nur 1
+ *         mï¿½glichen Zahl vorbehalten. Versuche laufen auf den Ebenen ab Nr. 2.
  */
 public class EintragsEbenen {
 
 	private int aktuelleEbene;
-	
+
 	public EintragsEbenen() {
 		reset();
 	}
 
 	/**
-	 * @return Die Ebene Nr. 1 ist den Einträgen in freien Feldern mit 1 möglichen Zahl vorbehalten.
-	 * (Versuche laufen auf den Ebenen ab Nr. 2.)
+	 * @return Die Ebene Nr. 1 ist den Eintrï¿½gen in freien Feldern mit 1
+	 *         mï¿½glichen Zahl vorbehalten. (Versuche laufen auf den Ebenen ab
+	 *         Nr. 2.)
 	 */
-	static public int gibStandardEbene1(){
+	static public int gibStandardEbene1() {
 		return 1;
 	}
-	
-	public boolean laeuftEine(){
-		return aktuelleEbene>0;
+
+	public boolean laeuftEine() {
+		return aktuelleEbene > 0;
 	}
-	
-	public int gibNummer(){
+
+	public int gibNummer() {
 		return aktuelleEbene;
 	}
-	
-	public void reset(){
+
+	public void reset() {
 		aktuelleEbene = 0;
 	}
 
-	
-	public void loesche(){
+	public void loesche() {
 		aktuelleEbene--;
 
-		if (aktuelleEbene<0){
+		if (aktuelleEbene < 0) {
 			aktuelleEbene = 0;
 		}
 	}
 
 	/**
-	 * Start des Eintrag-Setzens auf einem Feld mit nur einer möglichen Zahl
+	 * Start des Eintrag-Setzens auf einem Feld mit nur einer mï¿½glichen Zahl
 	 */
-	private void starteEbene(){
+	private void starteEbene() {
 		aktuelleEbene++;
 	}
-	
+
 	/**
-	 * Ein Feld mit mehreren Möglichen erhält einen Eintrag
+	 * Ein Feld mit mehreren Mï¿½glichen erhï¿½lt einen Eintrag
 	 */
-	private void starteVersuch(){
-		if (aktuelleEbene == 0){
-			// Ebene 1 überspringen
+	private void starteVersuch() {
+		if (aktuelleEbene == 0) {
+			// Ebene 1 ï¿½berspringen
 			aktuelleEbene++;
 		}
 		aktuelleEbene++;
 	}
 
 	/**
-	 * Führt die Eintrags-Ebene mit je Anzahl der Möglichen im Feld:
-	 * 	Anzahl=0: Exc; 
-	 *  Anzahl=1: a) keine Einträge=>1 @see gibStandardEbene1() b)Einträge sind=>return; 
-	 *  Anzahl>1 Starte Versuch (++)
+	 * Fï¿½hrt die Eintrags-Ebene mit je Anzahl der Mï¿½glichen im Feld: Anzahl=0:
+	 * Exc; Anzahl=1: a) keine Eintrï¿½ge=>1 @see gibStandardEbene1() b)Eintrï¿½ge
+	 * sind=>return; Anzahl>1 Starte Versuch (++)
+	 * 
 	 * @param feld
-	 * @param zahl Sie soll dann gesetzt werden
-	 * @return true wenn eine neue Ebene für diesen Eintrag erstellt wurde
-	 * @throws Exc Falls das Setzen der zahl als Eintrag anhand der Möglichen des Feldes gar nicht zulässig ist
+	 * @param zahl
+	 *            Sie soll dann gesetzt werden
+	 * @return true wenn eine neue Ebene fï¿½r diesen Eintrag erstellt wurde
+	 * @throws Exc
+	 *             Falls das Setzen der zahl als Eintrag anhand der Mï¿½glichen
+	 *             des Feldes gar nicht zulï¿½ssig ist
 	 */
-	public boolean setzeEintragsEbene(Feld feld,  int zahl) throws Exc{
+	public boolean setzeEintragsEbene(Feld feld, int zahl) throws Exc {
 		ArrayList<Integer> moegliche = feld.gibMoegliche();
-		
+
 		if (0 == moegliche.size()) {
 			throw Exc.setzeEintragNichtOhneMoegliche(feld, zahl);
 		}
-		// Ist dieser Eintrag möglich?
-		if (! moegliche.contains(zahl)){
+		// Ist dieser Eintrag mï¿½glich?
+		if (!moegliche.contains(zahl)) {
 			throw Exc.setzeEintragNichtOhneDieseMoegliche(feld, zahl);
 		}
-		
+
 		boolean istNeueEbene = false;
 		// Eventuell ist Ebenen-Start
 		if (1 == moegliche.size()) {
@@ -101,8 +104,7 @@ public class EintragsEbenen {
 				starteEbene();
 				istNeueEbene = true;
 			}
-		}
-		else{
+		} else {
 			starteVersuch();
 			istNeueEbene = true;
 		}

@@ -1,33 +1,32 @@
 package sudoku.bild;
 
 /**
- * @author heroe
- * Ein Sprung ab Index zu (Index+1) der Höhe X.
- * Der Vergleich zweier Instanzen erfolgt auf abs(sprung).
+ * @author heroe Ein Sprung ab Index zu (Index+1) der Hï¿½he X. Der Vergleich
+ *         zweier Instanzen erfolgt auf abs(sprung).
  */
-class Sprung{
+class Sprung {
 	public int gibVonIndex() {
 		return vonIndex;
 	}
+
 	public int gibSprungHoehe() {
 		return sprung;
 	}
 
-	
 	@Override
 	public String toString() {
 		return vonIndex + ":" + sprung;
 	}
-
 
 	/**
 	 * Index ab dem der Sprung beginnt zu (Index+1)
 	 */
 	private int vonIndex;
 	/**
-	 * Höhe des Sprunges als Color-Int
+	 * Hï¿½he des Sprunges als Color-Int
 	 */
 	private int sprung;
+
 	/**
 	 * @param vonIndex
 	 * @param sprung
@@ -37,8 +36,8 @@ class Sprung{
 		this.vonIndex = vonIndex;
 		this.sprung = sprung;
 	}
-	
-	public void transformiereIndex(int neuerUrsprung){
-		this.vonIndex-=neuerUrsprung;
+
+	public void transformiereIndex(int neuerUrsprung) {
+		this.vonIndex -= neuerUrsprung;
 	}
 }

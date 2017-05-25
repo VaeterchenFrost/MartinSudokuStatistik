@@ -1,12 +1,12 @@
 package sudoku.bild.leser;
 
-class KriteriumOder implements KriteriumBildInfo{
+class KriteriumOder implements KriteriumBildInfo {
 
 	// ========================================================
 	private String name;
-	private KriteriumBildInfo kriterium1; 
-	private KriteriumBildInfo kriterium2; 
-	
+	private KriteriumBildInfo kriterium1;
+	private KriteriumBildInfo kriterium2;
+
 	/**
 	 * @param name
 	 * @param vonFeld
@@ -27,24 +27,25 @@ class KriteriumOder implements KriteriumBildInfo{
 		float grad2 = kriterium2.gibErfuellungsGrad(zahlBildInfo, istHierSystemOut);
 		float grad = grad1;
 
-		if(grad2 > grad1){
+		if (grad2 > grad1) {
 			grad = grad2;
 		}
 
-		if (istHierSystemOut){
-			System.out.println(String.format("%s Erfüllt=%1.1f%% %s Kriterium1=%1.1f%% Kriterium2=%1.1f%%", 
+		if (istHierSystemOut) {
+			System.out.println(String.format("%s Erfï¿½llt=%1.1f%% %s Kriterium1=%1.1f%% Kriterium2=%1.1f%%",
 					getClass().getSimpleName(), grad, this.name, grad1, grad2));
 		}
-		
+
 		return grad;
 	}
 
 	@Override
 	public String toString() {
-		return "KriteriumOder [" + name + ": Kriterium1=" + kriterium1.gibName() + " Kriterium2=" + kriterium2.gibName() + "]";
+		return "KriteriumOder [" + name + ": Kriterium1=" + kriterium1.gibName() + " Kriterium2=" + kriterium2.gibName()
+				+ "]";
 	}
 
-	public String gibName(){
+	public String gibName() {
 		return this.toString();
 	}
 }

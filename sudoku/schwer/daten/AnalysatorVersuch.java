@@ -9,29 +9,28 @@ import sudoku.knacker.bericht.KB_VersuchePaare;
 import sudoku.knacker.bericht.KB_VersuchStart;
 
 /**
- * @author Hendrick
- * Analysiert den sudoku.knacker.bericht.BerichtKnacker auf vorhandene Versuche
+ * @author Hendrick Analysiert den sudoku.knacker.bericht.BerichtKnacker auf
+ *         vorhandene Versuche
  */
 public class AnalysatorVersuch {
 
-
 	/**
 	 * @param bericht
-	 * @return Nummer der maximalen Ebene () 
-	 * 	oder 0 wenn kein gesuchter Eintrag existiert im Bericht
+	 * @return Nummer der maximalen Ebene () oder 0 wenn kein gesuchter Eintrag
+	 *         existiert im Bericht
 	 */
-	private static int gibMaxEbene(BerichtKnacker bericht){
-		for (int i = bericht.size()-1; i >= 0; i--){
+	private static int gibMaxEbene(BerichtKnacker bericht) {
+		for (int i = bericht.size() - 1; i >= 0; i--) {
 			Object o = bericht.get(i);
-			if (o instanceof KB_LoeseInternEnde){
+			if (o instanceof KB_LoeseInternEnde) {
 				KB_LoeseInternEnde bericht1 = (KB_LoeseInternEnde) o;
 				return bericht1.gibEbeneNummer();
 			}
 		}
 		return 0;
 	}
-	
-	private static int gibAnzahlVersuche(int maxEbene){
+
+	private static int gibAnzahlVersuche(int maxEbene) {
 		return maxEbene - EintragsEbenen.gibStandardEbene1();
 	}
 
@@ -43,10 +42,9 @@ public class AnalysatorVersuch {
 		int maxEbene = gibMaxEbene(bericht);
 		int nVersucheOK = gibAnzahlVersuche(maxEbene);
 
-		if (nVersucheOK <= 0){
+		if (nVersucheOK <= 0) {
 			return null;
-		}
-		else{
+		} else {
 			InfoVersucheOK info = new InfoVersucheOK(nVersucheOK);
 			return info;
 		}
@@ -60,38 +58,36 @@ public class AnalysatorVersuch {
 		int maxEbene = gibMaxEbene(bericht);
 		int nVersucheOK = gibAnzahlVersuche(maxEbene);
 
-		if (nVersucheOK == 0){
+		if (nVersucheOK == 0) {
 			return null;
-		}
-		else{
+		} else {
 			ArrayList<InfoVersuche> infos = new ArrayList<>();
 			int nStartsFeld1 = 0;
 			int nStartsFelderPaare = 0;
 			boolean istStartFeldPaar = false;
-				
-			if (maxEbene > EintragsEbenen.gibStandardEbene1()){
-				for (int i = 0; i <bericht.size(); i++){
+
+			if (maxEbene > EintragsEbenen.gibStandardEbene1()) {
+				for (int i = 0; i < bericht.size(); i++) {
 					Object o = bericht.get(i);
-					if (o instanceof KB_VersuchePaare){
+					if (o instanceof KB_VersuchePaare) {
 						KB_VersuchePaare bericht1 = (KB_VersuchePaare) o;
-						 istStartFeldPaar = bericht1.benutzteFeldPaare();
+						istStartFeldPaar = bericht1.benutzteFeldPaare();
 					}
-					if (o instanceof KB_VersuchStart){
-						if (istStartFeldPaar){
+					if (o instanceof KB_VersuchStart) {
+						if (istStartFeldPaar) {
 							nStartsFelderPaare++;
-						}
-						else {
+						} else {
 							nStartsFeld1++;
 						}
 					}
 				}
 			}
 
-			if (nStartsFeld1 > 0){
+			if (nStartsFeld1 > 0) {
 				InfoVersuche info = new InfoVersuche(nStartsFeld1, true);
 				infos.add(info);
 			}
-			if (nStartsFelderPaare > 0){
+			if (nStartsFelderPaare > 0) {
 				InfoVersuche info = new InfoVersuche(nStartsFelderPaare, false);
 				infos.add(info);
 			}

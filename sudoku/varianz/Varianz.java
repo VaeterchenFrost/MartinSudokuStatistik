@@ -14,19 +14,22 @@ import sudoku.logik.SudokuLogik;
 import sudoku.logik.SudokuLogik.SetzeMoeglicheErgebnis;
 
 public class Varianz {
-//	 		Und wieder besser mit awt: (http://www.willemer.de/informatik/java/awtdia.htm)
-//	static private int nMaxVarianten = 100;
+	// Und wieder besser mit awt:
+	// (http://www.willemer.de/informatik/java/awtdia.htm)
+	// static private int nMaxVarianten = 100;
 	static private boolean istSystemOut = false;
 
-	static public Loesungen gibLoesungen(SudokuLogik sudoku, ProtokollMarkierer protokollMarkierer, int maxAnzahl) throws Exc  {
-		if (istSystemOut){
+	static public Loesungen gibLoesungen(SudokuLogik sudoku, ProtokollMarkierer protokollMarkierer, int maxAnzahl)
+			throws Exc {
+		if (istSystemOut) {
 			System.out.println("Varianz.gibLoesungen()");
 			ArrayList<String> kopftexte = Loesung.gibKopftexte();
-			for(String s: kopftexte)	System.out.println(s);
+			for (String s : kopftexte)
+				System.out.println(s);
 		}
-		
+
 		Klugheit klugheit = new Klugheit(true);
-		Loesungen loesungen= new Loesungen();
+		Loesungen loesungen = new Loesungen();
 		try {
 			sucheLoesungen(sudoku, klugheit, protokollMarkierer, new VersuchStarts(), loesungen, maxAnzahl);
 		} catch (SudokuFertig e) {
@@ -37,7 +40,7 @@ public class Varianz {
 		return loesungen;
 	}
 
-	static public boolean loese(SudokuLogik sudoku, ProtokollMarkierer protokollMarkierer) throws Exc  {
+	static public boolean loese(SudokuLogik sudoku, ProtokollMarkierer protokollMarkierer) throws Exc {
 		Klugheit klugheit = new Klugheit(true);
 		try {
 			sucheLoesungen(sudoku, klugheit, protokollMarkierer, new VersuchStarts(), null, 0);
@@ -53,35 +56,35 @@ public class Varianz {
 	 * @param klugheit
 	 * @param protokollMarkierer
 	 * @param erfolgteVersuchStarts
-	 * @param loesungen Bei loesungen==null wird die erste Lösung per Exception "SudokuFertig" gemeldet.
-	 * 					Das sudoku enthält dann diese Lösung. 
-	 * @param maxAnzahl Ist nur relevant bei loesungen != null: 
-	 * 					Ist die maximale Anzahl Lösungen, die gewünscht werden.	 
+	 * @param loesungen
+	 *            Bei loesungen==null wird die erste Lï¿½sung per Exception
+	 *            "SudokuFertig" gemeldet. Das sudoku enthï¿½lt dann diese Lï¿½sung.
+	 * @param maxAnzahl
+	 *            Ist nur relevant bei loesungen != null: Ist die maximale
+	 *            Anzahl Lï¿½sungen, die gewï¿½nscht werden.
 	 * @throws Exc
-	 * @throws SudokuFertig 
+	 * @throws SudokuFertig
 	 */
-	static private void sucheLoesungen(SudokuLogik sudoku, Klugheit klugheit, 
-			ProtokollMarkierer protokollMarkierer,
-			VersuchStarts erfolgteVersuchStarts, Loesungen loesungen, int maxAnzahl) throws Exc, SudokuFertig  {
+	static private void sucheLoesungen(SudokuLogik sudoku, Klugheit klugheit, ProtokollMarkierer protokollMarkierer,
+			VersuchStarts erfolgteVersuchStarts, Loesungen loesungen, int maxAnzahl) throws Exc, SudokuFertig {
 		/*
-	  	  * 1. sudoku.setzeEintraegeAufKlareAlle(); 
-	  	  * 1. a) fertig => n=1;
-	  	  * 1. b) Problem => unlösbar
-	  	  * 1. c) unfertig => 2.
-	  	  * 2. Mithilfe Protokoll und den Ebenen stückweise vorgehen:
-	  	  * 	Alles abbrechbar. Mit allen freien Feldern, mit allen Möglichen: Mögliche Zahl setzen +  sudoku.setzeEintraegeAufKlareAlle()
-	  	  * 	Mit ev. Verzweigungen.
-	  	  */
+		 * 1. sudoku.setzeEintraegeAufKlareAlle(); 1. a) fertig => n=1; 1. b)
+		 * Problem => unlï¿½sbar 1. c) unfertig => 2. 2. Mithilfe Protokoll und
+		 * den Ebenen stï¿½ckweise vorgehen: Alles abbrechbar. Mit allen freien
+		 * Feldern, mit allen Mï¿½glichen: Mï¿½gliche Zahl setzen +
+		 * sudoku.setzeEintraegeAufKlareAlle() Mit ev. Verzweigungen.
+		 */
 
 		// ======================================= Startzustand vermerken
 		int markierungStart = protokollMarkierer.markierungSetzen();
 
-		try{
+		try {
 			// ======================================= Klare treiben
 			while (true) {
 				SetzeMoeglicheErgebnis ergebnis = sudoku.setzeMoegliche(klugheit, false);
 				if (ergebnis.gibProblem() != null) {
-					// Das Sudoku ist versaut: Für diesen Zustand gibt es keine Lösung
+					// Das Sudoku ist versaut: Fï¿½r diesen Zustand gibt es keine
+					// Lï¿½sung
 					protokollMarkierer.markierungAnsteuern(markierungStart);
 					return; // =======================>
 				}
@@ -89,15 +92,15 @@ public class Varianz {
 				if (ergebnis.gibEintrag() != null) {
 					sudoku.setzeEintrag(ergebnis.gibEintrag());
 				}
-				
-				if ( ! sudoku.istUnFertig() ) {
-					// Fertig => Lösung melden oder eintragen 
-					if (loesungen == null){
+
+				if (!sudoku.istUnFertig()) {
+					// Fertig => Lï¿½sung melden oder eintragen
+					if (loesungen == null) {
 						throw new SudokuFertig();
 					}
 					Loesung loesung = new Loesung(erfolgteVersuchStarts, sudoku.gibFeldInfos());
 					loesungen.add(loesung);
-					if(istSystemOut){
+					if (istSystemOut) {
 						System.out.println(loesung.gibText());
 					}
 					protokollMarkierer.markierungAnsteuern(markierungStart);
@@ -105,49 +108,50 @@ public class Varianz {
 				}
 
 				if (ergebnis.gibEintrag() == null) {
-					// Für diesen Zustand gibt es keine logisch eindeutige Lösung (mit der Klugheit)
+					// Fï¿½r diesen Zustand gibt es keine logisch eindeutige
+					// Lï¿½sung (mit der Klugheit)
 					protokollMarkierer.markierungAnsteuern(markierungStart);
 					break; // =======================> unten weiter
 				}
-				
+
 			}
-	
+
 			// ======================================= Weiter versuchen
-			
+
 			FeldNummerListe freieFelder = sudoku.gibFreieFelder();
 			FeldNummer feldNummer = freieFelder.get(0);
 			sudoku.setzeMoegliche(klugheit, false);
 			ArrayList<Integer> moegliche = sudoku.gibFeldInfo(feldNummer).gibMoegliche();
-	
+
 			for (int VersuchNr = 0; VersuchNr < moegliche.size(); VersuchNr++) {
 				// Protokollmarkierung setzen
 				int markierungStartVersuch = protokollMarkierer.markierungSetzen();
-	
-				// Mögliche Zahl setzen
+
+				// Mï¿½gliche Zahl setzen
 				sudoku.setzeMoegliche(klugheit, false);
 				int zahl = moegliche.get(VersuchNr);
 				sudoku.setzeEintrag(new FeldNummerMitZahl(feldNummer, zahl));
-				
+
 				// VersuchStart vermerken
 				FeldInfo feldInfo = sudoku.gibFeldInfo(feldNummer);
 				VersuchStart versuchStart = new VersuchStart(VersuchNr + 1, feldInfo);
 				VersuchStarts versuchStarts2 = new VersuchStarts(erfolgteVersuchStarts, versuchStart);
-				
-				// Weiter suchen ob so wohl eine Lösung möglich ist
+
+				// Weiter suchen ob so wohl eine Lï¿½sung mï¿½glich ist
 				sucheLoesungen(sudoku, klugheit, protokollMarkierer, versuchStarts2, loesungen, maxAnzahl);
-				if (loesungen != null){
-					if (loesungen.gibAnzahl() >= maxAnzahl){
-						// Abbruch wegen sinnlos vieler Lösungen
+				if (loesungen != null) {
+					if (loesungen.gibAnzahl() >= maxAnzahl) {
+						// Abbruch wegen sinnlos vieler Lï¿½sungen
 						break;
 					}
 				}
-				// Protokollmarkierung rücksetzen
+				// Protokollmarkierung rï¿½cksetzen
 				protokollMarkierer.markierungAnsteuern(markierungStartVersuch);
 			} // for (Integer m: moegliche
-		} catch(Exc e){
-			// Unbedingt Protokoll zurückstellen
+		} catch (Exc e) {
+			// Unbedingt Protokoll zurï¿½ckstellen
 			protokollMarkierer.markierungAnsteuern(markierungStart);
-			throw(e);
+			throw (e);
 		}
 		protokollMarkierer.markierungAnsteuern(markierungStart);
 	}

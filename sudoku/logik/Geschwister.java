@@ -6,29 +6,31 @@ import sudoku.kern.feldmatrix.FeldNummerListe;
 import sudoku.kern.feldmatrix.ZahlenListe;
 
 /**
- * @author Hendrick
- * In einer Gruppe gibt es n Felder mit genau denselben n möglichen Zahlen. 
- * Daraus folgt: 
- * - Diese n Zahlen belegen unbedingt die Felder. 
- * - Andere Zahlen in diesen Feldern sind nicht möglich.  
+ * @author Hendrick In einer Gruppe gibt es n Felder mit genau denselben n
+ *         mï¿½glichen Zahlen. Daraus folgt: - Diese n Zahlen belegen unbedingt
+ *         die Felder. - Andere Zahlen in diesen Feldern sind nicht mï¿½glich.
  */
 class Geschwister {
-	/** Zahlen, die die Felder unbedingt belegen
+	/**
+	 * Zahlen, die die Felder unbedingt belegen
 	 */
 	private ArrayList<Integer> zahlen;
-	/** Felder, die unbedingt belegt sind
+	/**
+	 * Felder, die unbedingt belegt sind
 	 */
 	private FeldNummerListe felder;
-	/** Mögliche Zahlen in diesen Feldern, die zu löschen sind
+	/**
+	 * Mï¿½gliche Zahlen in diesen Feldern, die zu lï¿½schen sind
 	 */
 	private ZahlenListe loeschZahlen;
-	
+
 	/**
-	 * @param zahlen Anzahl und Index genau wie felder
-	 * @param felder Anzahl und Index genau wie zahlen
+	 * @param zahlen
+	 *            Anzahl und Index genau wie felder
+	 * @param felder
+	 *            Anzahl und Index genau wie zahlen
 	 */
-	public Geschwister(ArrayList<Integer> zahlen, FeldNummerListe felder, ZahlenListe loeschZahlen)  
-	{
+	public Geschwister(ArrayList<Integer> zahlen, FeldNummerListe felder, ZahlenListe loeschZahlen) {
 		this.zahlen = zahlen;
 		this.felder = felder;
 		this.loeschZahlen = loeschZahlen;
@@ -46,9 +48,9 @@ class Geschwister {
 	public FeldNummerListe gibFelder() {
 		return felder;
 	}
-	
-	public ZahlenListe gibLoeschZahlen(){
+
+	public ZahlenListe gibLoeschZahlen() {
 		return this.loeschZahlen;
 	}
-	
+
 }

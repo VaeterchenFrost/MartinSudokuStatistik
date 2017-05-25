@@ -5,16 +5,15 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 /**
- * @author heroe
- * Die Arrays mit der Weiss-Pixel-Anzahl:
- * Wie oft tritt ein Weiss-Pixel auf Spalte[i] bzw. Zeile[i] auf?
+ * @author heroe Die Arrays mit der Weiss-Pixel-Anzahl: Wie oft tritt ein
+ *         Weiss-Pixel auf Spalte[i] bzw. Zeile[i] auf?
  */
 class LinienWeiss {
 	final int zeilenWeiss[];
 	final int spaltenWeiss[];
 
 	public LinienWeiss(BufferedImage image, Rectangle r) {
-		if (r == null){
+		if (r == null) {
 			r = new Rectangle(0, 0, image.getWidth(), image.getHeight());
 		}
 
@@ -41,28 +40,30 @@ class LinienWeiss {
 		} // for (int iZeile
 	}
 
-	private int gibWeissPixelAnzahl(){
+	private int gibWeissPixelAnzahl() {
 		int nWeissPixel = 0;
 		for (int i = 0; i < zeilenWeiss.length; i++) {
 			nWeissPixel += zeilenWeiss[i];
 		}
 		return nWeissPixel;
 	}
-	
+
 	/**
-	 * @return Anteil der weissen Pixel in Prozent bezogen auf das Pixel-Rechteck
+	 * @return Anteil der weissen Pixel in Prozent bezogen auf das
+	 *         Pixel-Rechteck
 	 */
-	public int gibWeissAnteil(){
+	public int gibWeissAnteil() {
 		int nWeissPixel = gibWeissPixelAnzahl();
 		int nPixel = spaltenWeiss.length * zeilenWeiss.length;
 		int weissAnteil = (nWeissPixel * 100) / nPixel;
 		return weissAnteil;
 	}
-	
+
 	/**
-	 * @return Anteil der schwarzen Pixel in Prozent bezogen auf das Pixel-Rechteck
+	 * @return Anteil der schwarzen Pixel in Prozent bezogen auf das
+	 *         Pixel-Rechteck
 	 */
-	public float gibSchwarzAnteil(){
+	public float gibSchwarzAnteil() {
 		int nWeissPixel = gibWeissPixelAnzahl();
 		int nPixel = spaltenWeiss.length * zeilenWeiss.length;
 		int nSchwarzPixel = nPixel - nWeissPixel;
@@ -70,44 +71,44 @@ class LinienWeiss {
 		return schwarzAnteil;
 	}
 
-	public void systemOut(){
-		System.out.println(String.format("LinienWeiss mit %d Spalten und %d Zeilen", spaltenWeiss.length, zeilenWeiss.length));
-		
-		int maxIndex = Math.max(spaltenWeiss.length, zeilenWeiss.length) -1;
+	public void systemOut() {
+		System.out.println(
+				String.format("LinienWeiss mit %d Spalten und %d Zeilen", spaltenWeiss.length, zeilenWeiss.length));
+
+		int maxIndex = Math.max(spaltenWeiss.length, zeilenWeiss.length) - 1;
 		System.out.print("Indexe: ");
 		for (int i = 0; i <= maxIndex; i++) {
 			System.out.print(String.format("%4d", i));
 		}
 		System.out.println();
-		
+
 		System.out.print("Spalte: ");
 		for (int i = 0; i < spaltenWeiss.length; i++) {
 			System.out.print(String.format("%4d", spaltenWeiss[i]));
 		}
 		System.out.println();
-		
+
 		System.out.print("Zeilen: ");
 		for (int i = 0; i < zeilenWeiss.length; i++) {
 			System.out.print(String.format("%4d", zeilenWeiss[i]));
 		}
 		System.out.println();
 	}
-	
-	static public void systemOutSchwarz(int[] linienWeiss, int schwarzUnter){
+
+	static public void systemOutSchwarz(int[] linienWeiss, int schwarzUnter) {
 		System.out.print("Schwar: ");
-		
+
 		for (int i = 0; i < linienWeiss.length; i++) {
 			int weiss = linienWeiss[i];
 			String s = null;
-			if (weiss < schwarzUnter){
+			if (weiss < schwarzUnter) {
 				s = " ###";
-			}
-			else{
+			} else {
 				s = " ___";
 			}
 			System.out.print(s);
 		}
 		System.out.println();
 	}
-	
+
 }

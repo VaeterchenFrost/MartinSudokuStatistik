@@ -9,17 +9,20 @@ import sudoku.kern.feldmatrix.Feld;
 import sudoku.kern.feldmatrix.FeldListe;
 
 /**
- * @author heroe
- * Es handelt sich um zwei Felder einer Gruppe.
- * In der Gruppe (Zeile, Spalte, Kasten) existiert die eine mögliche Zahl "nur" in genau diesen beiden Feldern.
+ * @author heroe Es handelt sich um zwei Felder einer Gruppe. In der Gruppe
+ *         (Zeile, Spalte, Kasten) existiert die eine mï¿½gliche Zahl "nur" in
+ *         genau diesen beiden Feldern.
  */
 class FeldPaar {
 	/**
-	 * Für die Logiken.
+	 * Fï¿½r die Logiken.
+	 * 
 	 * @param gruppen
-	 * @return Je Zahl, für die es Feldpaare in den Gruppen gibt, ein Map-Eintrag.
-	 * 				Der Map-Eintrag benennt all die FeldPaare, die über die mögliche "Zahl" verbunden sind.
-	 * 				Oder anders gesagt: Er benennt alle Gruppen, die FeldPaare besitzen, die über die mögliche "Zahl" verbunden sind.
+	 * @return Je Zahl, fï¿½r die es Feldpaare in den Gruppen gibt, ein
+	 *         Map-Eintrag. Der Map-Eintrag benennt all die FeldPaare, die ï¿½ber
+	 *         die mï¿½gliche "Zahl" verbunden sind. Oder anders gesagt: Er
+	 *         benennt alle Gruppen, die FeldPaare besitzen, die ï¿½ber die
+	 *         mï¿½gliche "Zahl" verbunden sind.
 	 */
 	static Map<Integer, ArrayList<FeldPaar>> gibZahlenPartner(ArrayList<Gruppe> gruppen) {
 		Map<Integer, ArrayList<FeldPaar>> zahlenPartner = new HashMap<Integer, ArrayList<FeldPaar>>();
@@ -40,7 +43,8 @@ class FeldPaar {
 
 	/**
 	 * @param gruppen
-	 * @param feldPaarGeber Der bestimmt, welche Felder als FeldPaare gelten
+	 * @param feldPaarGeber
+	 *            Der bestimmt, welche Felder als FeldPaare gelten
 	 * @return Alle FeldPaare der gruppen
 	 */
 	static ArrayList<FeldPaar> gibFeldPaare(ArrayList<Gruppe> gruppen, FeldPaarGeber feldPaarGeber) {
@@ -56,7 +60,7 @@ class FeldPaar {
 				for (Integer zahl : moeglicheZahlen) {
 					FeldListe felder = zahlFelderMap.get(zahl);
 					ArrayList<FeldPaar> dieseFeldPaare = feldPaarGeber.gibFeldPaare(gruppe, zahl, felder);
-					if (dieseFeldPaare != null){
+					if (dieseFeldPaare != null) {
 						feldPaare.addAll(dieseFeldPaare);
 					}
 				}
@@ -66,8 +70,8 @@ class FeldPaar {
 	}
 
 	/**
-	 * @author heroe
-	 * Die übergebenen Felder sind ein FeldPaar, wenn es genau 2 Felder gibt (in dieser Gruppe der Felder)
+	 * @author heroe Die ï¿½bergebenen Felder sind ein FeldPaar, wenn es genau 2
+	 *         Felder gibt (in dieser Gruppe der Felder)
 	 */
 	class EchterFeldPaarGeber extends FeldPaarGeber {
 		@Override
@@ -97,7 +101,8 @@ class FeldPaar {
 
 	/**
 	 * @param gruppen
-	 * @return Je Gruppe: Je mögliche Zahl die Felder, die diese mögliche Zahl enthalten. 
+	 * @return Je Gruppe: Je mï¿½gliche Zahl die Felder, die diese mï¿½gliche Zahl
+	 *         enthalten.
 	 */
 	static private Map<Gruppe, Map<Integer, FeldListe>> gibMoeglicheZahlFelder(ArrayList<Gruppe> gruppen) {
 		Map<Gruppe, Map<Integer, FeldListe>> gruppenMap = new HashMap<Gruppe, Map<Integer, FeldListe>>();

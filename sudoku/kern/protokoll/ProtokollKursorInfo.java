@@ -1,19 +1,17 @@
 package sudoku.kern.protokoll;
 
-
 public class ProtokollKursorInfo {
 	private MinMax eintrag;
 	private MinMax ebene;
 
 	private int kursorEintrag;
 	private int kursorEbene;
-	
+
 	private boolean istVorwaertsMoeglich;
 	private boolean istRueckwaertsMoeglich;
 
-	public ProtokollKursorInfo(MinMax eintrag, MinMax ebene, int kursorEintrag,
-			int kursorEbene, boolean istVorwaertsMoeglich,
-			boolean istRueckwaertsMoeglich) {
+	public ProtokollKursorInfo(MinMax eintrag, MinMax ebene, int kursorEintrag, int kursorEbene,
+			boolean istVorwaertsMoeglich, boolean istRueckwaertsMoeglich) {
 		super();
 		this.eintrag = eintrag;
 		this.ebene = ebene;

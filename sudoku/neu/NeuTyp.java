@@ -5,48 +5,51 @@ import java.util.ArrayList;
 import sudoku.logik.Schwierigkeit;
 
 /**
- * @author Hendrick
- * Der Typ eines neuen angeforderten Sudoku
+ * @author Hendrick Der Typ eines neuen angeforderten Sudoku
  */
 public class NeuTyp {
 	/**
 	 * Der Typ eines angeforderten neuen Sudoku
 	 */
-	public enum Typ {LEER, VOLL, VORLAGE, SCHWER};
+	public enum Typ {
+		LEER, VOLL, VORLAGE, SCHWER
+	};
+
 	/**
-	 * @return alle verfügbaren Typen in der Reihenfolge LEER, VOLL, VORLAGE, SCHWER 
+	 * @return alle verfï¿½gbaren Typen in der Reihenfolge LEER, VOLL, VORLAGE,
+	 *         SCHWER
 	 */
 	public static ArrayList<NeuTyp> gibAlleTypen() {
 		ArrayList<NeuTyp> neuTypen = new ArrayList<>();
-		for(NeuTyp.Typ neuTyp: NeuTyp.Typ.values()){
+		for (NeuTyp.Typ neuTyp : NeuTyp.Typ.values()) {
 			switch (neuTyp) {
-			case LEER: 
+			case LEER:
 				neuTypen.add(new NeuTyp(Typ.LEER));
 				break;
-			case VOLL: 
+			case VOLL:
 				neuTypen.add(new NeuTyp(Typ.VOLL));
 				break;
-			case VORLAGE: 
+			case VORLAGE:
 				neuTypen.add(new NeuTyp(Typ.VORLAGE));
 				break;
 			case SCHWER:
-				for(Schwierigkeit typ: Schwierigkeit.values()){
+				for (Schwierigkeit typ : Schwierigkeit.values()) {
 					neuTypen.add(new NeuTyp(typ));
 				}
 				break;
-			default: ;
+			default:
+				;
 			}
 		}
 		return neuTypen;
 	}
 
-
 	private Typ typ;
 	private Schwierigkeit wieSchwer;
 
-	
 	/**
-	 * @param typ LEER oder VOLL
+	 * @param typ
+	 *            LEER oder VOLL
 	 */
 	public NeuTyp(Typ typ) {
 		super();
@@ -55,7 +58,8 @@ public class NeuTyp {
 	}
 
 	/**
-	 * @param typ typisch SCHWER
+	 * @param typ
+	 *            typisch SCHWER
 	 * @param wieSchwer
 	 */
 	public NeuTyp(Schwierigkeit wieSchwer) {
@@ -67,26 +71,31 @@ public class NeuTyp {
 	public Typ gibTyp() {
 		return this.typ;
 	}
-	
+
 	public Schwierigkeit gibWieSchwer() {
 		return this.wieSchwer;
 	}
-	
+
 	public String gibName() {
 		switch (typ) {
-		case LEER: return "Leer";
-		case VOLL: return "Voll";
-		case VORLAGE: return "Nach Vorlage";
-		case SCHWER: return Schwierigkeit.gibName(this.wieSchwer);
-		default: return "???";
+		case LEER:
+			return "Leer";
+		case VOLL:
+			return "Voll";
+		case VORLAGE:
+			return "Nach Vorlage";
+		case SCHWER:
+			return Schwierigkeit.gibName(this.wieSchwer);
+		default:
+			return "???";
 		}
 	}
 
 	@Override
 	public String toString() {
-		if (wieSchwer == null){
+		if (wieSchwer == null) {
 			return " NeuTyp=" + typ;
-		}else{
+		} else {
 			return " NeuTyp=" + typ + ": " + wieSchwer;
 		}
 	}
@@ -96,8 +105,7 @@ public class NeuTyp {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((typ == null) ? 0 : typ.hashCode());
-		result = prime * result
-				+ ((wieSchwer == null) ? 0 : wieSchwer.hashCode());
+		result = prime * result + ((wieSchwer == null) ? 0 : wieSchwer.hashCode());
 		return result;
 	}
 
@@ -122,5 +130,4 @@ public class NeuTyp {
 		return true;
 	}
 
-	
 }

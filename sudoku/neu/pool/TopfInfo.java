@@ -6,19 +6,19 @@ public class TopfInfo {
 	 */
 	private int anzahl;
 	/**
-	 * Anzahl der zweiten Sudokus mit gleicher Schwierigkeit 
+	 * Anzahl der zweiten Sudokus mit gleicher Schwierigkeit
 	 */
 	private int anzahlDoppel;
 	/**
-	 * Größe auf Dateträger
+	 * Grï¿½ï¿½e auf Datetrï¿½ger
 	 */
 	private long groesse;
 	/**
-	 * Lösungszeit
+	 * Lï¿½sungszeit
 	 */
 	private Integer leichtestes;
 	/**
-	 * Lösungszeit
+	 * Lï¿½sungszeit
 	 */
 	private Integer schwerstes;
 	/**
@@ -53,8 +53,8 @@ public class TopfInfo {
 	 * @param aeltestes
 	 * @param juengstes
 	 */
-	public TopfInfo(int anzahl, int anzahlDoppel, long groesse, Integer leichtestes, Integer schwerstes,
-			Long aeltestes, Long juengstes) {
+	public TopfInfo(int anzahl, int anzahlDoppel, long groesse, Integer leichtestes, Integer schwerstes, Long aeltestes,
+			Long juengstes) {
 		super();
 		this.anzahl = anzahl;
 		this.anzahlDoppel = anzahlDoppel;
@@ -94,7 +94,8 @@ public class TopfInfo {
 	}
 
 	/**
-	 * @return Füllstand des Topfes in % der max. möglichen Anzahl Sudokus in diesem Topfe
+	 * @return Fï¿½llstand des Topfes in % der max. mï¿½glichen Anzahl Sudokus in
+	 *         diesem Topfe
 	 */
 	static private int gibFuellstand(int maxAnzahl, int anzahl) {
 		int fuellstand = 0;
@@ -109,13 +110,14 @@ public class TopfInfo {
 	}
 
 	/**
-	 * @return Füllstand der Basis-Sudokus des Topfes in % der max. möglichen Anzahl Bais-Sudokus in diesem Topfe
+	 * @return Fï¿½llstand der Basis-Sudokus des Topfes in % der max. mï¿½glichen
+	 *         Anzahl Bais-Sudokus in diesem Topfe
 	 */
 	public int gibFuellstand1() {
 		int fuellstand = 0;
 
 		if ((schwerstes != null) & (leichtestes != null)) {
-			int maxAnzahl = schwerstes - leichtestes +1;
+			int maxAnzahl = schwerstes - leichtestes + 1;
 			int meineAnzahl = anzahl - anzahlDoppel;
 			fuellstand = gibFuellstand(maxAnzahl, meineAnzahl);
 		}
@@ -123,20 +125,22 @@ public class TopfInfo {
 	}
 
 	/**
-	 * @return Füllstand der Doppel-Sudokus des Topfes in % der max. möglichen Anzahl Basis-Sudokus in diesem Topfe
+	 * @return Fï¿½llstand der Doppel-Sudokus des Topfes in % der max. mï¿½glichen
+	 *         Anzahl Basis-Sudokus in diesem Topfe
 	 */
 	public int gibFuellstand2() {
 		int fuellstand = 0;
 
 		if ((schwerstes != null) & (leichtestes != null)) {
-			int maxAnzahl = schwerstes - leichtestes +1;
+			int maxAnzahl = schwerstes - leichtestes + 1;
 			fuellstand = gibFuellstand(maxAnzahl, anzahlDoppel);
 		}
 		return fuellstand;
 	}
 
 	/**
-	 * @param topf2 Fügt die Werte des Topf2 zu meinen dazu.
+	 * @param topf2
+	 *            Fï¿½gt die Werte des Topf2 zu meinen dazu.
 	 */
 	public void add(TopfInfo topf2) {
 		this.anzahl += topf2.anzahl;

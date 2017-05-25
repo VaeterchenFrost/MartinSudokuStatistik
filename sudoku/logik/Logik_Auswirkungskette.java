@@ -21,16 +21,19 @@ import sudoku.logik.tipinfo.TipInfo;
 import sudoku.logik.tipinfo.TipInfo0;
 
 /**
- * @author heroe
- * Die Logik hat (fast) gar nichts mit FeldPaaren zu tun:
- *  1. Es geht einzig und allein um Felder, die 2 mögliche Zahlen besitzen.
- *  2. Diese Felder sind über eine gemeinsame Zahl miteinander  innerhalb einer Gruppe verbunden.
- * Die Forderung der Feldpaare, dass eine mögliche Zahl nur zweimal je Gruppe auftreten darf, gibt es hier jedenfalls nicht!
+ * @author heroe Die Logik hat (fast) gar nichts mit FeldPaaren zu tun: 1. Es
+ *         geht einzig und allein um Felder, die 2 mï¿½gliche Zahlen besitzen. 2.
+ *         Diese Felder sind ï¿½ber eine gemeinsame Zahl miteinander innerhalb
+ *         einer Gruppe verbunden. Die Forderung der Feldpaare, dass eine
+ *         mï¿½gliche Zahl nur zweimal je Gruppe auftreten darf, gibt es hier
+ *         jedenfalls nicht!
  * 
- * Diese Logik sucht für einen Tip die kürzeste Kette. Im Falle, dass die Logik nicht für einen Tip läuft,
- * nutzt sie die erste beste gefundene Kette. Dadurch kann es (meist) sein, dass in beiden Fällen 
- * verschiedene mögliche Zahlen (bzw. vorgeschlagene Einträge) als Ergebnis erscheinen, wass ein bischen irretieren könnte. 
- * Aber der Lösung des Sudoku schadet das garnichts!
+ *         Diese Logik sucht fï¿½r einen Tip die kï¿½rzeste Kette. Im Falle, dass
+ *         die Logik nicht fï¿½r einen Tip lï¿½uft, nutzt sie die erste beste
+ *         gefundene Kette. Dadurch kann es (meist) sein, dass in beiden Fï¿½llen
+ *         verschiedene mï¿½gliche Zahlen (bzw. vorgeschlagene Eintrï¿½ge) als
+ *         Ergebnis erscheinen, wass ein bischen irretieren kï¿½nnte. Aber der
+ *         Lï¿½sung des Sudoku schadet das garnichts!
  */
 class Logik_Auswirkungskette implements Logik__Interface {
 	static private boolean istSystemOut = false;
@@ -85,7 +88,8 @@ class Logik_Auswirkungskette implements Logik__Interface {
 	}
 
 	/**
-	 * @param kette Wird ausgegeben
+	 * @param kette
+	 *            Wird ausgegeben
 	 * @param titel
 	 */
 	static private void systemOut(ZahlenListe kette, boolean mitVorspann, String titel) {
@@ -128,13 +132,18 @@ class Logik_Auswirkungskette implements Logik__Interface {
 	}
 
 	/**
-	 * @param vorhandeneKette Die bereits zusammengestellten Kettenglieder: 
-	 * 				Jedes Kettenglied benennt die Nummer des Feldes und die Zahl, die hierher geführt hat.
-					Das erste Kettenglied (auf Index 0) besitzt die Zahl, die dann der Eintrag werden müsste.
-	 * @param feldPartner Alle Partner von Feldern, die als ein Kettenglied infrage kommen könnten
-	 * @param sudoku Gibt Felder für FeldNummern
+	 * @param vorhandeneKette
+	 *            Die bereits zusammengestellten Kettenglieder: Jedes
+	 *            Kettenglied benennt die Nummer des Feldes und die Zahl, die
+	 *            hierher gefï¿½hrt hat. Das erste Kettenglied (auf Index 0)
+	 *            besitzt die Zahl, die dann der Eintrag werden mï¿½sste.
+	 * @param feldPartner
+	 *            Alle Partner von Feldern, die als ein Kettenglied infrage
+	 *            kommen kï¿½nnten
+	 * @param sudoku
+	 *            Gibt Felder fï¿½r FeldNummern
 	 * @return Eine Kette oder null, falls keine gefunden werden konnte.
-	 * @throws Exc 
+	 * @throws Exc
 	 */
 	static private ZahlenListe gibKette(ZahlenListe vorhandeneKette, Map<FeldNummer, ZahlenFeldNummern> feldPartner)
 			throws Exc {
@@ -147,8 +156,10 @@ class Logik_Auswirkungskette implements Logik__Interface {
 		int herkunftsZahl = aktuell.gibZahl();
 
 		// > 3: Eine Auswirkungskette besitzt stets mindestens 4 Felder,
-		// denn die beiden Nachbar-Felder des Ende-Feldes müssen dieselbe Zahl als Eintrag erhalten.
-		// Damit können die beiden Nachbar-Felder nicht innerhalb eines Kastens liegen.
+		// denn die beiden Nachbar-Felder des Ende-Feldes mï¿½ssen dieselbe Zahl
+		// als Eintrag erhalten.
+		// Damit kï¿½nnen die beiden Nachbar-Felder nicht innerhalb eines Kastens
+		// liegen.
 		if ((vorhandeneKette.size() > 3) & aktuelleFeldNummer.equals(kettenStart.gibFeldNummer())) {
 			// Der Kreis ist komplett
 			if (herkunftsZahl != kettenStart.gibZahl()) {
@@ -162,18 +173,21 @@ class Logik_Auswirkungskette implements Logik__Interface {
 		}
 
 		ZahlenFeldNummern aktuellePartner = feldPartner.get(aktuelleFeldNummer);
-		// Wir können hier über ein FeldPaar auf einem Feld gelandet sein, dass nicht genau zwei mögliche Zahlen besitzt!
+		// Wir kï¿½nnen hier ï¿½ber ein FeldPaar auf einem Feld gelandet sein, dass
+		// nicht genau zwei mï¿½gliche Zahlen besitzt!
 		// ArrayList<Integer> moegliche = aktuellesFeld.gibMoegliche();
 		// if (moegliche.size() != 2) {
 		// systemOut(vorhandeneKette, String.format(
-		// "Vorhandene Kette führt auf eine Feld, das nicht genau 2 mögliche Zahlen besitzt, sondern %d",
+		// "Vorhandene Kette fï¿½hrt auf eine Feld, das nicht genau 2 mï¿½gliche
+		// Zahlen besitzt, sondern %d",
 		// moegliche.size()));
 		// return null;
 		// }
 
-		// Die Zahl von den genau 2 möglichen Zahlen, die auf dem Weg weiterführen könnte, ermitteln.
+		// Die Zahl von den genau 2 mï¿½glichen Zahlen, die auf dem Weg
+		// weiterfï¿½hren kï¿½nnte, ermitteln.
 		int[] zahlen = aktuellePartner.gibZahlen();
-		// Es gibt hier für jedes Feld Zahlen, mindestens eine.
+		// Es gibt hier fï¿½r jedes Feld Zahlen, mindestens eine.
 		// Mit allen Zahlen, die verbinden
 		for (int iZahl = 0; iZahl < zahlen.length; iZahl++) {
 			int wegZahl = zahlen[iZahl];
@@ -193,7 +207,8 @@ class Logik_Auswirkungskette implements Logik__Interface {
 					for (FeldNummer zielFeldNummer : zielFeldNummern) {
 						ZahlenListe kette = new ZahlenListe(vorhandeneKette);
 						FeldNummerMitZahl testZiel = new FeldNummerMitZahl(zielFeldNummer, wegZahl);
-						// systemOut(String.format("   Idee für TestZiel %s", testZiel));
+						// systemOut(String.format(" Idee fï¿½r TestZiel %s",
+						// testZiel));
 						if (kette.contains(testZiel)) {
 							if (istSystemOut) {
 								systemOut(String.format("%sTestZiel %s ist schon Ketten-Mitglied",
@@ -212,24 +227,30 @@ class Logik_Auswirkungskette implements Logik__Interface {
 			}
 		}
 
-		systemOut(vorhandeneKette, true, "Vorhandene Kette führt mit nicht weiter");
+		systemOut(vorhandeneKette, true, "Vorhandene Kette fï¿½hrt mit nicht weiter");
 		return null;
 	}
 
 	/**
-	 * @param feldPartner Alle Felder mit ihren Partnern, die jeweils in einer Kette sein könnten.
-	 * @param istTip bei true wird die kürzestes Kette gesucht
-	 * @param sudoku Gibt Felder für FeldNummern
-	 * @return Eine Kette oder null, falls keine gefunden werden konnte.
-	 * 				Die Kette startet und endet auf demselben Feld mit derselben Zahl. 
-	 * 				Die andere mögliche Zahl des Star- bzw. Ende-Feldes ist dann schon der Vorschlag für einen Eintrag:
-	 * 				Egal wie die Ketten-Felder, die weder Start noch Ende sind, belegt sind: 
-	 * 				Die andere mögliche Zahl muss im Start- bzw. Ende-Feld gesetzt sein, wenn das Sudoku lösbar ist. 
-	 * @throws Exc 
+	 * @param feldPartner
+	 *            Alle Felder mit ihren Partnern, die jeweils in einer Kette
+	 *            sein kï¿½nnten.
+	 * @param istTip
+	 *            bei true wird die kï¿½rzestes Kette gesucht
+	 * @param sudoku
+	 *            Gibt Felder fï¿½r FeldNummern
+	 * @return Eine Kette oder null, falls keine gefunden werden konnte. Die
+	 *         Kette startet und endet auf demselben Feld mit derselben Zahl.
+	 *         Die andere mï¿½gliche Zahl des Star- bzw. Ende-Feldes ist dann
+	 *         schon der Vorschlag fï¿½r einen Eintrag: Egal wie die
+	 *         Ketten-Felder, die weder Start noch Ende sind, belegt sind: Die
+	 *         andere mï¿½gliche Zahl muss im Start- bzw. Ende-Feld gesetzt sein,
+	 *         wenn das Sudoku lï¿½sbar ist.
+	 * @throws Exc
 	 */
 	static private ZahlenListe gibKette(Map<FeldNummer, ZahlenFeldNummern> feldPartner, boolean istTip,
 			SudokuLogik sudoku) throws Exc {
-		// Auf Index 0 steht die kürzeste Kette
+		// Auf Index 0 steht die kï¿½rzeste Kette
 		ArrayList<ZahlenListe> ketten = new ArrayList<>();
 
 		// Alle Felder durchklappern
@@ -238,12 +259,12 @@ class Logik_Auswirkungskette implements Logik__Interface {
 			ZahlenFeldNummern partner = feldPartner.get(feldNummer);
 
 			int[] zahlen = partner.gibZahlen();
-			// Es gibt hier für jedes Feld Zahlen, mindestens eine.
+			// Es gibt hier fï¿½r jedes Feld Zahlen, mindestens eine.
 			// Mit allen Zahlen, die verbinden
 			for (int iZahl = 0; iZahl < zahlen.length; iZahl++) {
 				int zahl = zahlen[iZahl];
 				if (partner.gibFeldNummernAnzahl(zahl) >= 2) {
-					// Dies Feld ist möglicherweise ein Ketten-Ende-Feld
+					// Dies Feld ist mï¿½glicherweise ein Ketten-Ende-Feld
 
 					// Die StartZahl (die andere als Zahl) ermitteln
 					Feld startFeld = sudoku.gibLogikFeld(feldNummer);
@@ -290,7 +311,7 @@ class Logik_Auswirkungskette implements Logik__Interface {
 				systemOut(ketten.get(iKette), false, "");
 			}
 		}
-		// kürzeste Kette
+		// kï¿½rzeste Kette
 		return ketten.get(0);
 	}
 
@@ -299,9 +320,9 @@ class Logik_Auswirkungskette implements Logik__Interface {
 	 * @param startIndex
 	 * @return Die Kette ab startIndex bis Index 0, gedreht
 	 */
-	static private ZahlenListe gibKetteRueckwaerst (ZahlenListe kette, int startIndex){
+	static private ZahlenListe gibKetteRueckwaerst(ZahlenListe kette, int startIndex) {
 		ZahlenListe ketteNeu = new ZahlenListe();
-		
+
 		for (int i = startIndex; i >= 0; i--) {
 			FeldNummerMitZahl feld = kette.get(i);
 			ketteNeu.add(feld);
@@ -312,15 +333,15 @@ class Logik_Auswirkungskette implements Logik__Interface {
 	/**
 	 * @param kette
 	 * @param startIndex
-	 * @return Die Kette als Auswirkungskette ab startIndex bis zum Ende 
+	 * @return Die Kette als Auswirkungskette ab startIndex bis zum Ende
 	 */
-	static private ZahlenListe gibKetteVorwaerst (ZahlenListe kette, int startIndex){
+	static private ZahlenListe gibKetteVorwaerst(ZahlenListe kette, int startIndex) {
 		ZahlenListe ketteNeu = new ZahlenListe();
-		
+
 		for (int i = startIndex; i < kette.size(); i++) {
 			FeldNummerMitZahl feld = kette.get(i);
 			int iZahl = i + 1;
-			if (iZahl == kette.size()){
+			if (iZahl == kette.size()) {
 				iZahl = 0;
 			}
 			FeldNummerMitZahl zahl = kette.get(iZahl);
@@ -330,23 +351,24 @@ class Logik_Auswirkungskette implements Logik__Interface {
 		return ketteNeu;
 	}
 
-	static private String gibAuswirkung(ZahlenListe kette){
+	static private String gibAuswirkung(ZahlenListe kette) {
 		String s = "";
 		for (int i = 0; i < kette.size(); i++) {
 			FeldNummerMitZahl feld = kette.get(i);
-			if (!s.isEmpty()){
+			if (!s.isEmpty()) {
 				s += " => ";
 			}
-			s += feld; 
+			s += feld;
 		}
 		return s;
 	}
 
 	// ===========================================================
 	/**
-	 * @author heroe
-	 * Die übergebenen Felder sind alles Felder der einen Gruppe, die alle die eine mögliche Zahl besitzen.
-	 * Die übergebenen Felder werden zu FeldPaaren kombiniert, wenn sie jeweils genau 2 mögliche Zahlen enthalten.
+	 * @author heroe Die ï¿½bergebenen Felder sind alles Felder der einen Gruppe,
+	 *         die alle die eine mï¿½gliche Zahl besitzen. Die ï¿½bergebenen Felder
+	 *         werden zu FeldPaaren kombiniert, wenn sie jeweils genau 2
+	 *         mï¿½gliche Zahlen enthalten.
 	 */
 	class KettenFeldPaarGeber extends FeldPaarGeber {
 		@Override
@@ -358,7 +380,8 @@ class Logik_Auswirkungskette implements Logik__Interface {
 				}
 			}
 			if (zweier.size() < 2) {
-				// Wenn es nicht wenigstens zwei Felder der Zahl in der einen Gruppe gibt, gibt es hierin keine FeldPaare.
+				// Wenn es nicht wenigstens zwei Felder der Zahl in der einen
+				// Gruppe gibt, gibt es hierin keine FeldPaare.
 				return null;
 			}
 
@@ -387,7 +410,6 @@ class Logik_Auswirkungskette implements Logik__Interface {
 		}
 	}
 
-	
 	private class TipInfoKette extends TipInfo0 {
 		private FeldNummerMitZahl sollEintrag;
 		private ZahlenListe kette;
@@ -399,18 +421,18 @@ class Logik_Auswirkungskette implements Logik__Interface {
 		}
 
 		public EinTipText[] gibTip() {
-			String s1a = String.format("Das Verschluß-Feld%s der Kette", this.sollEintrag.gibFeldNummer());
+			String s1a = String.format("Das Verschluï¿½-Feld%s der Kette", this.sollEintrag.gibFeldNummer());
 			EinTipText t1 = new EinTipText(s1a, kette.toString());
 
 			int verschlussZahl = kette.get(kette.size() - 1).gibZahl();
 			FeldNummerMitZahl nachbarStart = kette.get(1);
 			FeldNummerMitZahl nachbarEnde = kette.get(kette.size() - 2);
-			String s2a = String.format("ist über nur die EINE Zahl %d ", verschlussZahl);
+			String s2a = String.format("ist ï¿½ber nur die EINE Zahl %d ", verschlussZahl);
 			String s2b = String.format("mit seinen BEIDEN Nachbarn Feld%s und Feld%s verbunden.",
 					nachbarStart.gibFeldNummer(), nachbarEnde.gibFeldNummer());
 			EinTipText t2 = new EinTipText(s2a, s2b);
 
-			String s3a = String.format("Daher ist im Feld%s einzig die Zahl %d möglich.",
+			String s3a = String.format("Daher ist im Feld%s einzig die Zahl %d mï¿½glich.",
 					this.sollEintrag.gibFeldNummer(), sollEintrag.gibZahl());
 			EinTipText t3 = new EinTipText(s3a, null);
 
@@ -420,12 +442,12 @@ class Logik_Auswirkungskette implements Logik__Interface {
 					beispielFeldZahl.gibFeldNummer());
 			EinTipText t4 = new EinTipText(s4a, null);
 
-			ZahlenListe ketteRueckwaerts = gibKetteRueckwaerst (kette, beispielFeldIndex);
-			ZahlenListe ketteVorwaerts = gibKetteVorwaerst (kette, beispielFeldIndex);
+			ZahlenListe ketteRueckwaerts = gibKetteRueckwaerst(kette, beispielFeldIndex);
+			ZahlenListe ketteVorwaerts = gibKetteVorwaerst(kette, beispielFeldIndex);
 
-			EinTipText t5 = new EinTipText(gibAuswirkung(ketteRueckwaerts),null);
-			EinTipText t6 = new EinTipText(gibAuswirkung(ketteVorwaerts),null);
-			 
+			EinTipText t5 = new EinTipText(gibAuswirkung(ketteRueckwaerts), null);
+			EinTipText t6 = new EinTipText(gibAuswirkung(ketteVorwaerts), null);
+
 			EinTipText[] sArray = new EinTipText[] { t1, t2, t3, t4, t5, t6 };
 			return sArray;
 		}
@@ -486,28 +508,28 @@ class Logik_Auswirkungskette implements Logik__Interface {
 
 	@Override
 	public String[] gibWo() {
-		return new String[] { "Es handelt sich nur um Felder mit genau 2 möglichen Zahlen.",
+		return new String[] { "Es handelt sich nur um Felder mit genau 2 mï¿½glichen Zahlen.",
 				"Es handelt sich nur um Feldpaare:",
-				"Es gibt in einer der 9-Felder-Gruppen eines Feldes mind. ein weiteres Feld mit einer der möglichen Zahlen des Feldes." };
+				"Es gibt in einer der 9-Felder-Gruppen eines Feldes mind. ein weiteres Feld mit einer der mï¿½glichen Zahlen des Feldes." };
 	}
 
 	@Override
 	public String[] gibSituationAbstrakt() {
 		return new String[] { "In einem Feld einer Kette von Feldern ist eine Zahl festgelegt",
-				"unabhängig davon welche Alternative in einem anderen Feld der Kette gewählt wird." };
+				"unabhï¿½ngig davon welche Alternative in einem anderen Feld der Kette gewï¿½hlt wird." };
 	}
 
 	@Override
 	public String[] gibSituation() {
 		return new String[] { "Die Feldpaare bilden eine Kette. die geschlossen ist:",
-				"- 'Normale' Kettenfelder liegen mit beiden möglichen Zahlen in der Kette.",
-				"- Das Verschlußfeld liegt nur mit einer möglichen Zahl in der Kette.",
-				"Über diese eine mögliche Zahl ist das Verschlussfeld Feldpaar zu seinen beiden Ketten-Nachbar-Feldern." };
+				"- 'Normale' Kettenfelder liegen mit beiden mï¿½glichen Zahlen in der Kette.",
+				"- Das Verschluï¿½feld liegt nur mit einer mï¿½glichen Zahl in der Kette.",
+				"ï¿½ber diese eine mï¿½gliche Zahl ist das Verschlussfeld Feldpaar zu seinen beiden Ketten-Nachbar-Feldern." };
 	}
 
 	@Override
 	public String gibErgebnis() {
-		return "Die nicht verkette mögliche Zahl des Verschlußfeldes ist ein Eintrag.";
+		return "Die nicht verkette mï¿½gliche Zahl des Verschluï¿½feldes ist ein Eintrag.";
 	}
 
 	@Override
@@ -518,15 +540,17 @@ class Logik_Auswirkungskette implements Logik__Interface {
 	@Override
 	public LogikErgebnis laufen(boolean istTip, List<TipInfo> ignorierTips) throws Exc {
 		KettenFeldPaarGeber feldPaarGeber = new KettenFeldPaarGeber();
-		// Die Ketten-FeldPaare, die paareweise über eine Zahl (in einer Gruppe) verbunden sind.
-		// Jedes der Felder besitzt genau zwei mögliche Zahlen.
+		// Die Ketten-FeldPaare, die paareweise ï¿½ber eine Zahl (in einer Gruppe)
+		// verbunden sind.
+		// Jedes der Felder besitzt genau zwei mï¿½gliche Zahlen.
 		ArrayList<FeldPaar> feldPaare = FeldPaar.gibFeldPaare(gruppen, feldPaarGeber);
 		systemOut(feldPaare);
 
 		Map<FeldNummer, ZahlenFeldNummern> feldPartner = gibFeldPartner(feldPaare);
 		systemOut(feldPartner);
-		// ZahlenFeldNummern moeglicheKettenEnden = gibMoeglicheKettenEnden(feldPartner);
-		// systemOut(moeglicheKettenEnden, "Mögliche Ketten-End-Felder");
+		// ZahlenFeldNummern moeglicheKettenEnden =
+		// gibMoeglicheKettenEnden(feldPartner);
+		// systemOut(moeglicheKettenEnden, "Mï¿½gliche Ketten-End-Felder");
 		//
 		ZahlenListe kette = gibKette(feldPartner, istTip, sudoku);
 
@@ -540,8 +564,9 @@ class Logik_Auswirkungskette implements Logik__Interface {
 				tipInfo = new TipInfoKette(sollEintrag, kette);
 			}
 
-			// Hier kann man wohl nur eine einzige pauschale Zeit für diese Logik annehmen.
-			// Die könnte höchstens von der Anzahl der freien Felder abhängen.
+			// Hier kann man wohl nur eine einzige pauschale Zeit fï¿½r diese
+			// Logik annehmen.
+			// Die kï¿½nnte hï¿½chstens von der Anzahl der freien Felder abhï¿½ngen.
 			GruppenLaeufeListe gruppenLaeufeListe = new GruppenLaeufeListe(null);
 			LogikErgebnis ergebnis = new LogikErgebnis(gruppenLaeufeListe, sollEintrag, null, tipInfo);
 			return ergebnis;

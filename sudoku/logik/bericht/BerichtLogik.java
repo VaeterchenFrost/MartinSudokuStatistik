@@ -4,27 +4,27 @@ import java.util.ArrayList;
 
 /**
  * @author Hendrick
- * Der Bericht dient der Ermittlung der Lösungszeit des Menschen für das Sudoku. 
- * Der Bericht bekommt eine Info für jede Logik, die Anteil am Zustandekommen der Lösung des Sudoku hat:
- * Entweder das Erkennen eines neuen Soll-Eintrags oder das Löschen von Möglichen.
+ * Der Bericht dient der Ermittlung der Lï¿½sungszeit des Menschen fï¿½r das Sudoku. 
+ * Der Bericht bekommt eine Info fï¿½r jede Logik, die Anteil am Zustandekommen der Lï¿½sung des Sudoku hat:
+ * Entweder das Erkennen eines neuen Soll-Eintrags oder das Lï¿½schen von Mï¿½glichen.
  * 
- * Die Elemente des Berichts dürfen keine Verweise auf Felder beinhalten,
- * denn der Bericht wird rausgegeben (an Schwierigkeit). Dort könnten die Felder geändert werden!
+ * Die Elemente des Berichts dï¿½rfen keine Verweise auf Felder beinhalten,
+ * denn der Bericht wird rausgegeben (an Schwierigkeit). Dort kï¿½nnten die Felder geï¿½ndert werden!
  */
 /**
- * @author heroe
- * Dieser Bericht beinhaltet die Infos zu den Logikläufen innerhalb eines SudokuLogik.setzeMoegliche().
- * Er wird insbesondere genutzt für die Ermittlung der Sudoku-Lösungszeit.
+ * @author heroe Dieser Bericht beinhaltet die Infos zu den Logiklï¿½ufen
+ *         innerhalb eines SudokuLogik.setzeMoegliche(). Er wird insbesondere
+ *         genutzt fï¿½r die Ermittlung der Sudoku-Lï¿½sungszeit.
  */
 @SuppressWarnings("serial")
-public class BerichtLogik extends ArrayList<Object>{
+public class BerichtLogik extends ArrayList<Object> {
 
 	public BerichtLogik() {
 	}
 
-	public void systemOut(){
+	public void systemOut() {
 		System.out.println("BerichtLogik.systemOut() -------------------------------------------");
-		for (int i= 0; i< this.size(); i++) {
+		for (int i = 0; i < this.size(); i++) {
 			System.out.println(this.get(i));
 		}
 	}

@@ -16,18 +16,19 @@ import sudoku.logik.tipinfo.TipInfo0;
 
 class LogikTeilMengeFestN implements Logik__Interface {
 	static private boolean istSystemOut = false;
-	static private void systemOut(String s){
-		if (istSystemOut){
+
+	static private void systemOut(String s) {
+		if (istSystemOut) {
 			System.out.println(s);
 		}
 	}
 
-	private void systemOut2(String titel, ArrayList<Gruppe> gruppen){
+	private void systemOut2(String titel, ArrayList<Gruppe> gruppen) {
 		systemOut(String.format("%s %s %d %s", titel, this.gibKurzName(), anzahlZahlen, this.getClass().getName()));
-		if (gruppen == null){
+		if (gruppen == null) {
 			return;
 		}
-		if (anzahlZahlen > 2){
+		if (anzahlZahlen > 2) {
 			return;
 		}
 		for (int i = 0; i < gruppen.size(); i++) {
@@ -35,10 +36,11 @@ class LogikTeilMengeFestN implements Logik__Interface {
 			systemOut(String.format("%d: Gruppe=%s", i, gruppe.gibTyp()));
 		}
 	}
-	
+
 	/**
 	 * @param anzahlZahlen
-	 * @return Die id für diese Logik. Diese Logiken müssen im enum Logik nicht hintereinander stehen! 
+	 * @return Die id fï¿½r diese Logik. Diese Logiken mï¿½ssen im enum Logik nicht
+	 *         hintereinander stehen!
 	 */
 	static private Logik_ID gibLogikID(int anzahlZahlen) {
 		String name2 = Logik_ID.TEILMENGEFEST2.name();
@@ -56,9 +58,13 @@ class LogikTeilMengeFestN implements Logik__Interface {
 		final String textInGruppe;
 
 		/**
-		 * @param mitSpieler Sind diejenigen der Geschwisterlogik - ohne die des solistErgebnis
+		 * @param mitSpieler
+		 *            Sind diejenigen der Geschwisterlogik - ohne die des
+		 *            solistErgebnis
 		 * @param geschwister
-		 * @param textInGruppe beschreibt die Gruppe in der die Geschwister gefunden wurden
+		 * @param textInGruppe
+		 *            beschreibt die Gruppe in der die Geschwister gefunden
+		 *            wurden
 		 * @param infoSudoku
 		 */
 		private TipInfoTeilMengeFestN(Logik_ID logik, int anzahlZahlen, FeldNummerListe mitSpieler,
@@ -89,7 +95,7 @@ class LogikTeilMengeFestN implements Logik__Interface {
 			EinTipText tipText = new EinTipText(s1, s2);
 			texte.add(tipText);
 
-			String s3 = "In den anderen Feldern der Gruppe werden diese Zahlen gelöscht.";
+			String s3 = "In den anderen Feldern der Gruppe werden diese Zahlen gelï¿½scht.";
 			EinTipText tipText2 = new EinTipText(s3, "");
 			texte.add(tipText2);
 
@@ -142,31 +148,31 @@ class LogikTeilMengeFestN implements Logik__Interface {
 
 	@Override
 	public String gibName() {
-		String s = String.format("Teilmenge ist fest für %d Zahlen", anzahlZahlen);
+		String s = String.format("Teilmenge ist fest fï¿½r %d Zahlen", anzahlZahlen);
 		return s;
 	}
 
 	@Override
 	public String[] gibWo() {
-		return new String[]{"In einer Gruppe (Zeile, Spalte bzw. Kasten)"};
+		return new String[] { "In einer Gruppe (Zeile, Spalte bzw. Kasten)" };
 	}
 
 	@Override
 	public String[] gibSituationAbstrakt() {
-		String s = String.format("Die Teilmenge für %d Zahlen ist festgelegt.", anzahlZahlen);
-		return new String[]{s};
+		String s = String.format("Die Teilmenge fï¿½r %d Zahlen ist festgelegt.", anzahlZahlen);
+		return new String[] { s };
 	}
 
 	@Override
 	public String[] gibSituation() {
-		String s = String.format("Es gibt %d freie Felder mit denselben %d möglichen Zahlen.", anzahlZahlen,
+		String s = String.format("Es gibt %d freie Felder mit denselben %d mï¿½glichen Zahlen.", anzahlZahlen,
 				anzahlZahlen);
-		return new String[]{s};
+		return new String[] { s };
 	}
 
 	@Override
 	public String gibErgebnis() {
-		String s = "In allen anderen Feldern (der Gruppe) werden diese Zahlen aus den möglichen gelöscht.";
+		String s = "In allen anderen Feldern (der Gruppe) werden diese Zahlen aus den mï¿½glichen gelï¿½scht.";
 		return s;
 	}
 
@@ -204,7 +210,7 @@ class LogikTeilMengeFestN implements Logik__Interface {
 
 				gruppenLaeufeListe.add(gruppe.gibTyp());
 
-				// Gibt es Felder in dieser Gruppe mit genau n möglichen Zahlen?
+				// Gibt es Felder in dieser Gruppe mit genau n mï¿½glichen Zahlen?
 				FeldListe felderMitNMoeglichen = new FeldListe();
 				for (int iFeld = 0; iFeld < gruppe.size(); iFeld++) {
 					Feld feld = gruppe.get(iFeld);
@@ -213,13 +219,17 @@ class LogikTeilMengeFestN implements Logik__Interface {
 					}
 				}
 
-//				systemOut(String.format("%s: n=%d Gruppe=%s", this.getClass().getSimpleName(), anzahlZahlen, gruppe.gibTyp()));
-//				if ( (anzahlZahlen == 2) & (felderMitNMoeglichen.size() == 2) & (gruppe.gibTyp() == Gruppe.Typ.ZEILE) ){
-//					int j = 0;
-//					int g = j;
-//				}
+				// systemOut(String.format("%s: n=%d Gruppe=%s",
+				// this.getClass().getSimpleName(), anzahlZahlen,
+				// gruppe.gibTyp()));
+				// if ( (anzahlZahlen == 2) & (felderMitNMoeglichen.size() == 2)
+				// & (gruppe.gibTyp() == Gruppe.Typ.ZEILE) ){
+				// int j = 0;
+				// int g = j;
+				// }
 
-				// Gibt es in diesen Feldern mit n möglichen Zahlen Felder mit genau denselben n Zahlen?
+				// Gibt es in diesen Feldern mit n mï¿½glichen Zahlen Felder mit
+				// genau denselben n Zahlen?
 				for (int iBasisFeld = 0; iBasisFeld < felderMitNMoeglichen.size(); iBasisFeld++) {
 					Feld basisFeld = felderMitNMoeglichen.get(iBasisFeld);
 					ArrayList<Integer> basisMoegliche = basisFeld.gibMoegliche();
@@ -233,17 +243,19 @@ class LogikTeilMengeFestN implements Logik__Interface {
 							geschwister.add(feld);
 						}
 					} // for (int iFeld
-						// Das BasisFeld gehört sowieso zu den Geschwistern:
+						// Das BasisFeld gehï¿½rt sowieso zu den Geschwistern:
 					geschwister.add(0, basisFeld);
 
 					if (geschwister.size() == anzahlZahlen) {
-						
+
 						// Jetzt sind n Felder mit n gleichen Zahlen gefunden.
-						// Jetzt kommt noch die Frage, ob es denn in den anderen Feldern der Gruppe
-						// in ihren möglichen Zahlen eine der basisMöglichen gibt.
+						// Jetzt kommt noch die Frage, ob es denn in den anderen
+						// Feldern der Gruppe
+						// in ihren mï¿½glichen Zahlen eine der basisMï¿½glichen
+						// gibt.
 						ZahlenListe loeschZahlen = new ZahlenListe();
 						for (Feld feld : gruppe) {
-							if ( feld.istFrei() & ( ! geschwister.contains(feld)) ) {
+							if (feld.istFrei() & (!geschwister.contains(feld))) {
 								ArrayList<Integer> feldMoegliche = feld.gibMoegliche();
 
 								for (Integer basisMoeglich : basisMoegliche) {

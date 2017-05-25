@@ -3,9 +3,8 @@ package sudoku.bedienung;
 import sudoku.kern.protokoll.ProtokollKursorInfo;
 
 /**
- * @author Hendrick
- * Das ist ein Bedienelement für das Sudoku, das gesperrt sein muss 
- * während eine Sudoku-Aktion jäuft
+ * @author Hendrick Das ist ein Bedienelement fï¿½r das Sudoku, das gesperrt sein
+ *         muss wï¿½hrend eine Sudoku-Aktion jï¿½uft
  */
 public interface BedienElement {
 	/**
@@ -14,7 +13,7 @@ public interface BedienElement {
 	public abstract void sperre();
 
 	/**
-	 * Entsperrt das Bedienelement 
+	 * Entsperrt das Bedienelement
 	 */
 	public abstract void entsperre(boolean istVorgabenMin, ProtokollKursorInfo protokollKursorInfo);
 

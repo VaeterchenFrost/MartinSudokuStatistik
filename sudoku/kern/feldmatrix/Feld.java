@@ -11,35 +11,38 @@ import sudoku.kern.feldmatrix.FeldListe.AnzahlEintraege;
  * @author heroe
  *
  */
-public class Feld  implements Comparable<Feld> {
+public class Feld implements Comparable<Feld> {
 
 	private FeldNummer feldNummer;
-	// Das Setzen eines Eintrags erfolgt auf einer Ebene: So werden Versuche dokumentiert.
+	// Das Setzen eines Eintrags erfolgt auf einer Ebene: So werden Versuche
+	// dokumentiert.
 	private EintragsEbenen ebenen = null;
-	// Der protokolliert das Setzen von Einträgen
+	// Der protokolliert das Setzen von Eintrï¿½gen
 	private ProtokollSchreiber protokollSchreiber;
-	// In die Zukunft gedacht: Wnn mehrere 9x9-Sudokus miteinander verwoben sind.
+	// In die Zukunft gedacht: Wnn mehrere 9x9-Sudokus miteinander verwoben
+	// sind.
 	private FeldNummer offset = null;
-	
-	// Alle Felder (auch ich selbst). Für aktualisiereEbeneNachEintragLoeschen
+
+	// Alle Felder (auch ich selbst). Fï¿½r aktualisiereEbeneNachEintragLoeschen
 	private FeldListe sudokuFelder;
 	// 0 == keine
 	private int vorgabe;
-	// die durch reset gesetzte Vorgabe 
+	// die durch reset gesetzte Vorgabe
 	private Integer resetVorgabe;
 	// null == keiner
 	private Eintrag eintrag;
-	// Die in diesem Feld "noch" möglichen Zahlen
+	// Die in diesem Feld "noch" mï¿½glichen Zahlen
 	private ArrayList<Integer> moegliche;
 	/**
-	 * Wenn in einer Zeile bzw. Spalte bzw. in einem Kasten eine meiner möglichen Zahlen nur noch 
-	 * in einem einzigen anderen Feld möglich ist, so ist dies andere Feld FeldPartner zu mir.
-	 * Die ZahlenFeldNummern zeigen auf diese FeldPartner.
+	 * Wenn in einer Zeile bzw. Spalte bzw. in einem Kasten eine meiner
+	 * mï¿½glichen Zahlen nur noch in einem einzigen anderen Feld mï¿½glich ist, so
+	 * ist dies andere Feld FeldPartner zu mir. Die ZahlenFeldNummern zeigen auf
+	 * diese FeldPartner.
 	 */
 	private ZahlenFeldNummern feldPartner;
 	// null=keine, false=passiv, true=aktiv
 	private Boolean markierung;
-	
+
 	public Feld(FeldNummer offset, FeldNummer aFeldindex, EintragsEbenen ebenenObjekt) {
 		this.offset = offset;
 		this.feldNummer = aFeldindex;
@@ -51,215 +54,241 @@ public class Feld  implements Comparable<Feld> {
 		reset();
 	}
 
-	void setzeAlleFelder(FeldListe felder){
+	void setzeAlleFelder(FeldListe felder) {
 		sudokuFelder = felder;
 	}
-	
-	public void setzeProtokollSchreiber(ProtokollSchreiber protokollSchreiber){
+
+	public void setzeProtokollSchreiber(ProtokollSchreiber protokollSchreiber) {
 		this.protokollSchreiber = protokollSchreiber;
 	}
-	
+
 	// Beginn eines neuen Spiels
-	public void reset(){
+	public void reset() {
 		resetVorgabe = null;
-		vorgabe=0;
-		eintrag=null;
+		vorgabe = 0;
+		eintrag = null;
 		loescheMoegliche();
 		markierung = null;
 	}
 
-	public void setzeMarkierung(Boolean markierung){
+	public void setzeMarkierung(Boolean markierung) {
 		this.markierung = markierung;
 	}
 
-	public void resetFeldBerichte(){
+	public void resetFeldBerichte() {
 		loescheMoegliche();
 	}
-	
-	public String gibNameFeldNummer(){
-		String sOffsetZeile = "";
-		String sOffsetSpalte= "";
 
-		if (offset != null){
-			sOffsetZeile = String.valueOf(offset.zeile)+ ":";
-			sOffsetSpalte= String.valueOf(offset.spalte) + ":";
+	public String gibNameFeldNummer() {
+		String sOffsetZeile = "";
+		String sOffsetSpalte = "";
+
+		if (offset != null) {
+			sOffsetZeile = String.valueOf(offset.zeile) + ":";
+			sOffsetSpalte = String.valueOf(offset.spalte) + ":";
 		}
 		String s = String.format("[Z%s%d,S%s%d]", sOffsetZeile, feldNummer.zeile, sOffsetSpalte, feldNummer.spalte);
 		return s;
 	}
-	public String gibName(){
+
+	public String gibName() {
 		String s = "Feld" + gibNameFeldNummer();
 		return s;
 	}
-	public FeldNummer gibFeldNummer(){
+
+	public FeldNummer gibFeldNummer() {
 		return feldNummer;
 	}
-	public int gibZeile(){
+
+	public int gibZeile() {
 		return feldNummer.zeile;
 	}
-	public int gibSpalte(){
+
+	public int gibSpalte() {
 		return feldNummer.spalte;
 	}
-	public int gibVorgabe(){
+
+	public int gibVorgabe() {
 		return vorgabe;
 	}
-	public Integer gibResetVorgabe(){
+
+	public Integer gibResetVorgabe() {
 		return resetVorgabe;
 	}
-	public int gibEintrag(){
-		if (eintrag == null){
+
+	public int gibEintrag() {
+		if (eintrag == null) {
 			return 0;
 		}
 		return eintrag.gibZahl();
 	}
-	public int gibEintragEbene(){
-		if (eintrag == null){
+
+	public int gibEintragEbene() {
+		if (eintrag == null) {
 			return 0;
 		}
 		return eintrag.gibEbene();
 	}
-	public ZahlenFeldNummern gibFeldPartner(){
+
+	public ZahlenFeldNummern gibFeldPartner() {
 		return feldPartner;
 	}
-	public boolean istEintragEbenenStart(){
-		if (eintrag == null){
+
+	public boolean istEintragEbenenStart() {
+		if (eintrag == null) {
 			return false;
 		}
 		return eintrag.istEbenenStart();
 	}
-	public boolean istEintragVersuchStart(){
-		if (eintrag == null){
+
+	public boolean istEintragVersuchStart() {
+		if (eintrag == null) {
 			return false;
 		}
 		return eintrag.istVersuchsStart();
 	}
-	public  ArrayList<Integer> gibMoegliche(){
+
+	public ArrayList<Integer> gibMoegliche() {
 		return moegliche;
 	}
-	public int gibMoeglicheAnzahl(){
-		if (moegliche == null){
+
+	public int gibMoeglicheAnzahl() {
+		if (moegliche == null) {
 			return 0;
 		}
 		return moegliche.size();
 	}
+
 	/**
-	 * @return null oder die eine mögliche Zahl
+	 * @return null oder die eine mï¿½gliche Zahl
 	 */
 	public FeldNummerMitZahl gibKlareZahl() {
 		FeldNummerMitZahl ergebnis = null;
-		if (gibMoeglicheAnzahl() == 1){
+		if (gibMoeglicheAnzahl() == 1) {
 			int zahl = moegliche.get(0);
 			ergebnis = new FeldNummerMitZahl(this.feldNummer, zahl);
 		}
 		return ergebnis;
 	}
 
-	public String gibMoeglicheAlsString(){
+	public String gibMoeglicheAlsString() {
 		String s = new String();
-		for (int i=0; i<moegliche.size(); i++){
+		for (int i = 0; i < moegliche.size(); i++) {
 			s += " ";
 			s += moegliche.get(i);
 		}
 		return s;
 	}
-	public  Boolean gibMarkierung(){
+
+	public Boolean gibMarkierung() {
 		return markierung;
 	}
-	
-	public boolean istVorgabe(){
+
+	public boolean istVorgabe() {
 		return vorgabe > 0;
 	}
-	public boolean istEintrag(){
+
+	public boolean istEintrag() {
 		return eintrag != null;
 	}
-	public boolean istEintragAlsTip(){
-		if (eintrag == null){
+
+	public boolean istEintragAlsTip() {
+		if (eintrag == null) {
 			return false;
-		}
-		else {
+		} else {
 			return eintrag.istTipZahl();
 		}
 	}
-	public boolean istFrei(){
+
+	public boolean istFrei() {
 		return (vorgabe == 0) && (eintrag == null);
 	}
-	public boolean istFeldPaar(){
+
+	public boolean istFeldPaar() {
 		return (istFrei() && (feldPartner != null));
 	}
-	public boolean istMoeglich(int zahl){
-		return  (istFrei() && (moegliche.contains(new Integer(zahl))));
+
+	public boolean istMoeglich(int zahl) {
+		return (istFrei() && (moegliche.contains(new Integer(zahl))));
 	}
-	
+
 	/**
-	 * @return true wenn das Feld frei ist und (nur) genau eine mögliche Zahl besitzt
+	 * @return true wenn das Feld frei ist und (nur) genau eine mï¿½gliche Zahl
+	 *         besitzt
 	 */
-	public boolean istKlar(){
+	public boolean istKlar() {
 		return (istFrei() && (moegliche.size() == 1));
 	}
-	
-	// Setzt "nur" den Eintrag dieses Feldes zurück: Ohne logischen Bezug zum Versuch.
-	public void resetEintrag(){
+
+	// Setzt "nur" den Eintrag dieses Feldes zurï¿½ck: Ohne logischen Bezug zum
+	// Versuch.
+	public void resetEintrag() {
 		eintrag = null;
 	}
-	
+
 	/**
-	 * Vermerkt, dass ich mit einem anderen Feld (mit feldNummer) über die mögliche Zahl zahl ein FeldPaar bin. 
+	 * Vermerkt, dass ich mit einem anderen Feld (mit feldNummer) ï¿½ber die
+	 * mï¿½gliche Zahl zahl ein FeldPaar bin.
+	 * 
 	 * @param zahl
 	 * @param feld
 	 */
-	public void setzeFeldPaar(int zahl, FeldNummer feldNummer){
-		if (feldPartner == null){
+	public void setzeFeldPaar(int zahl, FeldNummer feldNummer) {
+		if (feldPartner == null) {
 			feldPartner = new ZahlenFeldNummern();
 		}
 		feldPartner.addNurNeue(zahl, feldNummer);
 	}
-	
-	public void loescheMoegliche(){
+
+	public void loescheMoegliche() {
 		moegliche = new ArrayList<Integer>();
 		feldPartner = null;
 	}
-	
 
 	/**
-	 * @param neueMoegliche Werden die neuen Möglichen (als Kopie)
-	 * @throws Exc Wenn die neuen Möglichen nicht Teilmenge der aktuellen sind
+	 * @param neueMoegliche
+	 *            Werden die neuen Mï¿½glichen (als Kopie)
+	 * @throws Exc
+	 *             Wenn die neuen Mï¿½glichen nicht Teilmenge der aktuellen sind
 	 */
-	public void setzeMoegliche(ArrayList<Integer> neueMoegliche) throws Exc
-	{
-		if (! this.moegliche.containsAll(neueMoegliche)){
+	public void setzeMoegliche(ArrayList<Integer> neueMoegliche) throws Exc {
+		if (!this.moegliche.containsAll(neueMoegliche)) {
 			throw Exc.setzeMoeglicheNicht(this.moegliche, neueMoegliche);
 		}
 		// Kopien erstellen:
 		loescheMoegliche();
 		moegliche.addAll(neueMoegliche);
-	}	
-	
+	}
+
 	/**
-	 * @param zahl wird als einzig mögliche gesetzt
+	 * @param zahl
+	 *            wird als einzig mï¿½gliche gesetzt
 	 * @throws Exc
 	 */
-	public void setzeMoeglichEinzig(int zahl) throws Exc{
+	public void setzeMoeglichEinzig(int zahl) throws Exc {
 		kontrolliereZahl(zahl);
 		moegliche = new ArrayList<Integer>();
 		moegliche.add(new Integer(zahl));
 	}
 
 	/**
-	 * @param zahl: Wird unbedingt zu den Möglichen hinzugefügt
+	 * @param zahl:
+	 *            Wird unbedingt zu den Mï¿½glichen hinzugefï¿½gt
 	 */
-	public void setzeMoeglicheUnbedingt(int zahl){
+	public void setzeMoeglicheUnbedingt(int zahl) {
 		moegliche.add(new Integer(zahl));
 	}
 
 	/**
 	 * @param unmoeglicheZahl
-	 * @return true wenn die (nicht mögliche) Zahl aus den Möglichen gelöscht wurde 
+	 * @return true wenn die (nicht mï¿½gliche) Zahl aus den Mï¿½glichen gelï¿½scht
+	 *         wurde
 	 * @throws Exc
 	 */
-	public boolean loescheUnmoeglicheZahl(int unmoeglicheZahl) throws Exc{
+	public boolean loescheUnmoeglicheZahl(int unmoeglicheZahl) throws Exc {
 		kontrolliereZahl(unmoeglicheZahl);
-		for (int i=0; i<moegliche.size(); i++){
-			if (moegliche.get(i) == unmoeglicheZahl){
+		for (int i = 0; i < moegliche.size(); i++) {
+			if (moegliche.get(i) == unmoeglicheZahl) {
 				moegliche.remove(i);
 				return true;
 			}
@@ -268,30 +297,28 @@ public class Feld  implements Comparable<Feld> {
 	};
 
 	/**
-	 * In einem freien Feld muss es bei Sudoku-Konsistenz mindestens eine mögliche Zahl geben.
-	 * Ansonsten besitzt das Sudoku eine falsche Zahl!
+	 * In einem freien Feld muss es bei Sudoku-Konsistenz mindestens eine
+	 * mï¿½gliche Zahl geben. Ansonsten besitzt das Sudoku eine falsche Zahl!
+	 * 
 	 * @return null (gut) oder Problem.freiesFeldOhneMoegliche
 	 */
 	public Problem sucheProblem() {
-		if ((vorgabe > 0) || (eintrag != null))
-		{
+		if ((vorgabe > 0) || (eintrag != null)) {
 			return null;
 		}
-		// Jetzt muss es Mögliche geben!
-		if (moegliche.size()<1){
+		// Jetzt muss es Mï¿½gliche geben!
+		if (moegliche.size() < 1) {
 			return Problem.freiesFeldOhneMoegliche(feldNummer);
 		}
 		return null;
 	}
-	
-	public char gibSystemOutChar(){
-		if (this.istVorgabe())
-		{
+
+	public char gibSystemOutChar() {
+		if (this.istVorgabe()) {
 			String sVorgabe = String.valueOf(this.gibVorgabe());
 			return sVorgabe.charAt(0);
 		}
-		if (this.istEintrag())
-		{
+		if (this.istEintrag()) {
 			String sEintrag = String.valueOf(this.gibEintrag());
 			return sEintrag.charAt(0);
 		}
@@ -299,43 +326,45 @@ public class Feld  implements Comparable<Feld> {
 	}
 
 	/**
-	 * Setzt den Eintrag falls ich (noch) frei bin und es nur eine mögliche Zahl gibt 
+	 * Setzt den Eintrag falls ich (noch) frei bin und es nur eine mï¿½gliche Zahl
+	 * gibt
+	 * 
 	 * @return true falls ein Eintrag gesetzt wurde
 	 * @throws Exc
 	 */
-	public boolean setzeEintragFallsNur1Moeglich() throws Exc{
-		if ( this.istFrei() && (1 == moegliche.size())){
+	public boolean setzeEintragFallsNur1Moeglich() throws Exc {
+		if (this.istFrei() && (1 == moegliche.size())) {
 			setzeEintrag(moegliche.get(0));
 			return true;
 		}
 		return false;
 	}
-	
-	private void kontrolliereZahl(int zahl) throws Exc{
-		if ( (zahl < 0) || (zahl > 9) ){
+
+	private void kontrolliereZahl(int zahl) throws Exc {
+		if ((zahl < 0) || (zahl > 9)) {
 			throw Exc.unerlaubteZahl(this, zahl);
 		}
 	}
-	
+
 	/**
 	 * Setzt die Vorgabe und die Rest-Vorgabe
-	 * @param vorgabe des reset(..)
+	 * 
+	 * @param vorgabe
+	 *            des reset(..)
 	 * @throws Exc
 	 */
-	public void setzeVorgabeReset(int vorgabe) throws Exc{
+	public void setzeVorgabeReset(int vorgabe) throws Exc {
 		setzeVorgabe(vorgabe);
-		if (vorgabe == 0){
+		if (vorgabe == 0) {
 			resetVorgabe = null;
-		}
-		else{
+		} else {
 			resetVorgabe = new Integer(vorgabe);
 		}
 	}
-	
-	public void setzeVorgabe(int vorgabe) throws Exc
-	{
+
+	public void setzeVorgabe(int vorgabe) throws Exc {
 		kontrolliereZahl(vorgabe);
-		if (ebenen.laeuftEine()){
+		if (ebenen.laeuftEine()) {
 			int aktuelleEbene = ebenen.gibNummer();
 			throw Exc.setzeVorgabeNurOhneEintraege(this, vorgabe, aktuelleEbene);
 		}
@@ -345,150 +374,154 @@ public class Feld  implements Comparable<Feld> {
 	}
 
 	/**
-	 * Wenn der soeben gelöschte Eintrag der letzte der "alteFeldEbene" war, wird diese Ebene gelöscht
+	 * Wenn der soeben gelï¿½schte Eintrag der letzte der "alteFeldEbene" war,
+	 * wird diese Ebene gelï¿½scht
+	 * 
 	 * @param alteFeldEbene
 	 */
-	private void aktualisiereEbeneNachEintragLoeschen(int alteFeldEbene){
+	private void aktualisiereEbeneNachEintragLoeschen(int alteFeldEbene) {
 		AnzahlEintraege info = sudokuFelder.gibAnzahlEintraege(alteFeldEbene);
 
-		// War das der letzte Eintrag überhaupt?
-		if (0 == info.anzahlGesamt){
+		// War das der letzte Eintrag ï¿½berhaupt?
+		if (0 == info.anzahlGesamt) {
 			ebenen.reset();
 			return;
 		}
 		// War ich der letzte Eintrag der aktuellen Ebene?
-		if (0 == info.anzahlEbene){
+		if (0 == info.anzahlEbene) {
 			ebenen.loesche();
 		}
 	}
-	
-	private void protokolliereEintrag(Eintrag eintragAlt, Eintrag eintragNeu){
-		if (eintragAlt != null){
+
+	private void protokolliereEintrag(Eintrag eintragAlt, Eintrag eintragNeu) {
+		if (eintragAlt != null) {
 			eintragAlt = new Eintrag(eintragAlt);
 		}
-		if (eintragNeu != null){
+		if (eintragNeu != null) {
 			eintragNeu = new Eintrag(eintragNeu);
 		}
 		protokollSchreiber.protokolliere(new FeldNummer(feldNummer), eintragAlt, eintragNeu);
 	}
-		
+
 	/**
-	 * Setzt bzw. löscht den Eintrag und protokolliert dies. 
-	 * @param zahl 1 bis 9: Setzt den Eintrag, 0 löscht ihn.
-	 * @throws Exc Wenn das Eintragssetzen nicht stattfinden kann
+	 * Setzt bzw. lï¿½scht den Eintrag und protokolliert dies.
+	 * 
+	 * @param zahl
+	 *            1 bis 9: Setzt den Eintrag, 0 lï¿½scht ihn.
+	 * @throws Exc
+	 *             Wenn das Eintragssetzen nicht stattfinden kann
 	 */
-	public void setzeEintrag(int zahl) throws Exc{
-		Eintrag eintragAlt = this.eintrag; 
-		
+	public void setzeEintrag(int zahl) throws Exc {
+		Eintrag eintragAlt = this.eintrag;
+
 		kontrolliereZahl(zahl);
 		setzeEintragIntern(zahl);
-		
-		Eintrag eintragNeu = this.eintrag; 
+
+		Eintrag eintragNeu = this.eintrag;
 		protokolliereEintrag(eintragAlt, eintragNeu);
 	}
 
 	/**
-	 * Setzt bzw. löscht den Eintrag und protokolliert dies. 
-	 * Ein gesetzter Eintrag wird als Zahl-Tip markiert.
+	 * Setzt bzw. lï¿½scht den Eintrag und protokolliert dies. Ein gesetzter
+	 * Eintrag wird als Zahl-Tip markiert.
+	 * 
 	 * @param zahl
 	 * @throws Exc
 	 */
-	public void setzeEintragAlsTip(int zahl) throws Exc{
-		Eintrag eintragAlt = this.eintrag; 
+	public void setzeEintragAlsTip(int zahl) throws Exc {
+		Eintrag eintragAlt = this.eintrag;
 
 		kontrolliereZahl(zahl);
 		setzeEintragIntern(zahl);
-		if (istEintrag()){
+		if (istEintrag()) {
 			eintrag.markiereAlsTip();
 		}
-		
-		Eintrag eintragNeu = this.eintrag; 
+
+		Eintrag eintragNeu = this.eintrag;
 		protokolliereEintrag(eintragAlt, eintragNeu);
 	}
 
-	public void wandleEintragZuVorgabe(){
-		if (istEintrag()){
+	public void wandleEintragZuVorgabe() {
+		if (istEintrag()) {
 			int zahl = eintrag.gibZahl();
 			eintrag = null;
 			loescheMoegliche();
 			vorgabe = zahl;
 		}
 	}
-	
+
 	/**
-	 * @param zahl 1 bis9: Setzt den Eintrag, 0 löscht ihn
-	 * @throws Exc Wenn das Eintragssetzen nicht stattfinden kann
+	 * @param zahl
+	 *            1 bis9: Setzt den Eintrag, 0 lï¿½scht ihn
+	 * @throws Exc
+	 *             Wenn das Eintragssetzen nicht stattfinden kann
 	 */
-	private void setzeEintragIntern(int zahl) throws Exc
-	{
+	private void setzeEintragIntern(int zahl) throws Exc {
 		// Unsinn bei gesetzter Vorgabe
-		if (vorgabe > 0){
+		if (vorgabe > 0) {
 			throw Exc.setzeEintragNichtAufVorgabe(this, zahl);
 		}
-		if (zahl == 0){
-			// ------------------------ Eintrag soll gelöscht werden
-			if (! this.istEintrag() ){
+		if (zahl == 0) {
+			// ------------------------ Eintrag soll gelï¿½scht werden
+			if (!this.istEintrag()) {
 				return; // Eintrag existiert NICHT => OK
-			}
-			else // Eintrag existiert => Eintrag löschen
+			} else // Eintrag existiert => Eintrag lï¿½schen
 			{
 				// gearbeitet wird nur auf der aktuellen Ebene
 				int aktuelleEbene = ebenen.gibNummer();
-				if (eintrag.gibEbene() < aktuelleEbene){
+				if (eintrag.gibEbene() < aktuelleEbene) {
 					throw Exc.loescheEintragNichtAufEbene(this, aktuelleEbene);
 				}
-				// Eintrag löschen
+				// Eintrag lï¿½schen
 				reset();
 				aktualisiereEbeneNachEintragLoeschen(aktuelleEbene);
 				return;
 			} // if (! this.istEintrag() )
 		} // if (zahl == 0)
-		
+
 		// ---------------------------------- Eintrag setzen
-		if ((this.istEintrag())){
+		if ((this.istEintrag())) {
 			throw Exc.setzeEintragNichtAufEintrag(this, zahl);
-		}
-		else {
-			// Feld ohne Mögliche: Kann nicht akzeptiert werden wegen der
+		} else {
+			// Feld ohne Mï¿½gliche: Kann nicht akzeptiert werden wegen der
 			// Ebenen-Steuerung
 			if (0 == moegliche.size()) {
 				throw Exc.setzeEintragNichtOhneMoegliche(this, zahl);
 			}
-			// Ist dieser Eintrag möglich?
-			if (! istMoeglich(zahl)){
+			// Ist dieser Eintrag mï¿½glich?
+			if (!istMoeglich(zahl)) {
 				throw Exc.setzeEintragNichtOhneDieseMoegliche(this, zahl);
 			}
 			// Eventuell ist Ebenen-Start
 			boolean istNeueEbene = ebenen.setzeEintragsEbene(this, zahl);
 			// Nun doch noch den Eintrag setzen
-			eintrag = new Eintrag(zahl, ebenen.gibNummer(),istNeueEbene, false);
-			// Und damit gibt es keine Möglichen mehr
+			eintrag = new Eintrag(zahl, ebenen.gibNummer(), istNeueEbene, false);
+			// Und damit gibt es keine Mï¿½glichen mehr
 			this.loescheMoegliche();
 		}
 	}
-	
+
 	/**
-	 * Setzt den Eintrag unbedingt in das Feld. 
-	 * Das geschieht typisch durch das Protokoll.
-	 * Hier werden keinerlei Konsistenzen überprüft: 
-	 * Das Protokoll ist für die richtige Aufrufreihenfolge verantwortlich.
+	 * Setzt den Eintrag unbedingt in das Feld. Das geschieht typisch durch das
+	 * Protokoll. Hier werden keinerlei Konsistenzen ï¿½berprï¿½ft: Das Protokoll
+	 * ist fï¿½r die richtige Aufrufreihenfolge verantwortlich.
+	 * 
 	 * @param eintrag
 	 * @throws Exc
 	 */
-	public void setzeEintragUnbedingt(Eintrag eintrag) throws Exc{
-		if (eintrag == null){
-			// Löschen des Eintrags
+	public void setzeEintragUnbedingt(Eintrag eintrag) throws Exc {
+		if (eintrag == null) {
+			// Lï¿½schen des Eintrags
 			int meineEbene = this.eintrag.gibEbene();
-			
+
 			this.eintrag = null;
-			// Und fein die Ebene mitführen!!!
+			// Und fein die Ebene mitfï¿½hren!!!
 			aktualisiereEbeneNachEintragLoeschen(meineEbene);
-		}
-		else {
+		} else {
 			// Wirklich einen Eintrag setzen
 			this.eintrag = eintrag;
 			this.loescheMoegliche();
-			// Und fein die Ebene mitführen!!!
+			// Und fein die Ebene mitfï¿½hren!!!
 			ebenen.setzeEintragsEbeneUnbedingt(eintrag.gibEbene());
 		}
 	}
@@ -504,10 +537,8 @@ public class Feld  implements Comparable<Feld> {
 		if (getClass() != other.getClass()) {
 			return 1;
 		}
-		int feldNummerErgebnis = this.feldNummer.compareTo(other.feldNummer); 
+		int feldNummerErgebnis = this.feldNummer.compareTo(other.feldNummer);
 		return feldNummerErgebnis;
 	}
-	
+
 }
-
-
